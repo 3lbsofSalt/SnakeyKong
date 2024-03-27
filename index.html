@@ -1,17 +1,24 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE HTML>
+<html lang = "en-US">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CS5410 HW 3</title>
-    <script src="lunarLander.js"></script>
-    <style>
-        body {
-            background-color: lightgray;
-        }
-    </style>
+    <meta charset = "UTF-8">
+    <title>Spritesheet Animation</title>
+    <link rel = "stylesheet" type = "text/css" href = "styles/game.css">
 </head>
-<body onload="initialize()">
-    <canvas id="canvas-main" width="1200" height="750" style="width: 70%; height: 70%;"></canvas>
+<body>
+    <canvas id = "id-canvas" width = "600" height = "600"></canvas>
+
+    <script>
+        let MyGame = {
+            objects: {},
+            input: {},
+            render: {}
+        };
+    </script>
+    <script src = "scripts/input/keyboard.js"></script>
+    <script src = "scripts/render/core.js"></script>
+    <script src = "scripts/render/animated-model.js"></script>
+    <script src = "scripts/objects/bird.js"></script>
+    <script src = "scripts/game.js"></script>
 </body>
 </html>
