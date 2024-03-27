@@ -28,14 +28,14 @@ MyGame.main = (function (objects, input, renderer, graphics) {
     });
 
     let littleBirdRender = renderer.AnimatedModel({
-        spriteSheet: 'assets/spritesheet-bird.png',
-        spriteCount: 14,
-        spriteTime: [25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25],   // ms per frame
+        spriteSheet: 'assets/spritesheet-bananaGreenSingle.png',
+        spriteCount: 8,
+        spriteTime: [150, 150, 150, 150, 150, 150, 150, 150],   // ms per frame
     }, graphics);
     let bigBirdRender = renderer.AnimatedModel({
-        spriteSheet: 'assets/spritesheet-bananaYellowSingle.png',
-        spriteCount: 8,
-        spriteTime: [100, 100, 100, 100, 100, 100, 100, 100],   // ms per frame
+        spriteSheet: 'assets/spritesheet-bananaBlueBunch.png',
+        spriteCount: 12,
+        spriteTime: [100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100],   // ms per frame
     }, graphics);
 
     function processInput(elapsedTime) {
