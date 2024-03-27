@@ -34,6 +34,7 @@ MyGame.render.AnimatedModel = function(spec, graphics) {
             // When switching sprites, keep the leftover time because
             // it needs to be accounted for the next sprite animation frame.
             animationTime -= spec.spriteTime[subImageIndex];
+            console.log("SPEC SPRITE TIME:  " + spec.spriteTime[subImageIndex])
             subImageIndex += 1;
             //
             // Wrap around from the last back to the first sprite as needed

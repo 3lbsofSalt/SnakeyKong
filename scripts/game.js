@@ -35,7 +35,7 @@ MyGame.main = (function (objects, input, renderer, graphics) {
     let bigBirdRender = renderer.AnimatedModel({
         spriteSheet: 'assets/spritesheet-bananaYellowSingle.png',
         spriteCount: 8,
-        spriteTime: [40, 40, 40, 40, 40, 40, 40, 40],   // ms per frame
+        spriteTime: [100, 100, 100, 100, 100, 100, 100, 100],   // ms per frame
     }, graphics);
 
     function processInput(elapsedTime) {
