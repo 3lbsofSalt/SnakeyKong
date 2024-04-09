@@ -33,6 +33,13 @@ MyGame.main = (function (objects, input, renderer, graphics) {
         moveRate: 75 / 1000,          // Pixels per second
         rotateRate: Math.PI / 1000    // Radians per second
     });
+    let dkBody = objects.Snake({
+        size: { x: 50, y: 50 },       // Size in pixels
+        center: { x: 220, y: 350 },
+        rotation: 0,
+        moveRate: 75 / 1000,          // Pixels per second
+        rotateRate: Math.PI / 1000    // Radians per second
+    });
 
     let littleBirdRender = renderer.AnimatedModel({
         spriteSheet: 'assets/spritesheet-bananaGreenSingle.png',
@@ -49,6 +56,11 @@ MyGame.main = (function (objects, input, renderer, graphics) {
         spriteCount: 1,
         spriteTime: [1000],   // ms per frame
     }, graphics);
+    let dkBodyRender = renderer.AnimatedModel({
+        spriteSheet: 'assets/dkbody.png',
+        spriteCount: 1,
+        spriteTime: [1000],   // ms per frame
+    }, graphics);
 
     function processInput(elapsedTime) {
         myKeyboard.update(elapsedTime);
@@ -62,6 +74,10 @@ MyGame.main = (function (objects, input, renderer, graphics) {
     function update(elapsedTime) {
         littleBirdRender.update(elapsedTime);
         bigBirdRender.update(elapsedTime);
+        dkHeadRender.update(elapsedTime);
+        dkBodyRender.update(elapsedTime);
+
+        dkBody.center.x = dkHead.center.x - 30;
     }
 
     //------------------------------------------------------------------
@@ -74,6 +90,9 @@ MyGame.main = (function (objects, input, renderer, graphics) {
 
         littleBirdRender.render(littleBird);
         bigBirdRender.render(bigBird);
+
+        // Render segments from last to first
+        dkBodyRender.render(dkBody);
         dkHeadRender.render(dkHead);
     }
 
