@@ -3,6 +3,8 @@
 // This provides the "game" code.
 //
 //------------------------------------------------------------------
+// noinspection JSVoidFunctionReturnValueUsed
+
 MyGame.main = (function (objects, input, renderer, graphics) {
     'use strict';
 
