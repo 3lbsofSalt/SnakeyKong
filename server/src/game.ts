@@ -2,6 +2,7 @@ import { type Server } from 'http';
 import { type IOInputEvent } from './types/game';
 import type Player from './types/objects/Player';
 
+//@ts-ignore
 import present from 'present';
 import { Server as IOServer, Socket } from 'socket.io';
 import createPlayer from './objects/Player';
