@@ -26,6 +26,13 @@ MyGame.main = (function (objects, input, renderer, graphics) {
         moveRate: 75 / 1000,          // Pixels per second
         rotateRate: Math.PI / 1000    // Radians per second
     });
+    let dkHead = objects.Snake({
+        size: { x: 75, y: 50 },       // Size in pixels
+        center: { x: 250, y: 350 },
+        rotation: 0,
+        moveRate: 75 / 1000,          // Pixels per second
+        rotateRate: Math.PI / 1000    // Radians per second
+    });
 
     let littleBirdRender = renderer.AnimatedModel({
         spriteSheet: 'assets/spritesheet-bananaGreenSingle.png',
@@ -36,6 +43,11 @@ MyGame.main = (function (objects, input, renderer, graphics) {
         spriteSheet: 'assets/spritesheet-bananaBlueBunch.png',
         spriteCount: 12,
         spriteTime: [100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100],   // ms per frame
+    }, graphics);
+    let dkHeadRender = renderer.AnimatedModel({
+        spriteSheet: 'assets/dkhead.png',
+        spriteCount: 1,
+        spriteTime: [1000],   // ms per frame
     }, graphics);
 
     function processInput(elapsedTime) {
@@ -62,6 +74,7 @@ MyGame.main = (function (objects, input, renderer, graphics) {
 
         littleBirdRender.render(littleBird);
         bigBirdRender.render(bigBird);
+        dkHeadRender.render(dkHead);
     }
 
     //------------------------------------------------------------------
@@ -80,13 +93,15 @@ MyGame.main = (function (objects, input, renderer, graphics) {
         requestAnimationFrame(gameLoop);
     };
 
+    /*
     myKeyboard.register('w', littleBird.moveForward);
     myKeyboard.register('a', littleBird.rotateLeft);
     myKeyboard.register('d', littleBird.rotateRight);
+    */
 
-    myKeyboard.register('ArrowUp', bigBird.moveForward);
-    myKeyboard.register('ArrowLeft', bigBird.rotateLeft);
-    myKeyboard.register('ArrowRight', bigBird.rotateRight);
+    myKeyboard.register('ArrowUp', dkHead.moveForward);
+    myKeyboard.register('ArrowLeft', dkHead.rotateLeft);
+    myKeyboard.register('ArrowRight', dkHead.rotateRight);
 
     requestAnimationFrame(gameLoop);
 }(MyGame.objects, MyGame.input, MyGame.render, MyGame.graphics));
