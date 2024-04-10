@@ -13,7 +13,7 @@ MyGame.render.AnimatedModel = function(spec, graphics) {
     let isReady = false;  // Can't render until the texture is loaded
 
     //
-    // Load he texture to use for the particle system loading and ready for rendering
+    // Load the texture to use for the particle system loading and ready for rendering
     image.onload = function() {
         isReady = true;
         subTextureWidth = image.width / spec.spriteCount;
@@ -34,7 +34,6 @@ MyGame.render.AnimatedModel = function(spec, graphics) {
             // When switching sprites, keep the leftover time because
             // it needs to be accounted for the next sprite animation frame.
             animationTime -= spec.spriteTime[subImageIndex];
-            console.log("SPEC SPRITE TIME:  " + spec.spriteTime[subImageIndex])
             subImageIndex += 1;
             //
             // Wrap around from the last back to the first sprite as needed
