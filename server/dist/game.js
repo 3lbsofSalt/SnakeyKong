@@ -4,10 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.start = void 0;
-<<<<<<< HEAD
-=======
 //@ts-ignore
->>>>>>> 48a3356aaccca74356960f99e3ffe3e40996957b
 const present_1 = __importDefault(require("present"));
 const socket_io_1 = require("socket.io");
 const Player_1 = __importDefault(require("./objects/Player"));

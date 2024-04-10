@@ -6,6 +6,8 @@
 MyGame.main = (function (objects, input, renderer, graphics) {
     'use strict';
 
+    let TURNPOINT_TOL = 20;
+    let ROTATION_TOL = Math.PI / 50;
     console.log('game initializing...');
 
     let lastTimeStamp = performance.now();
@@ -26,19 +28,21 @@ MyGame.main = (function (objects, input, renderer, graphics) {
         moveRate: 75 / 1000,          // Pixels per second
         rotateRate: Math.PI / 1000    // Radians per second
     });
-    let dkHead = objects.Snake({
+    let dkHead = objects.Head({
         size: { x: 75, y: 50 },       // Size in pixels
         center: { x: 250, y: 350 },
         rotation: 0,
-        moveRate: 75 / 1000,          // Pixels per second
-        rotateRate: Math.PI / 1000    // Radians per second
+        desiredRotation: 0,
+        moveRate: 200 / 1000,          // Pixels per second
+        rotateRate: Math.PI / 1000,    // Radians per second
     });
-    let dkBody = objects.Snake({
+    let dkBody = objects.Body({
         size: { x: 50, y: 50 },       // Size in pixels
         center: { x: 220, y: 350 },
         rotation: 0,
-        moveRate: 75 / 1000,          // Pixels per second
-        rotateRate: Math.PI / 1000    // Radians per second
+        moveRate: 200 / 1000,          // Pixels per second
+        rotateRate: Math.PI / 1000,    // Radians per second
+        nextLocations: [{ x: 250, y: 350 }]
     });
 
     let littleBirdRender = renderer.AnimatedModel({
@@ -47,7 +51,7 @@ MyGame.main = (function (objects, input, renderer, graphics) {
         spriteTime: [150, 150, 150, 150, 150, 150, 150, 150],   // ms per frame
     }, graphics);
     let bigBirdRender = renderer.AnimatedModel({
-        spriteSheet: 'assets/spritesheet-bananaBlueBunch.png',
+        spriteSheet: 'assets/spritesheet-bananaPurpleBunch.png',
         spriteCount: 12,
         spriteTime: [100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100],   // ms per frame
     }, graphics);
@@ -66,6 +70,18 @@ MyGame.main = (function (objects, input, renderer, graphics) {
         myKeyboard.update(elapsedTime);
     }
 
+    function updateRotation(elapsedTime) {
+        dkHead.rotation = dkHead.rotation % (2 * Math.PI);
+        dkBody.nextLocations.push(dkHead.center);
+        //console.log("ROTATE VS DESIRED ROTATE    " + dkHead.rotation + "     " + dkHead.desiredRotation);
+        if (Math.abs(dkHead.rotation - dkHead.desiredRotation) > ROTATION_TOL) {
+            const leftIsCloser = (dkHead.desiredRotation - dkHead.rotation + 2 * Math.PI) % (2 * Math.PI) > Math.PI;
+            if (leftIsCloser) { dkHead.rotateLeft(elapsedTime); }
+            else { dkHead.rotateRight(elapsedTime); }
+        }
+        else { dkHead.rotation = dkHead.desiredRotation; }
+    }
+
     //------------------------------------------------------------------
     //
     // Update the particles
@@ -77,7 +93,13 @@ MyGame.main = (function (objects, input, renderer, graphics) {
         dkHeadRender.update(elapsedTime);
         dkBodyRender.update(elapsedTime);
 
-        dkBody.center.x = dkHead.center.x - 30;
+        //console.log(dkBody.nextLocations.length);
+
+        dkHead.moveForward(elapsedTime);
+        dkBody.moveForward(elapsedTime);
+
+        updateRotation(elapsedTime);
+
     }
 
     //------------------------------------------------------------------
@@ -94,6 +116,7 @@ MyGame.main = (function (objects, input, renderer, graphics) {
         // Render segments from last to first
         dkBodyRender.render(dkBody);
         dkHeadRender.render(dkHead);
+        //console.log("RENDERING");
     }
 
     //------------------------------------------------------------------
@@ -118,9 +141,14 @@ MyGame.main = (function (objects, input, renderer, graphics) {
     myKeyboard.register('d', littleBird.rotateRight);
     */
 
-    myKeyboard.register('ArrowUp', dkHead.moveForward);
-    myKeyboard.register('ArrowLeft', dkHead.rotateLeft);
-    myKeyboard.register('ArrowRight', dkHead.rotateRight);
+    //myKeyboard.register('ArrowUp', dkHead.moveForward);
+    //myKeyboard.register('ArrowLeft', dkHead.rotateLeft);
+    //myKeyboard.register('ArrowRight', dkHead.rotateRight);
+
+    myKeyboard.register('ArrowUp', dkHead.setDirectionUp);
+    myKeyboard.register('ArrowDown', dkHead.setDirectionDown);
+    myKeyboard.register('ArrowLeft', dkHead.setDirectionLeft);
+    myKeyboard.register('ArrowRight', dkHead.setDirectionRight);
 
     requestAnimationFrame(gameLoop);
 }(MyGame.objects, MyGame.input, MyGame.render, MyGame.graphics));
