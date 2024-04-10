@@ -1,1 +1,5 @@
 node_modules/
+server/dist/
+package.json
+package-lock.json
+.idea/

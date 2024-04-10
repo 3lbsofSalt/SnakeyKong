@@ -13,7 +13,7 @@ MyGame.render.AnimatedModel = function(spec, graphics) {
     let isReady = false;  // Can't render until the texture is loaded
 
     //
-    // Load he texture to use for the particle system loading and ready for rendering
+    // Load the texture to use for the particle system loading and ready for rendering
     image.onload = function() {
         isReady = true;
         subTextureWidth = image.width / spec.spriteCount;

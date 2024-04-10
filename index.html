@@ -6,20 +6,55 @@
     <link rel = "stylesheet" type = "text/css" href = "styles/game.css">
     <link rel="icon" type="image/png" href="assets/favicon.png">
 </head>
-<body>
-    <canvas id = "id-canvas" width = "1200" height = "600"></canvas>
+<body onload = "MyGame.manager.initialize();">
+    <div id = "game">
+        <div id = "main-menu" class = "screen">
+            <img id="main-title" src="assets/logo.png" alt="SNAKEY KONG">
+            <ul class = "menu">
+                <li><button id = "id-new-game">New&nbsp;Game</button></li>
+                <li><button id = "id-high-scores">High&nbsp;Scores</button></li>
+                <li><button id = "id-about">Credits</button></li>
+            </ul>
+        </div>
+        <div id = "game-play" class = "screen">
+            <canvas id = "id-canvas" width = "1200" height = "600"></canvas>
+        </div>
+        <div id = "high-scores" class = "screen">
+            <h1>High Scores</h1>
+            <ol id = 'scores-list'></ol>
+            <ul class = "menu">
+                <li><button id = "id-high-scores-back">Back</button></li>
+            </ul>
+        </div>
+        <div id = "about" class = "screen">
+            <h1>Credits</h1>
+            <p>Developed by</p>
+            <p>Max Ramsdell, Stockton Smith, Braden Cook</p>
+            <ul class = "menu">
+                <li><button id = "id-about-back">Back</button></li>
+            </ul>
+        </div>
+    </div>
 
     <script>
         let MyGame = {
             objects: {},
             input: {},
-            render: {}
+            render: {},
+            screens: {}
         };
     </script>
+
     <script src = "scripts/input/keyboard.js"></script>
     <script src = "scripts/render/core.js"></script>
     <script src = "scripts/render/animated-model.js"></script>
     <script src = "scripts/objects/bird.js"></script>
     <script src = "scripts/game.js"></script>
+
+    <script src = "scripts/screens/manager.js"></script>
+    <script src = "scripts/screens/main-menu.js"></script>
+    <script src = "scripts/screens/game-play.js"></script>
+    <script src = "scripts/screens/high-scores.js"></script>
+    <script src = "scripts/screens/about.js"></script>
 </body>
 </html>
