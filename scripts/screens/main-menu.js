@@ -7,6 +7,10 @@ MyGame.screens['main-menu'] = (function(manager) {
         document.getElementById('id-new-game').addEventListener(
             'click',
             function() {manager.showScreen('game-play'); });
+
+        document.getElementById('id-controls').addEventListener(
+            'click',
+            function() {manager.showScreen('edit-controls'); });
         
         document.getElementById('id-high-scores').addEventListener(
             'click',

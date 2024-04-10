@@ -41,6 +41,7 @@ canvas {
 
 #game-play {
     margin: 0;
+    background-color: rgb(0, 0, 0);
 }
 
 ul.menu {
@@ -51,7 +52,7 @@ ul.menu {
 }
 
 ul.menu li {
-    margin: 2em 0;
+    margin: 1em 0;
 }
 
 ul.menu li button {
@@ -61,10 +62,11 @@ ul.menu li button {
     width: 10em;
     height: 2em;
     margin: 0.1em;
-    background: #1f2023;
+    background: rgba(0, 51, 0, 0.9);
     border: 0.1em solid rgb(255, 255, 255);
     box-shadow: 0.2em 0.2em 0.3em rgb(0, 0, 0);
     cursor: pointer;
+    border-radius: .5em;
 }
 
 ul.menu li button:hover {
@@ -76,7 +78,7 @@ ul.menu li button:hover {
 
 ul.menu li button:active {
     color: #ffffff;
-    background: rgb(0, 0, 0);
+    background: rgba(1, 66, 1, 0.9);
 }
 
 #game div h1 {
@@ -92,5 +94,9 @@ ul.menu li button:active {
 }
 
 #about p {
+    text-align: center;
+}
+
+#edit-controls p {
     text-align: center;
 }

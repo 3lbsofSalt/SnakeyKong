@@ -6,6 +6,8 @@ MyGame.screens['game-play'] = (function(manager, graphics, input) {
     let model = null;
     let myKeyboard = input.Keyboard();
 
+
+
     //------------------------------------------------------------------
     //
     // One time initialization...nothing to do here.
@@ -37,15 +39,14 @@ MyGame.screens['game-play'] = (function(manager, graphics, input) {
         update(elapsed);
         render()
         lastTimeStamp = time;
-        
+
         if (!cancelNextRequest) {
             requestAnimationFrame(gameLoop);
         }
     }
 
     function run() {
-        myKeyboard.register('Escape', function() { manager.showScreen('main-menu'); });
-        //
+        myKeyboard.register('Escape', function() {cancelNextRequest = true; manager.showScreen('main-menu'); });
         // Start the animation loop
         cancelNextRequest = false;
         lastTimeStamp = performance.now();

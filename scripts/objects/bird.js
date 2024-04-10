@@ -69,15 +69,31 @@ MyGame.objects.Head = function(spec) {
     }
 
     function setDirectionRight(elapsedTime) {
-        spec.desiredRotation = 0;
+        if (spec.keyboard.keys.hasOwnProperty(MyGame.input.keys.up)) {
+            setDirectionUpRight()
+        }
+        else if (spec.keyboard.keys.hasOwnProperty(MyGame.input.keys.down)) {
+            setDirectionDownRight()
+        }
+        else {
+            spec.desiredRotation = 0;
+        }
     }
 
     function setDirectionUpRight(elapsedTime) {
-        spec.rotation = 7 * Math.PI / 4;
+        spec.desiredRotation = 7 * Math.PI / 4;
     }
 
     function setDirectionUp(elapsedTime) {
-        spec.desiredRotation = 3 * Math.PI / 2;
+        if (spec.keyboard.keys.hasOwnProperty(MyGame.input.keys.left)) {
+            setDirectionUpLeft()
+        }
+        else if (spec.keyboard.keys.hasOwnProperty(MyGame.input.keys.right)) {
+            setDirectionUpRight()
+        }
+        else {
+            spec.desiredRotation = 3 * Math.PI / 2;
+        }
     }
 
     function setDirectionUpLeft(elapsedTime) {
@@ -85,19 +101,35 @@ MyGame.objects.Head = function(spec) {
     }
 
     function setDirectionLeft(elapsedTime) {
-        spec.desiredRotation = Math.PI;
+        if (spec.keyboard.keys.hasOwnProperty(MyGame.input.keys.up)) {
+            setDirectionUpLeft()
+        }
+        else if (spec.keyboard.keys.hasOwnProperty(MyGame.input.keys.down)) {
+            setDirectionDownLeft()
+        }
+        else {
+            spec.desiredRotation = Math.PI;
+        }
     }
 
     function setDirectionDownLeft(elapsedTime) {
-        spec.rotation = 3 * Math.PI / 4;
+        spec.desiredRotation = 3 * Math.PI / 4;
     }
 
     function setDirectionDown(elapsedTime) {
-        spec.desiredRotation = Math.PI / 2;
+        if (spec.keyboard.keys.hasOwnProperty(MyGame.input.keys.left)) {
+            setDirectionDownLeft()
+        }
+        else if (spec.keyboard.keys.hasOwnProperty(MyGame.input.keys.right)) {
+            setDirectionDownRight()
+        }
+        else {
+            spec.desiredRotation = Math.PI / 2;
+        }
     }
 
     function setDirectionDownRight(elapsedTime) {
-        spec.rotation = Math.PI / 4;
+        spec.desiredRotation = Math.PI / 4;
     }
 
     let api = {

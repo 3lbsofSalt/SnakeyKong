@@ -28,7 +28,7 @@ MyGame.main = (function (objects, input, renderer, graphics) {
         center: { x: 50, y: 350 },
         rotation: 0,
         moveRate: 75 / 1000,          // Pixels per second
-        rotateRate: Math.PI / 1000    // Radians per second
+        rotateRate: Math.PI / 1000// Radians per second
     });
     let dkHead = objects.Head({
         size: { x: 75, y: 50 },       // Size in pixels
@@ -36,7 +36,8 @@ MyGame.main = (function (objects, input, renderer, graphics) {
         rotation: 0,
         desiredRotation: 0,
         moveRate: 200 / 1000,          // Pixels per second
-        rotateRate: Math.PI / 1000,    // Radians per second
+        rotateRate: Math.PI / 1000,   // Radians per second
+        keyboard: myKeyboard
     });
     let dkBody = objects.Body({
         size: { x: 50, y: 50 },       // Size in pixels
@@ -147,10 +148,10 @@ MyGame.main = (function (objects, input, renderer, graphics) {
     //myKeyboard.register('ArrowLeft', dkHead.rotateLeft);
     //myKeyboard.register('ArrowRight', dkHead.rotateRight);
 
-    myKeyboard.register('ArrowUp', dkHead.setDirectionUp);
-    myKeyboard.register('ArrowDown', dkHead.setDirectionDown);
-    myKeyboard.register('ArrowLeft', dkHead.setDirectionLeft);
-    myKeyboard.register('ArrowRight', dkHead.setDirectionRight);
+    myKeyboard.register(MyGame.input.keys.up, dkHead.setDirectionUp);
+    myKeyboard.register(MyGame.input.keys.down, dkHead.setDirectionDown);
+    myKeyboard.register(MyGame.input.keys.left, dkHead.setDirectionLeft);
+    myKeyboard.register(MyGame.input.keys.right, dkHead.setDirectionRight);
 
     requestAnimationFrame(gameLoop);
 }(MyGame.objects, MyGame.input, MyGame.render, MyGame.graphics));

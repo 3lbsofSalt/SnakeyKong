@@ -11,7 +11,8 @@
         <div id = "main-menu" class = "screen">
             <img id="main-title" src="assets/logo.png" alt="SNAKEY KONG">
             <ul class = "menu">
-                <li><button id = "id-new-game">New&nbsp;Game</button></li>
+                <li><button id = "id-new-game">Join Game</button></li>
+                <li><button id = "id-controls">Controls</button></li>
                 <li><button id = "id-high-scores">High&nbsp;Scores</button></li>
                 <li><button id = "id-about">Credits</button></li>
             </ul>
@@ -32,6 +33,14 @@
             <p>Max Ramsdell, Stockton Smith, Braden Cook</p>
             <ul class = "menu">
                 <li><button id = "id-about-back">Back</button></li>
+            </ul>
+        </div>
+        <div id = "edit-controls" class = "screen">
+            <h1>Configure Keyboard Control</h1>
+            <p id = 'instructions'>select a direction to edit key</p>
+            <canvas id = "id-controls-canvas" width = "1000" height = "400"></canvas>
+            <ul class = "menu">
+                <li><button id = "id-controls-back">Back</button></li>
             </ul>
         </div>
     </div>
@@ -56,5 +65,6 @@
     <script src = "scripts/screens/game-play.js"></script>
     <script src = "scripts/screens/high-scores.js"></script>
     <script src = "scripts/screens/about.js"></script>
+    <script src = "scripts/screens/edit-controls.js"></script>
 </body>
 </html>
