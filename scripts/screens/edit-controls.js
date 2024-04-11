@@ -14,7 +14,7 @@ MyGame.screens['edit-controls'] = (function(manager) {
     function initialize() {
         document.getElementById('id-controls-back').addEventListener(
             'click',
-            function() {manager.showScreen('main-menu'); });
+            function() { activeDirection = null; manager.showScreen('main-menu'); });
 
         document.getElementById('up').addEventListener(
             'click',
@@ -31,22 +31,27 @@ MyGame.screens['edit-controls'] = (function(manager) {
     }
 
     window.addEventListener('keydown', function (event) {
+        let key;
+        if (event.key === ' ') {
+            key = 'Space'
+        }
+        else {
+            key = event.key;
+        }
         if (activeDirection) {
             if (activeDirection === 'up') {
-                controlsList[0] = event.key
+                controlsList[0] = key
             }
             if (activeDirection === 'down') {
-                controlsList[1] = event.key
+                controlsList[1] = key
             }
             if (activeDirection === 'left') {
-                controlsList[2] = event.key
+                controlsList[2] = key
             }
             if (activeDirection === 'right') {
-                controlsList[3] = event.key
+                controlsList[3] = key
             }
             localStorage.setItem('controls', controlsList.join(' '));
-            document.getElementById('instructions').textContent = 'select a key to edit';
-            document.getElementById(activeDirection).style.color = 'black';
             activeDirection = null;
             run();
         }
@@ -82,10 +87,17 @@ MyGame.screens['edit-controls'] = (function(manager) {
         leftText = controlsList[2]
         rightText = controlsList[3]
 
+
+        document.getElementById('instructions').textContent = 'select a key to edit';
         document.getElementById('up').textContent = upText
         document.getElementById('down').textContent = downText
         document.getElementById('left').textContent = leftText
         document.getElementById('right').textContent = rightText
+
+        document.getElementById('up').style.color = 'black';
+        document.getElementById('down').style.color = 'black';
+        document.getElementById('left').style.color = 'black';
+        document.getElementById('right').style.color = 'black';
 
     }
 
