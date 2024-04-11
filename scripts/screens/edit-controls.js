@@ -74,7 +74,6 @@ MyGame.screens['edit-controls'] = (function(manager) {
     }
 
     function run() {
-        let running = true;
         if (localStorage.getItem('controls')) {
             controlsList = localStorage.getItem('controls').split(' ')
         }

@@ -6,7 +6,7 @@ MyGame.screens['main-menu'] = (function(manager) {
         // Setup each of menu events for the screens
         document.getElementById('id-new-game').addEventListener(
             'click',
-            function() {manager.showScreen('game-play'); });
+            function() {manager.showScreen('setup'); });
 
         document.getElementById('id-controls').addEventListener(
             'click',

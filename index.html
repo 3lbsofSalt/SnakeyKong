@@ -18,6 +18,7 @@
             </ul>
         </div>
         <div id = "game-play" class = "screen">
+            <img class="main-title-small" src="assets/logo.png" alt="SNAKEY KONG">
             <canvas id = "id-canvas" width = "1200" height = "600"></canvas>
         </div>
         <div id = "high-scores" class = "screen">
@@ -35,6 +36,18 @@
                 <li><button id = "id-about-back">Back</button></li>
             </ul>
         </div>
+        <div id = "setup" class = "screen">
+            <img class="main-title-small" src="assets/logo.png" alt="SNAKEY KONG">
+            <form>
+                <label for="name">Choose a name for your kong: </label><br>
+                <input type="text" id="name" maxlength="15"><br>
+            </form>
+            <ul id = "setup-menu" class="menu">
+                <li><button id = "id-setup-back">Back</button></li>
+                <li><button id = "id-next">Join</button></li>
+            </ul>
+        </div>
+
         <div id = "edit-controls" class = "screen">
             <h1>Configure Keyboard Control</h1>
             <p id = 'instructions'>select a key to edit</p>
@@ -80,5 +93,7 @@
     <script src = "scripts/screens/high-scores.js"></script>
     <script src = "scripts/screens/about.js"></script>
     <script src = "scripts/screens/edit-controls.js"></script>
+    <script src = "scripts/screens/setup.js"></script>
+
 </body>
 </html>
