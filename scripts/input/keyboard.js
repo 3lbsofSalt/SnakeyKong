@@ -4,7 +4,7 @@ if (localStorage.getItem('controls')) {
         up: controlsList[0],
         down: controlsList[1],
         left: controlsList[2],
-        right: controlsList[4]
+        right: controlsList[3]
     }
 }
 else {

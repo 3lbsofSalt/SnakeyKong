@@ -46,6 +46,7 @@ MyGame.screens['game-play'] = (function(manager, graphics, input) {
     }
 
     function run() {
+        console.log('running')
         myKeyboard.register('Escape', function() {cancelNextRequest = true; manager.showScreen('main-menu'); });
         // Start the animation loop
         cancelNextRequest = false;

@@ -7,6 +7,8 @@ MyGame.screens['edit-controls'] = (function(manager) {
     let leftText;
     let rightText;
 
+    let activeDirection = null;
+
 
 
     function initialize() {
@@ -28,9 +30,42 @@ MyGame.screens['edit-controls'] = (function(manager) {
             function() {editControl('right'); });
     }
 
+    window.addEventListener('keydown', function (event) {
+        if (activeDirection) {
+            if (activeDirection === 'up') {
+                controlsList[0] = event.key
+            }
+            if (activeDirection === 'down') {
+                controlsList[1] = event.key
+            }
+            if (activeDirection === 'left') {
+                controlsList[2] = event.key
+            }
+            if (activeDirection === 'right') {
+                controlsList[3] = event.key
+            }
+            localStorage.setItem('controls', controlsList.join(' '));
+            document.getElementById('instructions').textContent = 'select a key to edit';
+            document.getElementById(activeDirection).style.color = 'black';
+            activeDirection = null;
+            run();
+        }
+    });
+
+
     function editControl(direction) {
-        document.getElementById('instructions').textContent = 'Press a key to register'
-        document.getElementById(direction).style.color = 'red'
+        document.getElementById('instructions').textContent = 'press a key to register';
+        if (activeDirection) {
+            document.getElementById(activeDirection).style.color = 'black';
+        }
+        if (activeDirection === direction) {
+            document.getElementById('instructions').textContent = 'select a key to edit';
+            activeDirection = null;
+        }
+        else {
+            document.getElementById(direction).style.color = 'red';
+            activeDirection = direction;
+        }
     }
 
     function run() {

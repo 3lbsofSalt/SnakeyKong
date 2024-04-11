@@ -102,6 +102,13 @@ ul.menu li button:active {
     margin: 0;
 }
 
+.top-bottom {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 #middle-stuff {
     display: flex;
     margin-left: auto;
@@ -134,11 +141,5 @@ ul.menu li button:active {
 }
 
 .direction:hover {
-    color: rgba(0, 250, 0, 0.9);
-    cursor: pointer;
-}
-
-.direction:active {
-    color: rgba(3, 187, 3, 0.9);
     cursor: pointer;
 }
