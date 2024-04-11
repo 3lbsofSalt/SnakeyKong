@@ -99,4 +99,46 @@ ul.menu li button:active {
 
 #edit-controls p {
     text-align: center;
+    margin: 0;
+}
+
+#middle-stuff {
+    display: flex;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+}
+
+#middle-stuff > * {
+    padding-left: .2em;
+    padding-right: .2em;
+}
+
+#left-div {
+    width: 100%;
+    display: flex;
+    justify-content: right;
+    align-items: center;
+}
+
+#right-div {
+    width: 100%;
+    display: flex;
+    justify-content: left;
+    align-items: center;
+}
+
+#instructions {
+    color: red;
+    padding-bottom: 2em;
+}
+
+.direction:hover {
+    color: rgba(0, 250, 0, 0.9);
+    cursor: pointer;
+}
+
+.direction:active {
+    color: rgba(3, 187, 3, 0.9);
+    cursor: pointer;
 }
