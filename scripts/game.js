@@ -10,8 +10,9 @@ MyGame.main = (function (objects, input, renderer, graphics) {
   'use strict';
 
   let TURNPOINT_TOL = 20;
-  const socket = 'ghey'//io();
+  const socket = io();
   console.log('game initializing...');
+  console.log(socket)
 
   const otherSnakes = [];
 
