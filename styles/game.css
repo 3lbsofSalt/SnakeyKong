@@ -1,8 +1,7 @@
 body {
     margin: 1em;
-    font-family: 'Courier',serif;
+    font-family: "Courier", serif;
     background-color: rgb(255, 255, 255);
-
 }
 
 canvas {
@@ -23,7 +22,7 @@ canvas {
     display: block;
     margin-left: auto;
     margin-right: auto;
-    margin-bottom: .5em;
+    margin-bottom: 0.5em;
     width: 30%;
     -webkit-filter: drop-shadow(5px 5px 2px #222);
     filter: drop-shadow(5px 5px 2px #222);
@@ -42,7 +41,6 @@ canvas {
     display: none;
     z-index: 10;
     font-size: 2em;
-
 }
 
 #game .screen.active {
@@ -78,7 +76,7 @@ ul.menu li {
 }
 
 ul.menu li button {
-    font-family: 'Courier',serif;
+    font-family: "Courier", serif;
     font-size: 1em;
     color: #ffffff;
     width: 10em;
@@ -88,9 +86,8 @@ ul.menu li button {
     border: 0.1em solid rgb(255, 255, 255);
     box-shadow: 0.2em 0.2em 0.3em rgb(0, 0, 0);
     cursor: pointer;
-    border-radius: .5em;
+    border-radius: 0.5em;
 }
-
 
 ul.menu li button:hover {
     width: 11em;
@@ -140,8 +137,8 @@ ul.menu li button:active {
 }
 
 #middle-stuff > * {
-    padding-left: .2em;
-    padding-right: .2em;
+    padding-left: 0.2em;
+    padding-right: 0.2em;
 }
 
 #left-div {
@@ -174,16 +171,15 @@ ul.menu li button:active {
 
 form {
     display: flex;
-    justify-content: center
+    justify-content: center;
 }
 
 form > * {
-    margin: .3em;
+    margin: 0.3em;
 }
 
-input[type="text"]
-{
-    font-size:1em;
-    font-family: 'Courier', serif;
+input[type="text"] {
+    font-size: 1em;
+    font-family: "Courier", serif;
     width: 9em;
 }

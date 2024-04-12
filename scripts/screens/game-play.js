@@ -1,12 +1,10 @@
-MyGame.screens['game-play'] = (function(manager, graphics, input) {
-    'use strict';
+MyGame.screens["game-play"] = (function (manager, graphics, input) {
+    "use strict";
 
     let cancelNextRequest = false;
     let lastTimeStamp;
     let model = null;
     let myKeyboard = input.Keyboard();
-
-
 
     //------------------------------------------------------------------
     //
@@ -14,7 +12,7 @@ MyGame.screens['game-play'] = (function(manager, graphics, input) {
     //
     //------------------------------------------------------------------
     function initialize() {
-        console.log('game initializing...');
+        console.log("game initializing...");
     }
 
     function processInput(elapsedTime) {
@@ -28,10 +26,10 @@ MyGame.screens['game-play'] = (function(manager, graphics, input) {
     //------------------------------------------------------------------
 
     function gameLoop(time) {
-        let elapsed = time - lastTimeStamp
+        let elapsed = time - lastTimeStamp;
         processInput(elapsed);
-        model.update(elapsed)
-        model.render()
+        model.update(elapsed);
+        model.render();
         lastTimeStamp = time;
 
         if (!cancelNextRequest) {
@@ -40,16 +38,32 @@ MyGame.screens['game-play'] = (function(manager, graphics, input) {
     }
 
     function run() {
-        console.log('running')
-        myKeyboard.register('Escape', function() {cancelNextRequest = true; manager.showScreen('main-menu'); });
-        model = MyGame.main(MyGame.objects, MyGame.input, MyGame.render, MyGame.graphics);
+        console.log("running");
+        myKeyboard.register("Escape", function () {
+            cancelNextRequest = true;
+            manager.showScreen("main-menu");
+        });
+        model = MyGame.main(
+            MyGame.objects,
+            MyGame.input,
+            MyGame.render,
+            MyGame.graphics,
+        );
 
         myKeyboard.register(MyGame.input.keys.up, model.dkHead.setDirectionUp);
-        myKeyboard.register(MyGame.input.keys.down, model.dkHead.setDirectionDown);
-        myKeyboard.register(MyGame.input.keys.left, model.dkHead.setDirectionLeft);
-        myKeyboard.register(MyGame.input.keys.right, model.dkHead.setDirectionRight);
+        myKeyboard.register(
+            MyGame.input.keys.down,
+            model.dkHead.setDirectionDown,
+        );
+        myKeyboard.register(
+            MyGame.input.keys.left,
+            model.dkHead.setDirectionLeft,
+        );
+        myKeyboard.register(
+            MyGame.input.keys.right,
+            model.dkHead.setDirectionRight,
+        );
         // Start the animation loop
-
 
         cancelNextRequest = false;
         lastTimeStamp = performance.now();
@@ -57,7 +71,7 @@ MyGame.screens['game-play'] = (function(manager, graphics, input) {
     }
 
     return {
-        initialize : initialize,
-        run : run
+        initialize: initialize,
+        run: run,
     };
-}(MyGame.manager, MyGame.graphics, MyGame.input));
+})(MyGame.manager, MyGame.graphics, MyGame.input);

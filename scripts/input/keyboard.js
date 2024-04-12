@@ -1,30 +1,29 @@
-if (localStorage.getItem('controls')) {
-    let controlsList = localStorage.getItem('controls').split(' ')
+if (localStorage.getItem("controls")) {
+    let controlsList = localStorage.getItem("controls").split(" ");
     for (let i = 0; i < controlsList.length; i++) {
-        if (controlsList[i] === 'Space') {
-            controlsList[i] = ' '
+        if (controlsList[i] === "Space") {
+            controlsList[i] = " ";
         }
     }
     MyGame.input.keys = {
         up: controlsList[0],
         down: controlsList[1],
         left: controlsList[2],
-        right: controlsList[3]
-    }
-}
-else {
+        right: controlsList[3],
+    };
+} else {
     MyGame.input.keys = {
-        up: 'ArrowUp',
-        down: 'ArrowDown',
-        left: 'ArrowLeft',
-        right: 'ArrowRight'
-    }
+        up: "ArrowUp",
+        down: "ArrowDown",
+        left: "ArrowLeft",
+        right: "ArrowRight",
+    };
 }
 
 MyGame.input.Keyboard = function () {
     let that = {
         keys: {},
-        handlers: {}
+        handlers: {},
     };
 
     function keyPress(e) {
@@ -49,8 +48,8 @@ MyGame.input.Keyboard = function () {
         that.handlers[key] = handler;
     };
 
-    window.addEventListener('keydown', keyPress);
-    window.addEventListener('keyup', keyRelease);
+    window.addEventListener("keydown", keyPress);
+    window.addEventListener("keyup", keyRelease);
 
     return that;
 };

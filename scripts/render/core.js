@@ -1,8 +1,8 @@
-MyGame.graphics = (function() {
-    'use strict';
+MyGame.graphics = (function () {
+    "use strict";
 
-    let canvas = document.getElementById('id-canvas');
-    let context = canvas.getContext('2d');
+    let canvas = document.getElementById("id-canvas");
+    let context = canvas.getContext("2d");
 
     //------------------------------------------------------------------
     //
@@ -33,7 +33,9 @@ MyGame.graphics = (function() {
             image,
             center.x - size.x / 2,
             center.y - size.y / 2,
-            size.x, size.y);
+            size.x,
+            size.y,
+        );
 
         context.restore();
     }
@@ -49,7 +51,14 @@ MyGame.graphics = (function() {
     //    size: { x: , y: } // Size (in pixels) to render the sub-texture
     //
     // --------------------------------------------------------------
-    function drawSubTexture(image, index, subTextureWidth, center, rotation, size) {
+    function drawSubTexture(
+        image,
+        index,
+        subTextureWidth,
+        center,
+        rotation,
+        size,
+    ) {
         context.save();
 
         context.translate(center.x, center.y);
@@ -60,11 +69,15 @@ MyGame.graphics = (function() {
         // Pick the selected sprite from the sprite sheet to render
         context.drawImage(
             image,
-            subTextureWidth * index, 0,      // Which sub-texture to pick out
-            subTextureWidth, image.height,   // The size of the sub-texture
-            center.x - size.x / 2,           // Where to draw the sub-texture
+            subTextureWidth * index,
+            0, // Which sub-texture to pick out
+            subTextureWidth,
+            image.height, // The size of the sub-texture
+            center.x - size.x / 2, // Where to draw the sub-texture
             center.y - size.y / 2,
-            size.x, size.y);
+            size.x,
+            size.y,
+        );
 
         context.restore();
     }
@@ -79,15 +92,25 @@ MyGame.graphics = (function() {
     // --------------------------------------------------------------
     function drawRectangle(rect, fillStyle, strokeStyle) {
         context.save();
-        context.translate(rect.center.x, rect.center.y );
+        context.translate(rect.center.x, rect.center.y);
         context.rotate(rect.rotation);
         context.translate(-rect.center.x, -rect.center.y);
-        
+
         context.fillStyle = fillStyle;
-        context.fillRect(rect.center.x - rect.size.x / 2, rect.center.y - rect.size.y / 2, rect.size.x, rect.size.y);
-        
+        context.fillRect(
+            rect.center.x - rect.size.x / 2,
+            rect.center.y - rect.size.y / 2,
+            rect.size.x,
+            rect.size.y,
+        );
+
         context.strokeStyle = strokeStyle;
-        context.strokeRect(rect.center.x - rect.size.x / 2, rect.center.y - rect.size.y / 2, rect.size.x, rect.size.y);
+        context.strokeRect(
+            rect.center.x - rect.size.x / 2,
+            rect.center.y - rect.size.y / 2,
+            rect.size.x,
+            rect.size.y,
+        );
 
         context.restore();
     }
@@ -96,8 +119,8 @@ MyGame.graphics = (function() {
         clear: clear,
         drawTexture: drawTexture,
         drawSubTexture: drawSubTexture,
-        drawRectangle: drawRectangle
+        drawRectangle: drawRectangle,
     };
 
     return api;
-}());
+})();

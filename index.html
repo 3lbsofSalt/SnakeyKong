@@ -1,101 +1,116 @@
-<!DOCTYPE HTML>
-<html lang = "en-US">
-<head>
-    <meta charset = "UTF-8">
-    <title>SNAKEY KONG</title>
-    <link rel = "stylesheet" type = "text/css" href = "styles/game.css">
-    <link rel="icon" type="image/png" href="assets/favicon.png">
-</head>
-<body onload = "MyGame.manager.initialize();">
-    <div id = "game">
-        <div id = "main-menu" class = "screen">
-            <img id="main-title" src="assets/logo.png" alt="SNAKEY KONG">
-            <ul class = "menu">
-                <li><button id = "id-new-game">Join Game</button></li>
-                <li><button id = "id-controls">Controls</button></li>
-                <li><button id = "id-high-scores">High&nbsp;Scores</button></li>
-                <li><button id = "id-about">Credits</button></li>
-            </ul>
-        </div>
-        <div id = "game-play" class = "screen">
-            <img class="main-title-small" src="assets/logo.png" alt="SNAKEY KONG">
-            <canvas id = "id-canvas" width = "1200" height = "600"></canvas>
-        </div>
-        <div id = "high-scores" class = "screen">
-            <h1>High Scores</h1>
-            <ol id = 'scores-list'></ol>
-            <ul class = "menu">
-                <li><button id = "id-high-scores-back">Back</button></li>
-            </ul>
-        </div>
-        <div id = "about" class = "screen">
-            <h1>Credits</h1>
-            <p>Developed by</p>
-            <p>Max Ramsdell, Stockton Smith, Braden Cook</p>
-            <ul class = "menu">
-                <li><button id = "id-about-back">Back</button></li>
-            </ul>
-        </div>
-        <div id = "setup" class = "screen">
-            <img class="main-title-small" src="assets/logo.png" alt="SNAKEY KONG">
-            <form>
-                <label for="name">Choose a name for your kong: </label><br>
-                <input type="text" id="name" maxlength="15"><br>
-            </form>
-            <ul id = "setup-menu" class="menu">
-                <li><button id = "id-setup-back">Back</button></li>
-                <li><button id = "id-next">Join</button></li>
-            </ul>
-        </div>
-
-        <div id = "edit-controls" class = "screen">
-            <h1>Configure Keyboard Control</h1>
-            <p id = 'instructions'>select a key to edit</p>
-            <div class="top-bottom">
-                <p id = 'up' class="direction">Up</p>
+<!DOCTYPE html>
+<html lang="en-US">
+    <head>
+        <meta charset="UTF-8" />
+        <title>SNAKEY KONG</title>
+        <link rel="stylesheet" type="text/css" href="styles/game.css" />
+        <link rel="icon" type="image/png" href="assets/favicon.png" />
+    </head>
+    <body onload="MyGame.manager.initialize();">
+        <div id="game">
+            <div id="main-menu" class="screen">
+                <img id="main-title" src="assets/logo.png" alt="SNAKEY KONG" />
+                <ul class="menu">
+                    <li><button id="id-new-game">Join Game</button></li>
+                    <li><button id="id-controls">Controls</button></li>
+                    <li>
+                        <button id="id-high-scores">High&nbsp;Scores</button>
+                    </li>
+                    <li><button id="id-about">Credits</button></li>
+                </ul>
             </div>
-            <div id = 'middle-stuff'>
-                <div id="left-div">
-                    <p id = 'left'  class="direction">Left</p>
+            <div id="game-play" class="screen">
+                <img
+                    class="main-title-small"
+                    src="assets/logo.png"
+                    alt="SNAKEY KONG"
+                />
+                <canvas id="id-canvas" width="1200" height="600"></canvas>
+            </div>
+            <div id="high-scores" class="screen">
+                <h1>High Scores</h1>
+                <ol id="scores-list"></ol>
+                <ul class="menu">
+                    <li><button id="id-high-scores-back">Back</button></li>
+                </ul>
+            </div>
+            <div id="about" class="screen">
+                <h1>Credits</h1>
+                <p>Developed by</p>
+                <p>Max Ramsdell, Stockton Smith, Braden Cook</p>
+                <ul class="menu">
+                    <li><button id="id-about-back">Back</button></li>
+                </ul>
+            </div>
+            <div id="setup" class="screen">
+                <img
+                    class="main-title-small"
+                    src="assets/logo.png"
+                    alt="SNAKEY KONG"
+                />
+                <form>
+                    <label for="name">Choose a name for your kong: </label
+                    ><br />
+                    <input type="text" id="name" maxlength="15" /><br />
+                </form>
+                <ul id="setup-menu" class="menu">
+                    <li><button id="id-setup-back">Back</button></li>
+                    <li><button id="id-next">Join</button></li>
+                </ul>
+            </div>
+
+            <div id="edit-controls" class="screen">
+                <h1>Configure Keyboard Control</h1>
+                <p id="instructions">select a key to edit</p>
+                <div class="top-bottom">
+                    <p id="up" class="direction">Up</p>
                 </div>
-                <img src="assets/arrow-4-way.svg" alt="direction arrows" width = '200' height = '200'>
-                <div id="right-div">
-                    <p id = 'right' class="direction">Right</p>
+                <div id="middle-stuff">
+                    <div id="left-div">
+                        <p id="left" class="direction">Left</p>
+                    </div>
+                    <img
+                        src="assets/arrow-4-way.svg"
+                        alt="direction arrows"
+                        width="200"
+                        height="200"
+                    />
+                    <div id="right-div">
+                        <p id="right" class="direction">Right</p>
+                    </div>
                 </div>
+                <div class="top-bottom">
+                    <p id="down" class="direction">Down</p>
+                </div>
+                <ul class="menu">
+                    <li><button id="id-controls-back">Back</button></li>
+                </ul>
             </div>
-            <div class="top-bottom">
-                <p id = 'down' class="direction">Down</p>
-            </div>
-            <ul class = "menu">
-                <li><button id = "id-controls-back">Back</button></li>
-            </ul>
         </div>
-    </div>
 
-    <script>
-        let MyGame = {
-            objects: {},
-            input: {},
-            render: {},
-            screens: {}
-        };
-    </script>
-    <script src = "server/src/shared/NetworkActions.js"></script>
-    <script src = "server/src/shared/Queue.js"></script>
-    <script src = "scripts/input/keyboard.js"></script>
-    <script src = "scripts/render/core.js"></script>
-    <script src = "scripts/render/animated-model.js"></script>
-    <script src = "scripts/objects/snake.js"></script>
-    <script src = "scripts/objects/objects.js"></script>
-    <script src = "scripts/game.js"></script>
+        <script>
+            let MyGame = {
+                objects: {},
+                input: {},
+                render: {},
+                screens: {},
+            };
+        </script>
+        <script src="server/src/shared/NetworkActions.js"></script>
+        <script src="server/src/shared/Queue.js"></script>
+        <script src="scripts/input/keyboard.js"></script>
+        <script src="scripts/render/core.js"></script>
+        <script src="scripts/render/animated-model.js"></script>
+        <script src="scripts/objects/snake.js"></script>
+        <script src="scripts/objects/objects.js"></script>
+        <script src="scripts/game.js"></script>
 
-    <script src = "scripts/screens/manager.js"></script>
-    <script src = "scripts/screens/main-menu.js"></script>
-    <script src = "scripts/screens/game-play.js"></script>
-    <script src = "scripts/screens/high-scores.js"></script>
-    <script src = "scripts/screens/about.js"></script>
-    <script src = "scripts/screens/edit-controls.js"></script>
-    <script src = "scripts/screens/setup.js"></script>
-
-</body>
+        <script src="scripts/screens/manager.js"></script>
+        <script src="scripts/screens/main-menu.js"></script>
+        <script src="scripts/screens/game-play.js"></script>
+        <script src="scripts/screens/high-scores.js"></script>
+        <script src="scripts/screens/about.js"></script>
+        <script src="scripts/screens/edit-controls.js"></script>
+        <script src="scripts/screens/setup.js"></script>
+    </body>
 </html>

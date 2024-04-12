@@ -3,21 +3,21 @@
 // Renders an animated model based on a spritesheet.
 //
 // --------------------------------------------------------------
-MyGame.render.AnimatedModel = function(spec, graphics) {
-    'use strict';
+MyGame.render.AnimatedModel = function (spec, graphics) {
+    "use strict";
 
     let animationTime = 0;
     let subImageIndex = 0;
     let subTextureWidth = 0;
     let image = new Image();
-    let isReady = false;  // Can't render until the texture is loaded
+    let isReady = false; // Can't render until the texture is loaded
 
     //
     // Load the texture to use for the particle system loading and ready for rendering
-    image.onload = function() {
+    image.onload = function () {
         isReady = true;
         subTextureWidth = image.width / spec.spriteCount;
-    }
+    };
     image.src = spec.spriteSheet;
 
     //------------------------------------------------------------------
@@ -49,13 +49,20 @@ MyGame.render.AnimatedModel = function(spec, graphics) {
     //------------------------------------------------------------------
     function render(model) {
         if (isReady) {
-            graphics.drawSubTexture(image, subImageIndex, subTextureWidth, model.center, model.rotation, model.size);
+            graphics.drawSubTexture(
+                image,
+                subImageIndex,
+                subTextureWidth,
+                model.center,
+                model.rotation,
+                model.size,
+            );
         }
     }
 
     let api = {
         update: update,
-        render: render
+        render: render,
     };
 
     return api;

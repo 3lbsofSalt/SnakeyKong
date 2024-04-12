@@ -1,14 +1,14 @@
 // ------------------------------------------------------------------
-// 
+//
 // This is the overall game state management object.  It initializes
 // the menu screens and provides the 'showScreen' method used to change
 // the menu state by all other screens.
 //
 // ------------------------------------------------------------------
 
-MyGame.manager = (function(screens) {
-    'use strict';
-    
+MyGame.manager = (function (screens) {
+    "use strict";
+
     //------------------------------------------------------------------
     //
     // This function is used to change to a new active screen.
@@ -19,16 +19,16 @@ MyGame.manager = (function(screens) {
         let active = null;
         //
         // Remove the active state from all screens.  There should only be one...
-        active = document.getElementsByClassName('active');
+        active = document.getElementsByClassName("active");
         for (screen = 0; screen < active.length; screen++) {
-            active[screen].classList.remove('active');
+            active[screen].classList.remove("active");
         }
         //
         // Tell the screen to start actively running
         screens[id].run();
         //
         // Then, set the new screen to be active
-        document.getElementById(id).classList.add('active');
+        document.getElementById(id).classList.add("active");
     }
 
     //------------------------------------------------------------------
@@ -45,14 +45,14 @@ MyGame.manager = (function(screens) {
                 screens[screen].initialize();
             }
         }
-        
+
         //
         // Make the main-menu screen the active one
-        showScreen('main-menu');
+        showScreen("main-menu");
     }
-    
+
     return {
-        initialize : initialize,
-        showScreen : showScreen
+        initialize: initialize,
+        showScreen: showScreen,
     };
-}(MyGame.screens));
+})(MyGame.screens);

@@ -1,4 +1,4 @@
 export interface IOInputEvent {
-  clientId: string,
-  message: any
+    clientId: string;
+    message: any;
 }
