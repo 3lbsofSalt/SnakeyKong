@@ -1,18 +1,21 @@
 import { type Server } from 'http';
 import { type IOInputEvent } from './types/game';
 import type Player from './types/objects/Player';
+import type Food from './types/objects/Food';
 
+//@ts-ignore
+import { NetworkAction } from './shared/NetworkActions.js'
 //@ts-ignore
 import present from 'present';
 import { Server as IOServer, Socket } from 'socket.io';
-import createPlayer from './objects/Player';
 
-const NetworkAction: Record<string, string> = {
-  CONNECT_ACK: 'connect',
-  INPUT: 'input',
-  CONNECT_OTHER: 'new_guy',
-  DISCONNECT_OTHER: 'dead_guy'
-};
+import createPlayer from './objects/Player';
+import createFood from './objects/Food';
+
+
+const food = [];
+const eats = [];
+const collisions = [];
 
 const UPDATE_RATE_MS = 30;
 let inputQueue: IOInputEvent[] = [];
@@ -97,7 +100,18 @@ function processInput(elapsedTime: number) {
     const client = activeClients[input.clientId];
     client.lastMessageId = input.message.id;
     switch(input.message.type) {
-      // Here is where you deal with the input types
+      case NetworkAction.INPUT_DOWN:
+        client.player.move();
+        break;
+      case NetworkAction.INPUT_UP:
+        client.player.move();
+        break;
+      case NetworkAction.INPUT_LEFT:
+        client.player.move();
+        break;
+      case NetworkAction.INPUT_RIGHT:
+        client.player.move();
+        break;
     }
   }
 }

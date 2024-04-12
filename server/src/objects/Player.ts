@@ -1,6 +1,6 @@
-import Player from "../types/objects/Player";
+import Player from '../types/objects/Player';
 
-export default function createPlayer(socketId: string) {
+export default function createPlayer(socketId: string): Player {
   const player: Player = {
     clientId: socketId,
     position: {
