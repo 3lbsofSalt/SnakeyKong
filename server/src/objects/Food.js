@@ -1,4 +1,4 @@
-export default function createFood(x, y, size) {
+function createFood(x, y, size) {
     const food = {
         position: {
             x,
@@ -9,3 +9,5 @@ export default function createFood(x, y, size) {
 
     return food;
 }
+
+exports.createFood = createFood;

@@ -1,8 +1,6 @@
 MyGame.screens["game-play"] = (function (manager, graphics, input) {
     "use strict";
 
-    let cancelNextRequest = false;
-    let lastTimeStamp;
     let model = null;
     let myKeyboard = input.Keyboard();
 
@@ -25,24 +23,9 @@ MyGame.screens["game-play"] = (function (manager, graphics, input) {
     //
     //------------------------------------------------------------------
 
-    function gameLoop(time) {
-        let elapsed = time - lastTimeStamp;
-        processInput(elapsed);
-        model.update(elapsed);
-        model.render();
-        lastTimeStamp = time;
-
-        if (!cancelNextRequest) {
-            requestAnimationFrame(gameLoop);
-        }
-    }
 
     function run() {
         console.log("running");
-        myKeyboard.register("Escape", function () {
-            cancelNextRequest = true;
-            manager.showScreen("main-menu");
-        });
         model = MyGame.main(
             MyGame.objects,
             MyGame.input,
@@ -65,9 +48,7 @@ MyGame.screens["game-play"] = (function (manager, graphics, input) {
         );
         // Start the animation loop
 
-        cancelNextRequest = false;
-        lastTimeStamp = performance.now();
-        requestAnimationFrame(gameLoop);
+        model.start();
     }
 
     return {

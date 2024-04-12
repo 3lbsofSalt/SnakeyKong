@@ -1,4 +1,4 @@
-export default function createPlayer(socketId) {
+function createPlayer(socketId) {
     const player = {
         clientId: socketId,
         position: {
@@ -13,3 +13,5 @@ export default function createPlayer(socketId) {
 
     return player;
 }
+
+exports.createPlayer = createPlayer;

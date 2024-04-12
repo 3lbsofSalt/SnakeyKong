@@ -1,4 +1,4 @@
-//const { NetworkAction } = require('');
+const NetworkAction = require(['server/src/shared/NetworkActions.js']);
 //------------------------------------------------------------------
 //
 // This provides the "game" code.
@@ -9,23 +9,72 @@
 MyGame.main = function (objects, input, renderer, graphics) {
   "use strict";
 
-  let TURNPOINT_TOL = 20;
+  let cancelNextRequest = true;
   const socket = io();
-  console.log("game initializing...");
-  console.log(socket);
+  let playerSnake = {};
 
   const otherSnakes = [];
 
-  socket.on(NetworkAction.CONNECT_ACK, data => { // Do nothing });
+  /*
+  socket.on(NetworkAction.CONNECT_ACK, () => { 
+    console.log('Connected to the Server!');
+  });
+  */
+  socket.on('connect-ack', () => { 
+    console.log('Connected to the Server!');
+  });
 
+
+  /*
   // This will be called after the client emits a join request to the server
   socket.on(NetworkAction.CLIENT_JOIN, data => {
     // Initialize the snake from data obtained from the server
+    playerSnake = objects.Snake({
+      rotation: data.rotation,
+      center: data.position,
+      moveRate: data.moveRate,
+      rotateRate: data.rotateRate,
+      segmentDistance: data.segmentDistance,
+      startingSegments: 3,
+      keyboard: myKeyboard,
+      headRenderer: dkHeadRender,
+      bodyRenderer: dkBodyRender
+    });
+
+    cancelNextRequest = false;
+    requestAnimationFrame(gameLoop);
+  });
+
+  socket.on('connect', () => {
+    console.log('connected');
+  });
+  
+  socket.on('disconnect', (stuff) => {
+    console.log(stuff);
+    console.log('disconnect');
+  });
+
+  socket.on('parse error', (data, error) => {
+    console.log('thingy')
+    console.log(data);
+    console.log(error);
+  })
+
+  socket.on("connect_error", (err) => {
+    // the reason of the error, for example "xhr poll error"
+    console.log(err.message);
+
+    // some additional description, for example the status code of the initial HTTP response
+    console.log(err.description);
+
+    // some additional context, for example the XMLHttpRequest object
+    console.log(err.context);
   });
 
   socket.on(NetworkAction.CONNECT_OTHER, data => {
 
   });
+  */
 
   let lastTimeStamp = performance.now();
 
@@ -42,7 +91,7 @@ MyGame.main = function (objects, input, renderer, graphics) {
     rotation: 0,
   });
 
-  let littleBirdRender = renderer.AnimatedModel(
+  const littleBirdRender = renderer.AnimatedModel(
     {
       spriteSheet: "assets/spritesheet-bananaGreenSingle.png",
       spriteCount: 8,
@@ -50,7 +99,7 @@ MyGame.main = function (objects, input, renderer, graphics) {
     },
     graphics,
   );
-  let bigBirdRender = renderer.AnimatedModel(
+  const bigBirdRender = renderer.AnimatedModel(
     {
       spriteSheet: "assets/spritesheet-bananaPurpleBunch.png",
       spriteCount: 12,
@@ -60,7 +109,7 @@ MyGame.main = function (objects, input, renderer, graphics) {
     },
     graphics,
   );
-  let dkHeadRender = renderer.AnimatedModel(
+  const dkHeadRender = renderer.AnimatedModel(
     {
       spriteSheet: "assets/dkhead.png",
       spriteCount: 1,
@@ -68,7 +117,7 @@ MyGame.main = function (objects, input, renderer, graphics) {
     },
     graphics,
   );
-  let dkBodyRender = renderer.AnimatedModel(
+  const dkBodyRender = renderer.AnimatedModel(
     {
       spriteSheet: "assets/dkbody.png",
       spriteCount: 1,
@@ -77,16 +126,6 @@ MyGame.main = function (objects, input, renderer, graphics) {
     graphics,
   );
 
-  const playerSnake = objects.Snake({
-    rotation: 0,
-    moveRate: 200 / 1000, // Pixels per second
-    rotateRate: Math.PI / 1000, // Radians per second
-    keyboard: myKeyboard,
-    startingSegments: 30,
-    segmentDistance: 30,
-    headRenderer: dkHeadRender,
-    bodyRenderer: dkBodyRender,
-  });
 
   function processInput(elapsedTime) {
     myKeyboard.update(elapsedTime);
@@ -104,6 +143,18 @@ MyGame.main = function (objects, input, renderer, graphics) {
     playerSnake.update(elapsedTime);
   }
 
+  function gameLoop(time) {
+    let elapsed = time - lastTimeStamp;
+    processInput(elapsed);
+    update(elapsed);
+    render();
+    lastTimeStamp = time;
+
+    if (!cancelNextRequest) {
+      requestAnimationFrame(gameLoop);
+    }
+  }
+
   //------------------------------------------------------------------
   //
   // Render the particles
@@ -119,15 +170,21 @@ MyGame.main = function (objects, input, renderer, graphics) {
     playerSnake.render();
   }
 
-  myKeyboard.register(MyGame.input.keys.up, playerSnake.setDirectionUp);
-  myKeyboard.register(MyGame.input.keys.down, playerSnake.setDirectionDown);
-  myKeyboard.register(MyGame.input.keys.left, playerSnake.setDirectionLeft);
-  myKeyboard.register(MyGame.input.keys.right, playerSnake.setDirectionRight);
+  myKeyboard.register("Escape", function () {
+    cancelNextRequest = true;
+    manager.showScreen("main-menu");
+  });
+
+  function start() {
+    console.log('yarg')
+    //socket.emit(NetworkAction.CLIENT_JOIN_REQUEST, {});
+  }
 
   return {
     processInput: processInput,
     update: update,
     render: render,
+    start: start,
     dkHead: playerSnake,
   };
 };
