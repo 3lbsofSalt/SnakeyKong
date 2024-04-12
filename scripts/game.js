@@ -16,19 +16,15 @@ MyGame.main = (function (objects, input, renderer, graphics) {
 
     let myKeyboard = input.Keyboard();
 
-    let littleBird = objects.Bird({
+    let littleFood = objects.Food({
         size: { x: 50, y: 50 },       // Size in pixels
         center: { x: 50, y: 150 },
-        rotation: 0,
-        moveRate: 125 / 1000,         // Pixels per second
-        rotateRate: Math.PI / 1000    // Radians per second
+        rotation: 0
     });
-    let bigBird = objects.Bird({
+    let bigFood = objects.Food({
         size: { x: 75, y: 75 },       // Size in pixels
         center: { x: 50, y: 350 },
-        rotation: 0,
-        moveRate: 75 / 1000,          // Pixels per second
-        rotateRate: Math.PI / 1000// Radians per second
+        rotation: 0
     });
     let dkHead = objects.Head({
         size: { x: 75, y: 50 },       // Size in pixels
@@ -36,7 +32,7 @@ MyGame.main = (function (objects, input, renderer, graphics) {
         rotation: 0,
         desiredRotation: 0,
         moveRate: 200 / 1000,          // Pixels per second
-        rotateRate: Math.PI / 1000,   // Radians per second
+        rotateRate: Math.PI / 500,   // Radians per second
         keyboard: myKeyboard
     });
     let dkBody = objects.Body({
@@ -113,8 +109,8 @@ MyGame.main = (function (objects, input, renderer, graphics) {
     function render() {
         graphics.clear();
 
-        littleBirdRender.render(littleBird);
-        bigBirdRender.render(bigBird);
+        littleBirdRender.render(littleFood);
+        bigBirdRender.render(bigFood);
 
         // Render segments from last to first
         dkBodyRender.render(dkBody);
@@ -122,25 +118,11 @@ MyGame.main = (function (objects, input, renderer, graphics) {
         //console.log("RENDERING");
     }
 
-    /*
-    myKeyboard.register('w', littleBird.moveForward);
-    myKeyboard.register('a', littleBird.rotateLeft);
-    myKeyboard.register('d', littleBird.rotateRight);
-    */
-
-    //myKeyboard.register('ArrowUp', dkHead.moveForward);
-    //myKeyboard.register('ArrowLeft', dkHead.rotateLeft);
-    //myKeyboard.register('ArrowRight', dkHead.rotateRight);
-
-    myKeyboard.register(MyGame.input.keys.up, dkHead.setDirectionUp);
-    myKeyboard.register(MyGame.input.keys.down, dkHead.setDirectionDown);
-    myKeyboard.register(MyGame.input.keys.left, dkHead.setDirectionLeft);
-    myKeyboard.register(MyGame.input.keys.right, dkHead.setDirectionRight);
-
     return {
         processInput: processInput,
         update: update,
-        render: render
+        render: render,
+        dkHead: dkHead
     }
 
-}(MyGame.objects, MyGame.input, MyGame.render, MyGame.graphics));
+});
