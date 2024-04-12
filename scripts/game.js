@@ -122,22 +122,6 @@ MyGame.main = (function (objects, input, renderer, graphics) {
         //console.log("RENDERING");
     }
 
-    //------------------------------------------------------------------
-    //
-    // This is the Game Loop function!
-    //
-    //------------------------------------------------------------------
-    function gameLoop(time) {
-        let elapsedTime = (time - lastTimeStamp);
-        lastTimeStamp = time;
-
-        processInput(elapsedTime);
-        update(elapsedTime);
-        render();
-
-        requestAnimationFrame(gameLoop);
-    };
-
     /*
     myKeyboard.register('w', littleBird.moveForward);
     myKeyboard.register('a', littleBird.rotateLeft);
@@ -153,5 +137,10 @@ MyGame.main = (function (objects, input, renderer, graphics) {
     myKeyboard.register(MyGame.input.keys.left, dkHead.setDirectionLeft);
     myKeyboard.register(MyGame.input.keys.right, dkHead.setDirectionRight);
 
-    requestAnimationFrame(gameLoop);
+    return {
+        processInput: processInput,
+        update: update,
+        render: render
+    }
+
 }(MyGame.objects, MyGame.input, MyGame.render, MyGame.graphics));

@@ -3,7 +3,6 @@ MyGame.screens['game-play'] = (function(manager, graphics, input) {
 
     let cancelNextRequest = false;
     let lastTimeStamp;
-    let model = null;
     let myKeyboard = input.Keyboard();
 
 
@@ -19,25 +18,19 @@ MyGame.screens['game-play'] = (function(manager, graphics, input) {
 
     function processInput(elapsedTime) {
         myKeyboard.update(elapsedTime);
+        MyGame.main.processInput(elapsedTime);
     }
     //------------------------------------------------------------------
     //
     // This is the Game Loop update function!
     //
     //------------------------------------------------------------------
-    function update(elapsedTime) {
-
-    }
-
-    function render() {
-
-    }
 
     function gameLoop(time) {
         let elapsed = time - lastTimeStamp
         processInput(elapsed);
-        update(elapsed);
-        render()
+        MyGame.main.update(elapsed)
+        MyGame.main.render()
         lastTimeStamp = time;
 
         if (!cancelNextRequest) {
