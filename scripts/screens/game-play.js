@@ -23,7 +23,6 @@ MyGame.screens["game-play"] = (function (manager, graphics, input) {
     //
     //------------------------------------------------------------------
 
-
     function run() {
         console.log("running");
         model = MyGame.main(

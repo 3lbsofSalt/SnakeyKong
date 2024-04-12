@@ -1,4 +1,4 @@
-const NetworkAction = require(['server/src/shared/NetworkActions.js']);
+const NetworkAction = require(["server/src/shared/NetworkActions.js"]);
 //------------------------------------------------------------------
 //
 // This provides the "game" code.
@@ -7,25 +7,25 @@ const NetworkAction = require(['server/src/shared/NetworkActions.js']);
 // noinspection JSVoidFunctionReturnValueUsed
 
 MyGame.main = function (objects, input, renderer, graphics) {
-  "use strict";
+    "use strict";
 
-  let cancelNextRequest = true;
-  const socket = io();
-  let playerSnake = {};
+    let cancelNextRequest = true;
+    const socket = io();
+    let playerSnake = {};
+    console.log("game initializing...");
 
-  const otherSnakes = [];
+    const otherSnakes = [];
 
-  /*
+    /*
   socket.on(NetworkAction.CONNECT_ACK, () => { 
     console.log('Connected to the Server!');
   });
   */
-  socket.on('connect-ack', () => { 
-    console.log('Connected to the Server!');
-  });
+    socket.on("connect-ack", () => {
+        console.log("Connected to the Server!");
+    });
 
-
-  /*
+    /*
   // This will be called after the client emits a join request to the server
   socket.on(NetworkAction.CLIENT_JOIN, data => {
     // Initialize the snake from data obtained from the server
@@ -76,115 +76,127 @@ MyGame.main = function (objects, input, renderer, graphics) {
   });
   */
 
-  let lastTimeStamp = performance.now();
+    let lastTimeStamp = performance.now();
 
-  let myKeyboard = input.Keyboard();
+    let myKeyboard = input.Keyboard();
 
-  let littleFood = objects.Food({
-    size: { x: 50, y: 50 }, // Size in pixels
-    center: { x: 50, y: 150 },
+    let littleFood = objects.Food({
+        size: { x: 50, y: 50 }, // Size in pixels
+        center: { x: 50, y: 150 },
+        rotation: 0,
+    });
+    let bigFood = objects.Food({
+        size: { x: 75, y: 75 }, // Size in pixels
+        center: { x: 50, y: 350 },
+        rotation: 0,
+    });
+
+    const littleBirdRender = renderer.AnimatedModel(
+        {
+            spriteSheet: "assets/spritesheet-bananaGreenSingle.png",
+            spriteCount: 8,
+            spriteTime: [150, 150, 150, 150, 150, 150, 150, 150], // ms per frame
+        },
+        graphics,
+    );
+    const bigBirdRender = renderer.AnimatedModel(
+        {
+            spriteSheet: "assets/spritesheet-bananaPurpleBunch.png",
+            spriteCount: 12,
+            spriteTime: [
+                100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,
+            ], // ms per frame
+        },
+        graphics,
+    );
+    const dkHeadRender = renderer.AnimatedModel(
+        {
+            spriteSheet: "assets/dkhead.png",
+            spriteCount: 1,
+            spriteTime: [1000], // ms per frame
+        },
+        graphics,
+    );
+    const dkBodyRender = renderer.AnimatedModel(
+        {
+            spriteSheet: "assets/dkbody.png",
+            spriteCount: 1,
+            spriteTime: [1000], // ms per frame
+        },
+        graphics,
+    );
+
+    /*
+  const playerSnake = objects.Snake({
     rotation: 0,
+    moveRate: 200 / 1000, // Pixels per second
+    rotateRate: Math.PI / 1000, // Radians per second
+    keyboard: myKeyboard,
+    startingSegments: 40,
+    segmentDistance: 30,
+    headRenderer: dkHeadRender,
+    bodyRenderer: dkBodyRender,
   });
-  let bigFood = objects.Food({
-    size: { x: 75, y: 75 }, // Size in pixels
-    center: { x: 50, y: 350 },
-    rotation: 0,
-  });
+  */
 
-  const littleBirdRender = renderer.AnimatedModel(
-    {
-      spriteSheet: "assets/spritesheet-bananaGreenSingle.png",
-      spriteCount: 8,
-      spriteTime: [150, 150, 150, 150, 150, 150, 150, 150], // ms per frame
-    },
-    graphics,
-  );
-  const bigBirdRender = renderer.AnimatedModel(
-    {
-      spriteSheet: "assets/spritesheet-bananaPurpleBunch.png",
-      spriteCount: 12,
-      spriteTime: [
-        100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,
-      ], // ms per frame
-    },
-    graphics,
-  );
-  const dkHeadRender = renderer.AnimatedModel(
-    {
-      spriteSheet: "assets/dkhead.png",
-      spriteCount: 1,
-      spriteTime: [1000], // ms per frame
-    },
-    graphics,
-  );
-  const dkBodyRender = renderer.AnimatedModel(
-    {
-      spriteSheet: "assets/dkbody.png",
-      spriteCount: 1,
-      spriteTime: [1000], // ms per frame
-    },
-    graphics,
-  );
-
-
-  function processInput(elapsedTime) {
-    myKeyboard.update(elapsedTime);
-  }
-
-  //------------------------------------------------------------------
-  //
-  // Update the particles
-  //
-  //------------------------------------------------------------------
-  function update(elapsedTime) {
-    littleBirdRender.render(littleFood);
-    bigBirdRender.render(bigFood);
-
-    playerSnake.update(elapsedTime);
-  }
-
-  function gameLoop(time) {
-    let elapsed = time - lastTimeStamp;
-    processInput(elapsed);
-    update(elapsed);
-    render();
-    lastTimeStamp = time;
-
-    if (!cancelNextRequest) {
-      requestAnimationFrame(gameLoop);
+    function processInput(elapsedTime) {
+        myKeyboard.update(elapsedTime);
     }
-  }
 
-  //------------------------------------------------------------------
-  //
-  // Render the particles
-  //
-  //------------------------------------------------------------------
-  function render() {
-    graphics.clear();
+    //------------------------------------------------------------------
+    //
+    // Update the particles
+    //
+    //------------------------------------------------------------------
+    function update(elapsedTime) {
+        littleBirdRender.render(littleFood);
+        bigBirdRender.render(bigFood);
 
-    littleBirdRender.render(littleFood);
-    bigBirdRender.render(bigFood);
+        playerSnake.update(elapsedTime);
+    }
 
-    // Render segments from last to first
-    playerSnake.render();
-  }
+    function gameLoop(time) {
+        let elapsed = time - lastTimeStamp;
+        processInput(elapsed);
+        update(elapsed);
+        render();
+        lastTimeStamp = time;
 
-  myKeyboard.register("Escape", function () {
-    cancelNextRequest = true;
-    manager.showScreen("main-menu");
-  });
+        if (!cancelNextRequest) {
+            requestAnimationFrame(gameLoop);
+        }
+    }
 
-  function start() {
-    console.log('yarg')
-    //socket.emit(NetworkAction.CLIENT_JOIN_REQUEST, {});
-  }
+    //------------------------------------------------------------------
+    //
+    // Render the particles
+    //
+    //------------------------------------------------------------------
+    function render() {
+        graphics.clear();
 
-  return {
-    processInput: processInput,
-    update: update,
-    render: render,
-    start: start,
-    dkHead: playerSnake,
-  };
+        littleBirdRender.render(littleFood);
+        bigBirdRender.render(bigFood);
+
+        // Render segments from last to first
+        playerSnake.render();
+    }
+
+    myKeyboard.register("Escape", function () {
+        cancelNextRequest = true;
+        manager.showScreen("main-menu");
+    });
+
+    function start() {
+        console.log("yarg");
+        //socket.emit(NetworkAction.CLIENT_JOIN_REQUEST, {});
+    }
+
+    return {
+        processInput: processInput,
+        update: update,
+        render: render,
+        start: start,
+        dkHead: playerSnake,
+    };
 };
