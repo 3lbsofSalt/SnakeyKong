@@ -123,14 +123,15 @@ MyGame.objects.Body = function(spec) {
   //------------------------------------------------------------------
   function moveForward(elapsedTime, nextSegment, segmentDistance) {
 
+    const nextLocation = spec.nextLocations.empty() ? nextSegment.center : spec.nextLocations.peek();
     // Create a normalized direction vector
-    let vectorX = spec.nextLocations.peek().x - spec.center.x;
-    let vectorY = spec.nextLocations.peek().y - spec.center.y;
+    let vectorX = nextLocation.x - spec.center.x;
+    let vectorY = nextLocation.y - spec.center.y;
 
     let magnitude = Math.sqrt(vectorX * vectorX + vectorY * vectorY);
 
-    const moveX = vectorX / magnitude * elapsedTime * spec.moveRate;
-    const moveY = vectorY / magnitude * elapsedTime * spec.moveRate;
+    let moveX = vectorX / magnitude * elapsedTime * spec.moveRate;
+    let moveY = vectorY / magnitude * elapsedTime * spec.moveRate;
 
     spec.center.x += moveX;
     spec.center.y += moveY;
@@ -220,12 +221,14 @@ MyGame.objects.Snake = function(spec) {
 
   snake.updateRotation = function (elapsedTime) {
     snake.head.rotation = snake.head.rotation % (2 * Math.PI);
-    const nextBody = {...snake.head.center};
-    for(let i = 0; i < snake.body.length; i++) {
-      snake.body[i].nextLocations.push(nextBody);
-    }
-
     if (Math.abs(snake.head.rotation - snake.head.desiredRotation) > snake.ROTATION_TOL) {
+
+      // Add new turn point when the head is being turned.
+      const nextBody = {...snake.head.center};
+      for(let i = 0; i < snake.body.length; i++) {
+        snake.body[i].nextLocations.push(nextBody);
+      }
+
       const leftIsCloser = (snake.head.desiredRotation - snake.head.rotation + 2 * Math.PI) % (2 * Math.PI) > Math.PI;
       if (leftIsCloser) { snake.head.rotateLeft(elapsedTime); }
       else { snake.head.rotateRight(elapsedTime); }
