@@ -33,36 +33,15 @@ MyGame.main = (function (objects, input, renderer, graphics) {
 
   let myKeyboard = input.Keyboard();
 
-  let littleBird = objects.Bird({
+  let littleFood = objects.Food({
     size: { x: 50, y: 50 },       // Size in pixels
     center: { x: 50, y: 150 },
-    rotation: 0,
-    moveRate: 125 / 1000,         // Pixels per second
-    rotateRate: Math.PI / 1000    // Radians per second
+    rotation: 0
   });
-  let bigBird = objects.Bird({
+  let bigFood = objects.Food({
     size: { x: 75, y: 75 },       // Size in pixels
     center: { x: 50, y: 350 },
-    rotation: 0,
-    moveRate: 75 / 1000,          // Pixels per second
-    rotateRate: Math.PI / 1000// Radians per second
-  });
-  let dkHead = objects.Head({
-    size: { x: 75, y: 50 },       // Size in pixels
-    center: { x: 250, y: 350 },
-    rotation: 0,
-    desiredRotation: 0,
-    moveRate: 200 / 1000,          // Pixels per second
-    rotateRate: Math.PI / 1000,   // Radians per second
-    keyboard: myKeyboard
-  });
-  let dkBody = objects.Body({
-    size: { x: 50, y: 50 },       // Size in pixels
-    center: { x: 220, y: 350 },
-    rotation: 0,
-    moveRate: 200 / 1000,          // Pixels per second
-    rotateRate: Math.PI / 1000,    // Radians per second
-    nextLocations: [{ x: 250, y: 350 }]
+    rotation: 0
   });
 
 
@@ -102,24 +81,16 @@ MyGame.main = (function (objects, input, renderer, graphics) {
     myKeyboard.update(elapsedTime);
   }
 
-
   //------------------------------------------------------------------
   //
   // Update the particles
   //
   //------------------------------------------------------------------
   function update(elapsedTime) {
-    littleBirdRender.update(elapsedTime);
-    bigBirdRender.update(elapsedTime);
-    //dkHeadRender.update(elapsedTime);
-    //dkBodyRender.update(elapsedTime);
+    littleBirdRender.render(littleFood);
+    bigBirdRender.render(bigFood);
 
-    //dkHead.moveForward(elapsedTime);
-    //dkBody.moveForward(elapsedTime);
     playerSnake.update(elapsedTime);
-
-    //updateRotation(elapsedTime);
-
   }
 
   //------------------------------------------------------------------
@@ -130,8 +101,8 @@ MyGame.main = (function (objects, input, renderer, graphics) {
   function render() {
     graphics.clear();
 
-    littleBirdRender.render(littleBird);
-    bigBirdRender.render(bigBird);
+    littleBirdRender.render(littleFood);
+    bigBirdRender.render(bigFood);
 
     // Render segments from last to first
     playerSnake.render();
@@ -145,8 +116,8 @@ MyGame.main = (function (objects, input, renderer, graphics) {
   return {
     processInput: processInput,
     update: update,
-    render: render
+    render: render,
+    dkHead: playerSnake
   }
 
-} (MyGame.objects, MyGame.input, MyGame.render, MyGame.graphics));
-
+});

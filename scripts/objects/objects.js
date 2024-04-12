@@ -3,7 +3,7 @@
 // Creates a Bird model based upon the passed in specification.
 //
 //------------------------------------------------------------------
-MyGame.objects.Bird = function(spec) {
+MyGame.objects.Food = function(spec) {
 
     //------------------------------------------------------------------
     //
