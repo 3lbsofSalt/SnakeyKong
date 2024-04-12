@@ -12,8 +12,14 @@ MyGame.objects.Head = function (spec) {
         let magnitude = Math.sqrt(vectorX * vectorX + vectorY * vectorY);
         //
         // With the normalized direction vector, move the center of the sprite
-        spec.center.x += (vectorX / magnitude) * spec.moveRate * elapsedTime;
-        spec.center.y += (vectorY / magnitude) * spec.moveRate * elapsedTime;
+        let moveX = (vectorX / magnitude) * spec.moveRate * elapsedTime;
+        let moveY = (vectorY / magnitude) * spec.moveRate * elapsedTime;
+
+        moveX = Math.round(moveX);
+        moveY = Math.round(moveY);
+
+        spec.center.x += moveX;
+        spec.center.y += moveY;
     }
 
     function rotateLeft(elapsedTime) {
@@ -128,19 +134,27 @@ MyGame.objects.Body = function (spec) {
         const nextLocation = spec.nextLocations.empty()
             ? nextSegment.center
             : spec.nextLocations.peek();
+
         // Create a normalized direction vector
         let vectorX = nextLocation.x - spec.center.x;
         let vectorY = nextLocation.y - spec.center.y;
 
         let magnitude = Math.sqrt(vectorX * vectorX + vectorY * vectorY);
 
-        let moveX = (vectorX / magnitude) * elapsedTime * spec.moveRate;
-        let moveY = (vectorY / magnitude) * elapsedTime * spec.moveRate;
+        let normalizedVectorX = vectorX / magnitude;
+        let normalizedVectorY = vectorY / magnitude;
+
+        let moveX = normalizedVectorX * elapsedTime * spec.moveRate;
+        let moveY = normalizedVectorY * elapsedTime * spec.moveRate;
+
+        moveX = Math.round(moveX);
+        moveY = Math.round(moveY);
 
         spec.center.x += moveX;
         spec.center.y += moveY;
 
-        const moveMag = Math.sqrt(moveX ** 2 + moveY ** 2);
+
+        const moveMag = Math.sqrt(moveX * moveX + moveY * moveY);
         if (moveMag >= magnitude) {
             spec.nextLocations.pop();
         }

@@ -10,13 +10,13 @@ MyGame.main = function (objects, input, renderer, graphics) {
   "use strict";
 
   let TURNPOINT_TOL = 20;
-  const socket = io();
+  //const socket = io();
   console.log("game initializing...");
-  console.log(socket);
+  //console.log(socket);
 
   const otherSnakes = [];
-
-  socket.on(NetworkAction.CONNECT_ACK, data => { // Do nothing });
+/*
+  socket.on(NetworkAction.CONNECT_ACK, data => {});
 
   // This will be called after the client emits a join request to the server
   socket.on(NetworkAction.CLIENT_JOIN, data => {
@@ -26,6 +26,7 @@ MyGame.main = function (objects, input, renderer, graphics) {
   socket.on(NetworkAction.CONNECT_OTHER, data => {
 
   });
+  */
 
   let lastTimeStamp = performance.now();
 
@@ -82,7 +83,7 @@ MyGame.main = function (objects, input, renderer, graphics) {
     moveRate: 200 / 1000, // Pixels per second
     rotateRate: Math.PI / 1000, // Radians per second
     keyboard: myKeyboard,
-    startingSegments: 30,
+    startingSegments: 40,
     segmentDistance: 30,
     headRenderer: dkHeadRender,
     bodyRenderer: dkBodyRender,
