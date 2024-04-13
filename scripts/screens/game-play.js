@@ -37,19 +37,6 @@ MyGame.screens["game-play"] = (function (manager, graphics, input) {
             MyGame.graphics,
         );
 
-        myKeyboard.register(MyGame.input.keys.up, model.dkHead.setDirectionUp);
-        myKeyboard.register(
-            MyGame.input.keys.down,
-            model.dkHead.setDirectionDown,
-        );
-        myKeyboard.register(
-            MyGame.input.keys.left,
-            model.dkHead.setDirectionLeft,
-        );
-        myKeyboard.register(
-            MyGame.input.keys.right,
-            model.dkHead.setDirectionRight,
-        );
         // Start the animation loop
 
         model.start();
