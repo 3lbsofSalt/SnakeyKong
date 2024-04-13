@@ -153,7 +153,6 @@ MyGame.objects.Body = function (spec) {
         spec.center.x += moveX;
         spec.center.y += moveY;
 
-
         const moveMag = Math.sqrt(moveX * moveX + moveY * moveY);
         if (moveMag >= magnitude) {
             spec.nextLocations.pop();
@@ -302,9 +301,13 @@ MyGame.objects.Snake = function (spec) {
         snake.headRenderer.render(snake.head);
     };
 
-    snake.isAlive = function () { return spec.alive; }
+    snake.isAlive = function () {
+        return spec.alive;
+    };
 
-    snake.kill = function () { spec.alive = false; }
+    snake.kill = function () {
+        spec.alive = false;
+    };
 
     return snake;
 };
