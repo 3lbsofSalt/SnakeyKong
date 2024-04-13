@@ -4,6 +4,8 @@ MyGame.graphics = (function () {
     let canvas = document.getElementById("id-canvas");
     let context = canvas.getContext("2d");
 
+    console.log("CANVAS: " + canvas.width)
+
     //------------------------------------------------------------------
     //
     // Public function that allows the client code to clear the canvas.
@@ -115,11 +117,16 @@ MyGame.graphics = (function () {
         context.restore();
     }
 
+    function getCanvas() {
+        return canvas;
+    }
+
     let api = {
         clear: clear,
         drawTexture: drawTexture,
         drawSubTexture: drawSubTexture,
         drawRectangle: drawRectangle,
+        getCanvas: getCanvas
     };
 
     return api;

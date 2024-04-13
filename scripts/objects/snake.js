@@ -302,5 +302,9 @@ MyGame.objects.Snake = function (spec) {
         snake.headRenderer.render(snake.head);
     };
 
+    snake.isAlive = function () { return spec.alive; }
+
+    snake.kill = function () { spec.alive = false; }
+
     return snake;
 };
