@@ -47,36 +47,35 @@ function initializeSocketIO(server) {
     io.on("connection", function (socket) {
         console.log("Connection established: ", socket.id);
 
-        socket.server.engine.on("connection_error", (err) => {
-            console.log(err.code); // the error code, for example 1
-            console.log(err.message); // the error message, for example "Session ID unknown"
-            console.log(err.context); // some additional error context
+        socket.emit("connect-ack", {});
+
+        socket.on("join-request", function () {
+            console.log("you might want to join, but too bad");
+            const newPlayer = createPlayer(socket.id);
+            activeClients[socket.id] = {
+                socket: socket,
+                player: newPlayer,
+            };
+
+            socket.emit("join", {
+                position: {
+                    x: newPlayer.position.x,
+                    y: newPlayer.position.y,
+                },
+                rotation: newPlayer.rotation,
+                moveRate,
+                rotateRate,
+                segmentDistance,
+                startingSegments: 3,
+            });
         });
 
-        const newPlayer = createPlayer(socket.id);
-        activeClients[socket.id] = {
-            socket: socket,
-            player: newPlayer,
-        };
-
-        console.log("frik");
-        //socket.emit(NetworkAction.CONNECT_ACK, {});
-        socket.emit("connect-ack", {});
+        socket.on("disconnect", function () {
+            console.log("disconnect?");
+            delete activeClients[socket.id];
+            notifyDisconnect(socket.id);
+        });
         /*
-    socket.on(NetworkAction.CLIENT_JOIN_REQUEST, function() {
-      socket.emit(NetworkAction.CLIENT_JOIN, {
-        position: {
-          x: newPlayer.position.x,
-          y: newPlayer.position.y
-        },
-        rotation: newPlayer.rotation,
-        moveRate,
-        rotateRate,
-        segmentDistance,
-        startingSegments: 3
-      });
-    });
-
     socket.on(NetworkAction.INPUT, data => {
       inputQueue.push({
         clientId: socket.id,
@@ -84,11 +83,6 @@ function initializeSocketIO(server) {
       });
     });
 
-    socket.on('disconnect', function() {
-      console.log('disconnect?')
-      delete activeClients[socket.id];
-      notifyDisconnect(socket.id);
-    })
     */
 
         //notifyConnect(socket, newPlayer);

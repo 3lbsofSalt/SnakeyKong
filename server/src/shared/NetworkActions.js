@@ -15,4 +15,4 @@
     };
 
     exports.NetworkAction = NetworkAction;
-})(typeof exports === "undefined" ? (this["NetworkIds"] = {}) : exports);
+})(typeof exports === "undefined" ? (this["NetworkActions"] = {}) : exports);

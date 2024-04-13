@@ -1,4 +1,4 @@
-const createQueue = require(["server/src/shared/Queue.js"]);
+//const createQueue = require(["server/src/shared/Queue.js"]);
 MyGame.objects.Head = function (spec) {
     //------------------------------------------------------------------
     //
@@ -187,6 +187,7 @@ MyGame.objects.Snake = function (spec) {
     // Just a reference to a head
     // head has reference to first body member
     // each body member has reference to next body member until null
+    console.log(spec.center);
     const snake = {
         direction: spec.direction,
         moveRate: spec.moveRate,
@@ -194,8 +195,8 @@ MyGame.objects.Snake = function (spec) {
         head: MyGame.objects.Head({
             size: { x: 75, y: 50 }, // Size in pixels
             center: { ...spec.center },
-            rotation: spec.rotation,
-            desiredRotation: spec.rotation,
+            rotation: spec.direction,
+            desiredRotation: spec.direction,
             moveRate: spec.moveRate, // Pixels per second
             rotateRate: spec.rotateRate, // Radians per second
             keyboard: spec.keyboard,
@@ -208,14 +209,14 @@ MyGame.objects.Snake = function (spec) {
 
     const lastLocationsTracker = [];
     for (let i = 0; i < spec.startingSegments; i++) {
-        const yDiff = Math.sin(spec.rotation) * spec.segmentDistance;
-        const xDiff = Math.cos(spec.rotation) * spec.segmentDistance;
+        const yDiff = Math.sin(spec.direction) * spec.segmentDistance;
+        const xDiff = Math.cos(spec.direction) * spec.segmentDistance;
 
         const lastLocation =
             i == 0 ? { ...snake.head.center } : { ...snake.body[i - 1].center };
         lastLocationsTracker.unshift(lastLocation);
 
-        const queue = createQueue();
+        const queue = Queue.createQueue();
         for (const location of lastLocationsTracker) {
             queue.push(location);
         }
@@ -227,7 +228,7 @@ MyGame.objects.Snake = function (spec) {
                     x: lastLocation.x - xDiff,
                     y: lastLocation.y - yDiff,
                 },
-                rotation: spec.rotation,
+                rotation: spec.direction,
                 moveRate: spec.moveRate, // Pixels per second
                 rotateRate: spec.rotateRate, // Radians per second
                 nextLocations: queue,
@@ -304,9 +305,13 @@ MyGame.objects.Snake = function (spec) {
         snake.headRenderer.render(snake.head);
     };
 
-    snake.isAlive = function () { return spec.alive; }
+    snake.isAlive = function () {
+        return spec.alive;
+    };
 
-    snake.kill = function () { spec.alive = false; }
+    snake.kill = function () {
+        spec.alive = false;
+    };
 
     return snake;
 };

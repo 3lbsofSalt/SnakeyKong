@@ -4,7 +4,6 @@
 //
 //------------------------------------------------------------------
 MyGame.objects.Food = function (spec) {
-
     let api = {
         get size() {
             return spec.size;
@@ -14,7 +13,7 @@ MyGame.objects.Food = function (spec) {
         },
         get rotation() {
             return spec.rotation;
-        }
+        },
     };
 
     return api;

@@ -1,5 +1,5 @@
 (function (exports) {
-    function createQueue() {
+    exports.createQueue = function () {
         const queue = {
             queue: [],
         };
@@ -21,7 +21,5 @@
         };
 
         return queue;
-    }
-
-    exports.createQueue = createQueue;
-})(typeof exports === "undefined" ? (this["NetworkIds"] = {}) : exports);
+    };
+})(typeof exports === "undefined" ? (this["Queue"] = {}) : exports);

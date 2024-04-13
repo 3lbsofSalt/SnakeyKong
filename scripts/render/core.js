@@ -4,7 +4,7 @@ MyGame.graphics = (function () {
     let canvas = document.getElementById("id-canvas");
     let context = canvas.getContext("2d");
 
-    console.log("CANVAS: " + canvas.width)
+    console.log("CANVAS: " + canvas.width);
 
     //------------------------------------------------------------------
     //
@@ -126,7 +126,7 @@ MyGame.graphics = (function () {
         drawTexture: drawTexture,
         drawSubTexture: drawSubTexture,
         drawRectangle: drawRectangle,
-        getCanvas: getCanvas
+        getCanvas: getCanvas,
     };
 
     return api;
