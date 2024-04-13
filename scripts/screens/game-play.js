@@ -43,6 +43,7 @@ MyGame.screens["game-play"] = (function (manager, graphics, input) {
             cancelNextRequest = true;
             manager.showScreen("main-menu");
         });
+        updateControls();
         model = MyGame.main(
             MyGame.objects,
             MyGame.input,

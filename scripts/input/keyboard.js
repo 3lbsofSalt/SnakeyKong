@@ -1,23 +1,25 @@
-if (localStorage.getItem("controls")) {
-    let controlsList = localStorage.getItem("controls").split(" ");
-    for (let i = 0; i < controlsList.length; i++) {
-        if (controlsList[i] === "Space") {
-            controlsList[i] = " ";
+function updateControls() {
+    if (localStorage.getItem("controls")) {
+        let controlsList = localStorage.getItem("controls").split(" ");
+        for (let i = 0; i < controlsList.length; i++) {
+            if (controlsList[i] === "Space") {
+                controlsList[i] = " ";
+            }
         }
+        MyGame.input.keys = {
+            up: controlsList[0],
+            down: controlsList[1],
+            left: controlsList[2],
+            right: controlsList[3],
+        };
+    } else {
+        MyGame.input.keys = {
+            up: "ArrowUp",
+            down: "ArrowDown",
+            left: "ArrowLeft",
+            right: "ArrowRight",
+        };
     }
-    MyGame.input.keys = {
-        up: controlsList[0],
-        down: controlsList[1],
-        left: controlsList[2],
-        right: controlsList[3],
-    };
-} else {
-    MyGame.input.keys = {
-        up: "ArrowUp",
-        down: "ArrowDown",
-        left: "ArrowLeft",
-        right: "ArrowRight",
-    };
 }
 
 MyGame.input.Keyboard = function () {
