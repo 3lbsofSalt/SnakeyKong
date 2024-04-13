@@ -1,3 +1,5 @@
+const starting_directions = [0, Math.PI / 2, Math.PI, Math.PI * 3 / 2];
+
 function createPlayer(socketId) {
     const player = {
         clientId: socketId,
@@ -5,7 +7,7 @@ function createPlayer(socketId) {
             x: Math.random() * 1000,
             y: Math.random() * 1000,
         },
-        rotation: Math.random() * 360,
+        rotation: starting_directions[Math.floor(Math.random() * 4)],
         move: () => {},
     };
 
