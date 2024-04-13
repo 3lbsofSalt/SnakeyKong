@@ -166,9 +166,17 @@ MyGame.main = function (objects, input, renderer, graphics) {
         }
     }
 
+    function update(elapsedTime) {
+        updateFood(elapsedTime);
+
+        if (playerSnake.isAlive()) {
+            testSnakeWallCollision(playerSnake);
+            playerSnake.update(elapsedTime);
+        }
+    }
+
     function render() {
         graphics.clear();
-
         renderFood();
 
         // Render segments from last to first
@@ -186,6 +194,10 @@ MyGame.main = function (objects, input, renderer, graphics) {
         console.log("yarg");
         //socket.emit(NetworkAction.CLIENT_JOIN_REQUEST, {});
     }
+    myKeyboard.register(MyGame.input.keys.up, playerSnake.setDirectionUp);
+    myKeyboard.register(MyGame.input.keys.down, playerSnake.setDirectionDown);
+    myKeyboard.register(MyGame.input.keys.left, playerSnake.setDirectionLeft);
+    myKeyboard.register(MyGame.input.keys.right, playerSnake.setDirectionRight);
 
     return {
         processInput: processInput,
