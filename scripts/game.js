@@ -136,8 +136,8 @@ MyGame.main = function (objects, input, renderer, graphics) {
     }
 
     function magnetPull(snake, banana, elapsedTime) {
-        banana.center.x += ((snake.head.center.x - banana.center.x) * elapsedTime / 200);
-        banana.center.y += ((snake.head.center.y - banana.center.y) * elapsedTime / 200);
+        banana.center.x += ((snake.head.center.x - banana.center.x) * elapsedTime / 150);
+        banana.center.y += ((snake.head.center.y - banana.center.y) * elapsedTime / 150);
     }
 
     function testBananaCollision(snake, elapsedTime) {
