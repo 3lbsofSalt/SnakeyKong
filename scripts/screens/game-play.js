@@ -2,7 +2,6 @@ MyGame.screens["game-play"] = (function (manager, graphics, input) {
     "use strict";
 
     let model = null;
-    let myKeyboard = input.Keyboard();
 
     //------------------------------------------------------------------
     //
@@ -13,10 +12,6 @@ MyGame.screens["game-play"] = (function (manager, graphics, input) {
         console.log("game initializing...");
     }
 
-    function processInput(elapsedTime) {
-        myKeyboard.update(elapsedTime);
-        model.processInput(elapsedTime);
-    }
     //------------------------------------------------------------------
     //
     // This is the Game Loop update function!
@@ -25,10 +20,6 @@ MyGame.screens["game-play"] = (function (manager, graphics, input) {
 
     function run() {
         console.log("running");
-        myKeyboard.register("Escape", function () {
-            cancelNextRequest = true;
-            manager.showScreen("main-menu");
-        });
         updateControls();
         model = MyGame.main(
             MyGame.objects,

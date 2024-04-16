@@ -130,6 +130,12 @@ function processInput(elapsedTime) {
                 client.player.snake.setDirectionUpLeft();
                 break;
         }
+        updateQueue.push({
+            type: "input",
+            player_id: client.socket.id,
+            desired: client.player.snake.head.desiredRotation,
+            turnPoint: { ...client.player.snake.head.center },
+        });
     }
 }
 
@@ -139,7 +145,20 @@ function update(elapsedTime, currentTime) {
     }
 }
 
-function updateClients(elapsedTime) {}
+function updateClients(elapsedTime) {
+    const tmpUpdateQueue = [...updateQueue];
+    updateQueue = [];
+    for (const event of tmpUpdateQueue) {
+        console.log(event);
+        for (const clientId in activeClients) {
+            let client = activeClients[clientId];
+            if (clientId == event.player_id) continue;
+            if (event.type === "input") {
+                client.socket.emit("update_other", event);
+            }
+        }
+    }
+}
 
 function gameLoop(currentTime, elapsedTime) {
     processInput(elapsedTime);

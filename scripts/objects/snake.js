@@ -87,6 +87,9 @@ MyGame.objects.Head = function (spec) {
         set newTurnInstruction(val) {
             spec.newTurnInstruction = val;
         },
+        set desiredRotation(val) {
+            return (spec.desiredRotation = val);
+        },
         set rotation(val) {
             return (spec.rotation = val);
         },
@@ -112,7 +115,7 @@ MyGame.objects.Body = function (spec) {
     // Move in the direction of the rotation.
     //
     //------------------------------------------------------------------
-    function moveForward(elapsedTime, nextSegment, segmentDistance) {
+    function moveForward(elapsedTime, nextSegment) {
         const nextLocation = spec.nextLocations.empty()
             ? nextSegment.center
             : spec.nextLocations.peek();
@@ -132,8 +135,23 @@ MyGame.objects.Body = function (spec) {
         moveX = Math.round(moveX);
         moveY = Math.round(moveY);
 
+    if(isNaN(moveX) || isNaN(moveY)) {
+    console.log('BIGGGEST BOI!');
+      console.log(spec.nextLocations.empty());
+      console.log(spec.center);
+      console.log(nextLocation);
+      console.log(vectorX);
+      console.log(vectorY);
+      console.log(magnitude);
+      console.log(normalizedVectorX);
+      console.log(normalizedVectorY);
+      //debugger;
+    }
+
+    if(!isNaN(moveX) && !isNaN(moveY)) {
         spec.center.x += moveX;
         spec.center.y += moveY;
+    }
 
         const moveMag = Math.sqrt(moveX * moveX + moveY * moveY);
         if (moveMag >= magnitude) {
@@ -252,6 +270,10 @@ MyGame.objects.Snake = function (spec) {
     snake.setDirectionRight = function (elapsedTime) {
         snake.head.setDirectionRight(elapsedTime);
     };
+    snake.setRotation = function (rotation) {
+        console.log("desired in functino", rotation);
+        snake.head.desiredRotation = rotation;
+    };
 
     snake.updateRotation = function (elapsedTime) {
         snake.head.rotation = snake.head.rotation % (2 * Math.PI);
@@ -301,23 +323,35 @@ MyGame.objects.Snake = function (spec) {
 
     snake.kill = function () {
         spec.alive = false;
+<<<<<<< HEAD
         let deathSound = new Audio('assets/audio/deathSound.mp3');
         deathSound.volume = 0.75;
+=======
+        let deathSound = new Audio("assets/audio/deathSound.mp3");
+>>>>>>> 269df4dd54848ed91daa5c1347cb7df9d6a748c8
         deathSound.play();
     };
 
     snake.eatSingleBanana = function () {
         snake.score += 1;
+<<<<<<< HEAD
         let eatSound = new Audio('assets/audio/eatSingle.mp3');
+=======
+        let eatSound = new Audio("assets/audio/eatSingle.mp3");
+>>>>>>> 269df4dd54848ed91daa5c1347cb7df9d6a748c8
         eatSound.play();
-    }
+    };
 
     snake.eatBananaBunch = function () {
         snake.score += 10;
+<<<<<<< HEAD
         let eatSound = new Audio('assets/audio/eatBunch.mp3');
         eatSound.volume = 0.4;
+=======
+        let eatSound = new Audio("assets/audio/eatBunch.mp3");
+>>>>>>> 269df4dd54848ed91daa5c1347cb7df9d6a748c8
         eatSound.play();
-    }
+    };
 
     return snake;
 };
