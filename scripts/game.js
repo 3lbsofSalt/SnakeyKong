@@ -15,6 +15,11 @@ MyGame.main = function (objects, input, renderer, graphics) {
 
 
     const yellowBunch = new Image();
+    const redBunch = new Image();
+    const blueBunch = new Image();
+    const purpleBunch = new Image();
+    const greenBunch = new Image();
+
     const dkhead = new Image();
     const dkbody = new Image();
 
@@ -35,6 +40,30 @@ MyGame.main = function (objects, input, renderer, graphics) {
         yellowBunch.subTextureWidth = yellowBunch.width / BUNCH_SPRITE_COUNT;
     };
     yellowBunch.src = "assets/spritesheet-bananaYellowBunch.png";
+
+    redBunch.onload = function () {
+        redBunch.isReady = true;
+        redBunch.subTextureWidth = redBunch.width / BUNCH_SPRITE_COUNT;
+    };
+    redBunch.src = "assets/spritesheet-bananaRedBunch.png";
+
+    blueBunch.onload = function () {
+        blueBunch.isReady = true;
+        blueBunch.subTextureWidth = blueBunch.width / BUNCH_SPRITE_COUNT;
+    };
+    blueBunch.src = "assets/spritesheet-bananaBlueBunch.png";
+
+    purpleBunch.onload = function () {
+        purpleBunch.isReady = true;
+        purpleBunch.subTextureWidth = purpleBunch.width / BUNCH_SPRITE_COUNT;
+    };
+    purpleBunch.src = "assets/spritesheet-bananaPurpleBunch.png";
+
+    greenBunch.onload = function () {
+        greenBunch.isReady = true;
+        greenBunch.subTextureWidth = greenBunch.width / BUNCH_SPRITE_COUNT;
+    };
+    greenBunch.src = "assets/spritesheet-bananaGreenBunch.png";
 
 
 
@@ -89,7 +118,6 @@ MyGame.main = function (objects, input, renderer, graphics) {
 
     const dkHeadRender = renderer.AnimatedModel(
         {
-            //spriteSheet: "assets/dkhead.png",
             spriteCount: 1,
             spriteTime: [1000], // ms per frame
         },
@@ -97,7 +125,6 @@ MyGame.main = function (objects, input, renderer, graphics) {
     );
     const dkBodyRender = renderer.AnimatedModel(
         {
-            //spriteSheet: "assets/dkbody.png",
             spriteCount: 1,
             spriteTime: [1000], // ms per frame
         },
@@ -110,7 +137,6 @@ MyGame.main = function (objects, input, renderer, graphics) {
 
     let singleBananaRender = renderer.AnimatedModel(
         {
-            //spriteSheet: "assets/spritesheet-bananaYellowSingle.png",
             spriteCount: SINGLE_SPRITE_COUNT,
             spriteTime: [150, 150, 150, 150, 150, 150, 150, 150], // ms per frame
         },
@@ -118,7 +144,6 @@ MyGame.main = function (objects, input, renderer, graphics) {
     );
     let bunchBananaRender = renderer.AnimatedModel(
         {
-            //spriteSheet: "assets/spritesheet-bananaYellowBunch.png",
             spriteCount: BUNCH_SPRITE_COUNT,
             spriteTime: [100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100], // ms per frame
         },
@@ -164,7 +189,7 @@ MyGame.main = function (objects, input, renderer, graphics) {
     greenSingle.src = "assets/spritesheet-bananaGreenSingle.png";
 
     let singleColorImages = [yellowSingle, redSingle, blueSingle, purpleSingle, greenSingle];
-    let bunchColorImages = [yellowBunch];
+    let bunchColorImages = [yellowBunch, redBunch, blueBunch, purpleBunch, greenBunch];
 
     let testFood = objects.Food({
         size: { x: 30, y: 30 }, // Size in pixels
@@ -252,10 +277,12 @@ MyGame.main = function (objects, input, renderer, graphics) {
 
     // Currently spawns bananas on body segments only, no head
     function createDeathBananas(snake) {
+        let bananaColor = Math.floor(Math.random() * 6);
+
         for (let segment of snake.body) {
             let deathBunch = objects.Food({
                 size: { x: 40, y: 40 }, // Size in pixels
-                image: bunchColorImages[0],
+                image: bunchColorImages[bananaColor],
                 center: { x: segment.center.x, y: segment.center.y },
                 rotation: 0,
             });
