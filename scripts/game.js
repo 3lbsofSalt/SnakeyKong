@@ -365,7 +365,7 @@ MyGame.main = function (objects, input, renderer, graphics) {
 
     myKeyboard.register("Escape", function () {
         cancelNextRequest = true;
-        manager.showScreen("main-menu");
+        MyGame.manager.showScreen("main-menu");
     });
 
     function start() {
