@@ -323,33 +323,21 @@ MyGame.objects.Snake = function (spec) {
 
     snake.kill = function () {
         spec.alive = false;
-<<<<<<< HEAD
         let deathSound = new Audio('assets/audio/deathSound.mp3');
         deathSound.volume = 0.75;
-=======
-        let deathSound = new Audio("assets/audio/deathSound.mp3");
->>>>>>> 269df4dd54848ed91daa5c1347cb7df9d6a748c8
         deathSound.play();
     };
 
     snake.eatSingleBanana = function () {
         snake.score += 1;
-<<<<<<< HEAD
         let eatSound = new Audio('assets/audio/eatSingle.mp3');
-=======
-        let eatSound = new Audio("assets/audio/eatSingle.mp3");
->>>>>>> 269df4dd54848ed91daa5c1347cb7df9d6a748c8
         eatSound.play();
     };
 
     snake.eatBananaBunch = function () {
         snake.score += 10;
-<<<<<<< HEAD
         let eatSound = new Audio('assets/audio/eatBunch.mp3');
         eatSound.volume = 0.4;
-=======
-        let eatSound = new Audio("assets/audio/eatBunch.mp3");
->>>>>>> 269df4dd54848ed91daa5c1347cb7df9d6a748c8
         eatSound.play();
     };
 
