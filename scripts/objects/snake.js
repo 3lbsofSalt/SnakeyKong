@@ -34,13 +34,7 @@ MyGame.objects.Head = function (spec) {
     }
 
     function setDirectionRight(elapsedTime) {
-        if (spec.keyboard.keys.hasOwnProperty(MyGame.input.keys.up)) {
-            setDirectionUpRight();
-        } else if (spec.keyboard.keys.hasOwnProperty(MyGame.input.keys.down)) {
-            setDirectionDownRight();
-        } else {
-            spec.desiredRotation = 0;
-        }
+        spec.desiredRotation = 0;
     }
 
     function setDirectionUpRight(elapsedTime) {
@@ -48,13 +42,7 @@ MyGame.objects.Head = function (spec) {
     }
 
     function setDirectionUp(elapsedTime) {
-        if (spec.keyboard.keys.hasOwnProperty(MyGame.input.keys.left)) {
-            setDirectionUpLeft();
-        } else if (spec.keyboard.keys.hasOwnProperty(MyGame.input.keys.right)) {
-            setDirectionUpRight();
-        } else {
-            spec.desiredRotation = (3 * Math.PI) / 2;
-        }
+        spec.desiredRotation = (3 * Math.PI) / 2;
     }
 
     function setDirectionUpLeft(elapsedTime) {
@@ -62,13 +50,7 @@ MyGame.objects.Head = function (spec) {
     }
 
     function setDirectionLeft(elapsedTime) {
-        if (spec.keyboard.keys.hasOwnProperty(MyGame.input.keys.up)) {
-            setDirectionUpLeft();
-        } else if (spec.keyboard.keys.hasOwnProperty(MyGame.input.keys.down)) {
-            setDirectionDownLeft();
-        } else {
-            spec.desiredRotation = Math.PI;
-        }
+        spec.desiredRotation = Math.PI;
     }
 
     function setDirectionDownLeft(elapsedTime) {
@@ -76,13 +58,7 @@ MyGame.objects.Head = function (spec) {
     }
 
     function setDirectionDown(elapsedTime) {
-        if (spec.keyboard.keys.hasOwnProperty(MyGame.input.keys.left)) {
-            setDirectionDownLeft();
-        } else if (spec.keyboard.keys.hasOwnProperty(MyGame.input.keys.right)) {
-            setDirectionDownRight();
-        } else {
-            spec.desiredRotation = Math.PI / 2;
-        }
+        spec.desiredRotation = Math.PI / 2;
     }
 
     function setDirectionDownRight(elapsedTime) {
@@ -182,12 +158,6 @@ MyGame.objects.Body = function (spec) {
 };
 
 MyGame.objects.Snake = function (spec) {
-    // What do I want?
-    // Move forward
-    // Just a reference to a head
-    // head has reference to first body member
-    // each body member has reference to next body member until null
-    console.log(spec.center);
     const snake = {
         direction: spec.direction,
         moveRate: spec.moveRate,
@@ -199,7 +169,6 @@ MyGame.objects.Snake = function (spec) {
             desiredRotation: spec.direction,
             moveRate: spec.moveRate, // Pixels per second
             rotateRate: spec.rotateRate, // Radians per second
-            keyboard: spec.keyboard,
         }),
         segmentDistance: spec.segmentDistance,
         body: [],
@@ -252,6 +221,18 @@ MyGame.objects.Snake = function (spec) {
 
     snake.setDirectionUp = function (elapsedTime) {
         snake.head.setDirectionUp(elapsedTime);
+    };
+    snake.setDirectionUpRight = function (elapsedTime) {
+        snake.head.setDirectionUpRight(elapsedTime);
+    };
+    snake.setDirectionUpLeft = function (elapsedTime) {
+        snake.head.setDirectionUpLeft(elapsedTime);
+    };
+    snake.setDirectionDownLeft = function (elapsedTime) {
+        snake.head.setDirectionDownLeft(elapsedTime);
+    };
+    snake.setDirectionDownRight = function (elapsedTime) {
+        snake.head.setDirectionDownRight(elapsedTime);
     };
     snake.setDirectionDown = function (elapsedTime) {
         snake.head.setDirectionDown(elapsedTime);

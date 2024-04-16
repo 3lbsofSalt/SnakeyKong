@@ -5,7 +5,7 @@ MyGame.main = function (objects, input, renderer, graphics) {
     const socket = io();
     let playerSnake = {};
     console.log("game initializing...");
-    const otherSnakes = [];
+    const otherSnakes = {};
 
     socket.on("connect-ack", () => {
         console.log("Connected to the Server!");
@@ -21,13 +21,11 @@ MyGame.main = function (objects, input, renderer, graphics) {
             rotateRate: data.rotateRate,
             segmentDistance: data.segmentDistance,
             startingSegments: 3,
-            keyboard: myKeyboard,
             headRenderer: dkHeadRender,
             bodyRenderer: dkBodyRender,
             alive: true,
         });
 
-        console.log(input.keys.up);
         myKeyboard.register(input.keys.up, playerSnake.setDirectionUp);
         myKeyboard.register(input.keys.down, playerSnake.setDirectionDown);
         myKeyboard.register(input.keys.left, playerSnake.setDirectionLeft);
@@ -36,12 +34,23 @@ MyGame.main = function (objects, input, renderer, graphics) {
         cancelNextRequest = false;
         requestAnimationFrame(gameLoop);
     });
-    /*
 
-  socket.on(NetworkAction.CONNECT_OTHER, data => {
+    socket.on("connect_other", (data) => {
+        const snake = data.snake;
+        const newSnake = objects.Snake({
+            direction: snake.direction,
+            center: snake.head.center,
+            moveRate: snake.moveRate,
+            rotateRate: snake.rotateRate,
+            segmentDistance: snake.segmentDistance,
+            startingSegments: snake.body.length,
+            headRenderer: dkHeadRender,
+            bodyRenderer: dkBodyRender,
+            alive: true,
+        });
 
-  });
-  */
+        otherSnakes[data.playerId] = newSnake;
+    });
 
     let lastTimeStamp = performance.now();
 
@@ -164,14 +173,9 @@ MyGame.main = function (objects, input, renderer, graphics) {
             testSnakeWallCollision(playerSnake);
             playerSnake.update(elapsedTime);
         }
-    }
 
-    function update(elapsedTime) {
-        updateFood(elapsedTime);
-
-        if (playerSnake.isAlive()) {
-            testSnakeWallCollision(playerSnake);
-            playerSnake.update(elapsedTime);
+        for (const snake of Object.values(otherSnakes)) {
+            snake.update(elapsedTime);
         }
     }
 
@@ -182,6 +186,10 @@ MyGame.main = function (objects, input, renderer, graphics) {
         // Render segments from last to first
         if (playerSnake.isAlive()) {
             playerSnake.render();
+        }
+
+        for (const snake of Object.values(otherSnakes)) {
+            snake.render();
         }
     }
 
@@ -194,10 +202,54 @@ MyGame.main = function (objects, input, renderer, graphics) {
         console.log("yarg");
         //socket.emit(NetworkAction.CLIENT_JOIN_REQUEST, {});
     }
-    myKeyboard.register(MyGame.input.keys.up, playerSnake.setDirectionUp);
-    myKeyboard.register(MyGame.input.keys.down, playerSnake.setDirectionDown);
-    myKeyboard.register(MyGame.input.keys.left, playerSnake.setDirectionLeft);
-    myKeyboard.register(MyGame.input.keys.right, playerSnake.setDirectionRight);
+    myKeyboard.register(MyGame.input.keys.right, () => {
+        if (myKeyboard.keys.hasOwnProperty(MyGame.input.keys.up)) {
+            playerSnake.setDirectionUpRight();
+            socket.emit("input", { command: "up-right" });
+        } else if (myKeyboard.keys.hasOwnProperty(MyGame.input.keys.down)) {
+            playerSnake.setDirectionDownRight();
+            socket.emit("input", { command: "down-right" });
+        } else {
+            playerSnake.setDirectionRight();
+            socket.emit("input", { command: "right" });
+        }
+    });
+    myKeyboard.register(MyGame.input.keys.down, () => {
+        if (myKeyboard.keys.hasOwnProperty(MyGame.input.keys.left)) {
+            playerSnake.setDirectionDownLeft();
+            socket.emit("input", { command: "down-left" });
+        } else if (myKeyboard.keys.hasOwnProperty(MyGame.input.keys.right)) {
+            playerSnake.setDirectionDownRight();
+            socket.emit("input", { command: "up-right" });
+        } else {
+            playerSnake.setDirectionDown();
+            socket.emit("input", { command: "down" });
+        }
+    });
+    myKeyboard.register(MyGame.input.keys.left, () => {
+        if (myKeyboard.keys.hasOwnProperty(MyGame.input.keys.up)) {
+            playerSnake.setDirectionUpLeft();
+            socket.emit("input", { command: "up-left" });
+        } else if (myKeyboard.keys.hasOwnProperty(MyGame.input.keys.down)) {
+            playerSnake.setDirectionDownLeft();
+            socket.emit("input", { command: "down-left" });
+        } else {
+            playerSnake.setDirectionLeft();
+            socket.emit("input", { command: "left" });
+        }
+    });
+    myKeyboard.register(MyGame.input.keys.up, () => {
+        if (myKeyboard.keys.hasOwnProperty(MyGame.input.keys.left)) {
+            playerSnake.setDirectionUpLeft();
+            socket.emit("input", { command: "up-left" });
+        } else if (myKeyboard.keys.hasOwnProperty(MyGame.input.keys.right)) {
+            playerSnake.setDirectionUpRight();
+            socket.emit("input", { command: "up-right" });
+        } else {
+            playerSnake.setDirectionUp();
+            socket.emit("input", { command: "up" });
+        }
+    });
 
     return {
         processInput: processInput,
