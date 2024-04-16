@@ -99,6 +99,9 @@ MyGame.objects.Head = function (spec) {
         get rotation() {
             return spec.rotation;
         },
+        get image() {
+            return spec.image;
+        },
         get desiredRotation() {
             return spec.desiredRotation;
         },
@@ -169,6 +172,9 @@ MyGame.objects.Body = function (spec) {
         get center() {
             return spec.center;
         },
+        get image() {
+            return spec.image;
+        },
         get rotation() {
             return spec.rotation;
         },
@@ -196,12 +202,14 @@ MyGame.objects.Snake = function (spec) {
             size: { x: 75, y: 50 }, // Size in pixels
             center: { ...spec.center },
             rotation: spec.direction,
+            image: spec.headimage,
             desiredRotation: spec.direction,
             moveRate: spec.moveRate, // Pixels per second
             rotateRate: spec.rotateRate, // Radians per second
             keyboard: spec.keyboard,
         }),
         segmentDistance: spec.segmentDistance,
+        score: spec.score,
         body: [],
         headRenderer: spec.headRenderer,
         bodyRenderer: spec.bodyRenderer,
@@ -228,6 +236,7 @@ MyGame.objects.Snake = function (spec) {
                     x: lastLocation.x - xDiff,
                     y: lastLocation.y - yDiff,
                 },
+                image: spec.bodyimage,
                 rotation: spec.direction,
                 moveRate: spec.moveRate, // Pixels per second
                 rotateRate: spec.rotateRate, // Radians per second
@@ -311,7 +320,23 @@ MyGame.objects.Snake = function (spec) {
 
     snake.kill = function () {
         spec.alive = false;
+        let deathSound = new Audio('assets/audio/deathSound.mp3');
+        deathSound.play();
     };
+
+    snake.eatSingleBanana = function () {
+        snake.score += 1;
+        console.log("score: " + snake.score);
+        let eatSound = new Audio('assets/audio/eatSingle.mp3');
+        eatSound.play();
+    }
+
+    snake.eatBananaBunch = function () {
+        snake.score += 10;
+        console.log("score: " + snake.score);
+        let eatSound = new Audio('assets/audio/eatBunch.mp3');
+        eatSound.play();
+    }
 
     return snake;
 };

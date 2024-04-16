@@ -9,16 +9,7 @@ MyGame.render.AnimatedModel = function (spec, graphics) {
     let animationTime = 0;
     let subImageIndex = 0;
     let subTextureWidth = 0;
-    let image = new Image();
     let isReady = false; // Can't render until the texture is loaded
-
-    //
-    // Load the texture to use for the particle system loading and ready for rendering
-    image.onload = function () {
-        isReady = true;
-        subTextureWidth = image.width / spec.spriteCount;
-    };
-    image.src = spec.spriteSheet;
 
     //------------------------------------------------------------------
     //
@@ -48,11 +39,11 @@ MyGame.render.AnimatedModel = function (spec, graphics) {
     //
     //------------------------------------------------------------------
     function render(model) {
-        if (isReady) {
+        if (model.image?.isReady) {
             graphics.drawSubTexture(
-                image,
+                model.image,
                 subImageIndex,
-                subTextureWidth,
+                model.image.subTextureWidth,
                 model.center,
                 model.rotation,
                 model.size,
@@ -62,7 +53,7 @@ MyGame.render.AnimatedModel = function (spec, graphics) {
 
     let api = {
         update: update,
-        render: render,
+        render: render
     };
 
     return api;
