@@ -510,15 +510,166 @@ MyGame.main = function (objects, input, renderer, graphics) {
     //socket.emit(NetworkAction.CLIENT_JOIN_REQUEST, {});
   }
 
-  return {
-    processInput: processInput,
-    update: update,
-    render: render,
-    start: start,
-    dkHead: playerSnake,
-  };
 
   // Particle system - put in own file later
+    function magnetPull(snake, banana, elapsedTime) {
+        banana.center.x +=
+            ((snake.head.center.x - banana.center.x) * elapsedTime) / 150;
+        banana.center.y +=
+            ((snake.head.center.y - banana.center.y) * elapsedTime) / 150;
+    }
+
+    function testBananaCollision(snake, elapsedTime) {
+        let newSingleBananas = [];
+        let newBunchBananas = [];
+
+        for (let banana of singleBananas) {
+            if (
+                Math.abs(snake.head.center.x - banana.center.x) <
+                    BANANA_MAGNET_TOL &&
+                Math.abs(snake.head.center.y - banana.center.y) <
+                    BANANA_MAGNET_TOL
+            ) {
+                magnetPull(snake, banana, elapsedTime);
+            }
+
+            if (
+                Math.abs(snake.head.center.x - banana.center.x) >
+                    BANANA_EAT_TOL ||
+                Math.abs(snake.head.center.y - banana.center.y) > BANANA_EAT_TOL
+            ) {
+                newSingleBananas.push(banana);
+            } else {
+                snake.eatSingleBanana();
+                particle_system.eatBanana(banana);
+            }
+        }
+        singleBananas = newSingleBananas;
+
+        for (let bunch of bunchBananas) {
+            if (
+                Math.abs(snake.head.center.x - bunch.center.x) <
+                    BANANA_MAGNET_TOL &&
+                Math.abs(snake.head.center.y - bunch.center.y) <
+                    BANANA_MAGNET_TOL
+            ) {
+                magnetPull(snake, bunch, elapsedTime);
+            }
+
+            if (
+                Math.abs(snake.head.center.x - bunch.center.x) >
+                    BANANA_EAT_TOL ||
+                Math.abs(snake.head.center.y - bunch.center.y) > BANANA_EAT_TOL
+            ) {
+                newBunchBananas.push(bunch);
+            } else {
+                snake.eatBananaBunch();
+                particle_system.eatBanana(bunch);
+            }
+        }
+        bunchBananas = newBunchBananas;
+    }
+
+    // Currently spawns bananas on body segments only, no head
+    function createDeathBananas(snake) {
+        let bananaColor = Math.floor(Math.random() * 6);
+
+        for (let segment of snake.body) {
+            let deathBunch = objects.Food({
+                size: { x: 40, y: 40 }, // Size in pixels
+                image: bunchColorImages[bananaColor],
+                center: { x: segment.center.x, y: segment.center.y },
+                rotation: 0,
+            });
+
+            bunchBananas.push(deathBunch);
+        }
+    }
+
+    function spawnNewBanana() {
+        let bananaSpawnX = Math.random() * graphics.getCanvas().width;
+        let bananaSpawnY = Math.random() * graphics.getCanvas().height;
+
+        let bananaColor = Math.floor(Math.random() * 6);
+
+        let newBanana = objects.Food({
+            size: { x: 30, y: 30 },
+            color: bananaColor,
+            image: singleColorImages[bananaColor],
+            center: { x: bananaSpawnX, y: bananaSpawnY },
+            rotation: 0,
+        });
+
+        singleBananas.push(newBanana);
+    }
+
+    function updateTime(elapsedTime) {
+        timer += elapsedTime;
+        if (timer >= 1000) {
+            timer -= 1000;
+            spawnNewBanana();
+        }
+    }
+
+    function updateFood(elapsedTime) {
+        singleBananaRender.update(elapsedTime);
+        bunchBananaRender.update(elapsedTime);
+    }
+
+    function renderFood() {
+        for (let banana of singleBananas) {
+            singleBananaRender.render(banana);
+        }
+        for (let bunch of bunchBananas) {
+            bunchBananaRender.render(bunch);
+        }
+    }
+
+    function updateScore(elapsedTime) {
+        document.getElementById("Score").textContent =
+            "Score: " + playerSnake.score;
+    }
+
+    function update(elapsedTime) {
+        updateFood(elapsedTime);
+        updateTime(elapsedTime);
+        updateScore(elapsedTime);
+        updateParticles(elapsedTime);
+
+        if (playerSnake.isAlive()) {
+            testSnakeWallCollision(playerSnake);
+            testBananaCollision(playerSnake, elapsedTime);
+            playerSnake.update(elapsedTime);
+        }
+
+        for (const snake of Object.values(otherSnakes)) {
+            snake.update(elapsedTime);
+        }
+    }
+
+    function render() {
+        graphics.clear();
+        renderFood();
+        renderParticles();
+
+        // Render segments from last to first
+        if (playerSnake.isAlive()) {
+            playerSnake.render();
+        }
+
+        for (const snake of Object.values(otherSnakes)) {
+            snake.render();
+        }
+    }
+
+    myKeyboard.register("Escape", function () {
+        cancelNextRequest = true;
+        MyGame.manager.showScreen("main-menu");
+    });
+
+    function start() {
+        //socket.emit(NetworkAction.CLIENT_JOIN_REQUEST, {});
+    }
 
   function Particle(spec) {
     spec.size = { x: 30, y: 30 };
@@ -563,10 +714,11 @@ MyGame.main = function (objects, input, renderer, graphics) {
       get image() {
         return spec.image;
       },
-    };
+    }
 
     return api;
   }
+
 
   function particleSystem() {
     function eatBanana(banana) {
@@ -689,4 +841,12 @@ MyGame.main = function (objects, input, renderer, graphics) {
         }
     }
     */
+
+  return {
+    processInput: processInput,
+    update: update,
+    render: render,
+    start: start,
+    dkHead: playerSnake,
+  };
 };
