@@ -63,10 +63,29 @@ MyGame.main = function (objects, input, renderer, graphics) {
         socket.emit("join-request");
     });
 
+    let canvas = graphics.getCanvas();
     let context = graphics.getContext();
 
     let particle_system = particleSystem();
     let banana_particles = [];
+
+    const WORLD_WIDTH = 4800;
+    const WORLD_HEIGHT = 2600;
+
+    const camera = {
+        x: 0,
+        y: 0,
+        width: canvas.width,
+        height: canvas.height
+    };
+
+    const backgroundImage = new Image();
+
+    backgroundImage.onload = function () {
+        backgroundImage.isReady = true;
+        backgroundImage.subTextureWidth = backgroundImage.width;
+    };
+    backgroundImage.src = "assets/gameBackdropDK.png";
 
     const yellowBunch = new Image();
     const redBunch = new Image();
@@ -301,6 +320,12 @@ MyGame.main = function (objects, input, renderer, graphics) {
     let singleBananas = [];
     let bunchBananas = [bigFood];
 
+    function renderBackground() {
+        if (backgroundImage.isReady) {
+            context.drawImage(backgroundImage, 0, 0, backgroundImage.width, backgroundImage.height);
+        }
+    }
+
 
 
     function processInput(elapsedTime) {
@@ -318,14 +343,54 @@ MyGame.main = function (objects, input, renderer, graphics) {
             requestAnimationFrame(gameLoop);
         }
     }
-    // This will have to be updated once we had a whole world with camera scrolling.
+
+    function update(elapsedTime) {
+        updateFood(elapsedTime);
+        updateTime(elapsedTime);
+        updateScore(elapsedTime);
+        updateParticles(elapsedTime);
+        updateCamera();
+
+        if (playerSnake.isAlive()) {
+            testSnakeWallCollision(playerSnake);
+            testBananaCollision(playerSnake, elapsedTime);
+            playerSnake.update(elapsedTime);
+        }
+
+        for (const snake of Object.values(otherSnakes)) {
+            snake.update(elapsedTime);
+        }
+    }
+
+    function render() {
+        graphics.clear();
+
+        context.translate(-camera.x, -camera.y);
+        renderBackground();
+        renderFood();
+        renderParticles();
+
+        // Render segments from last to first
+        if (playerSnake.isAlive()) {
+            playerSnake.render();
+        }
+
+        for (const snake of Object.values(otherSnakes)) {
+            snake.render();
+        }
+
+        context.translate(camera.x, camera.y);
+    }
+
+
+    // This will have to be updated once we have a whole world with camera scrolling.
     function testSnakeWallCollision(snake) {
         let hitHorizontalWall =
             snake.head.center.x < 0 ||
-            snake.head.center.x > graphics.getCanvas().width;
+            snake.head.center.x > WORLD_WIDTH;
         let hitVerticalWall =
             snake.head.center.y < 0 ||
-            snake.head.center.y > graphics.getCanvas().height;
+            snake.head.center.y > WORLD_HEIGHT;
         if (hitHorizontalWall || hitVerticalWall) {
             snake.kill();
             createDeathBananas(snake);
@@ -389,8 +454,8 @@ MyGame.main = function (objects, input, renderer, graphics) {
     }
 
     function spawnNewBanana() {
-        let bananaSpawnX = Math.random() * graphics.getCanvas().width;
-        let bananaSpawnY = Math.random() * graphics.getCanvas().height;
+        let bananaSpawnX = Math.random() * WORLD_WIDTH;
+        let bananaSpawnY = Math.random() * WORLD_HEIGHT;
 
         let bananaColor = Math.floor(Math.random() * 6);
 
@@ -407,8 +472,8 @@ MyGame.main = function (objects, input, renderer, graphics) {
 
     function updateTime(elapsedTime) {
         timer += elapsedTime;
-        if (timer >= 1000) {
-            timer -= 1000;
+        if (timer >= 250) {
+            timer -= 250;
             spawnNewBanana();
         }
     }
@@ -416,6 +481,26 @@ MyGame.main = function (objects, input, renderer, graphics) {
     function updateFood(elapsedTime) {
         singleBananaRender.update(elapsedTime);
         bunchBananaRender.update(elapsedTime);
+    }
+
+    function updateCamera() {
+        // Adjust camera position based on player's position
+        camera.x = playerSnake.head.center.x - camera.width / 2;
+        camera.y = playerSnake.head.center.y - camera.height / 2;
+    
+        // Ensure camera doesn't go out of bounds
+        if (camera.x < 0) {
+            camera.x = 0;
+        }
+        if (camera.y < 0) {
+            camera.y = 0;
+        }
+        if (camera.x + camera.width > WORLD_WIDTH) {
+            camera.x = WORLD_WIDTH - camera.width;
+        }
+        if (camera.y + camera.height > WORLD_HEIGHT) {
+            camera.y = WORLD_HEIGHT - camera.height;
+        }
     }
 
     function renderFood() {
@@ -429,38 +514,6 @@ MyGame.main = function (objects, input, renderer, graphics) {
 
     function updateScore(elapsedTime) {
         document.getElementById("Score").textContent = "Score: " + playerSnake.score;
-    }
-
-    function update(elapsedTime) {
-        updateFood(elapsedTime);
-        updateTime(elapsedTime);
-        updateScore(elapsedTime);
-        updateParticles(elapsedTime);
-
-        if (playerSnake.isAlive()) {
-            testSnakeWallCollision(playerSnake);
-            testBananaCollision(playerSnake, elapsedTime);
-            playerSnake.update(elapsedTime);
-        }
-
-        for (const snake of Object.values(otherSnakes)) {
-            snake.update(elapsedTime);
-        }
-    }
-
-    function render() {
-        graphics.clear();
-        renderFood();
-        renderParticles();
-
-        // Render segments from last to first
-        if (playerSnake.isAlive()) {
-            playerSnake.render();
-        }
-
-        for (const snake of Object.values(otherSnakes)) {
-            snake.render();
-        }
     }
 
     myKeyboard.register("Escape", function () {

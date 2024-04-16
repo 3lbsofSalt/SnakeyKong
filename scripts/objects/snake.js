@@ -302,20 +302,20 @@ MyGame.objects.Snake = function (spec) {
     snake.kill = function () {
         spec.alive = false;
         let deathSound = new Audio('assets/audio/deathSound.mp3');
+        deathSound.volume = 0.75;
         deathSound.play();
     };
 
     snake.eatSingleBanana = function () {
         snake.score += 1;
-        console.log("score: " + snake.score);
         let eatSound = new Audio('assets/audio/eatSingle.mp3');
         eatSound.play();
     }
 
     snake.eatBananaBunch = function () {
         snake.score += 10;
-        console.log("score: " + snake.score);
         let eatSound = new Audio('assets/audio/eatBunch.mp3');
+        eatSound.volume = 0.4;
         eatSound.play();
     }
 
