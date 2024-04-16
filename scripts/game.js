@@ -15,12 +15,12 @@ MyGame.main = function (objects, input, renderer, graphics) {
     // This event should only be recieved after a join request event is emitted.
     socket.on("join", (data) => {
         playerSnake = objects.Snake({
-            direction: data.rotation,
-            center: { x: 100, y: 200 },
+            direction: 3 * Math.PI / 2,
+            center: { x: 500, y: 300 },
             moveRate: data.moveRate,
             rotateRate: data.rotateRate,
             segmentDistance: data.segmentDistance,
-            startingSegments: 3,
+            startingSegments: 10,
             headRenderer: dkHeadRender,
             bodyRenderer: dkBodyRender,
             alive: true,
@@ -53,8 +53,10 @@ MyGame.main = function (objects, input, renderer, graphics) {
     });
 
     let lastTimeStamp = performance.now();
-
     let myKeyboard = input.Keyboard();
+    let timer = 0;
+    let BANANA_EAT_TOL = 20;
+    let BANANA_MAGNET_TOL = 75;
 
     const dkHeadRender = renderer.AnimatedModel(
         {
@@ -88,9 +90,6 @@ MyGame.main = function (objects, input, renderer, graphics) {
         rotation: 0,
     });
 
-    let singleBananas = [littleFood, littleFood2];
-    let bunchBananas = [bigFood];
-
     let singleBananaRender = renderer.AnimatedModel(
         {
             spriteSheet: "assets/spritesheet-bananaGreenSingle.png",
@@ -109,6 +108,12 @@ MyGame.main = function (objects, input, renderer, graphics) {
         },
         graphics,
     );
+
+
+    let singleBananas = [littleFood, littleFood2];
+    let bunchBananas = [bigFood];
+
+
 
     function processInput(elapsedTime) {
         myKeyboard.update(elapsedTime);
@@ -139,6 +144,38 @@ MyGame.main = function (objects, input, renderer, graphics) {
         }
     }
 
+    function magnetPull(snake, banana, elapsedTime) {
+        banana.center.x += ((snake.head.center.x - banana.center.x) * elapsedTime / 150);
+        banana.center.y += ((snake.head.center.y - banana.center.y) * elapsedTime / 150);
+    }
+
+    function testBananaCollision(snake, elapsedTime) {
+        let newSingleBananas = [];
+        let newBunchBananas = [];
+
+        for (let banana of singleBananas) {
+            if (Math.abs(snake.head.center.x - banana.center.x) < BANANA_MAGNET_TOL && Math.abs(snake.head.center.y - banana.center.y) < BANANA_MAGNET_TOL) {
+                magnetPull(snake, banana, elapsedTime);
+            }
+
+            if (Math.abs(snake.head.center.x - banana.center.x) > BANANA_EAT_TOL || Math.abs(snake.head.center.y - banana.center.y) > BANANA_EAT_TOL) {
+                newSingleBananas.push(banana);
+            }
+        }
+        singleBananas = newSingleBananas;
+
+        for (let bunch of bunchBananas) {
+            if (Math.abs(snake.head.center.x - bunch.center.x) < BANANA_MAGNET_TOL && Math.abs(snake.head.center.y - bunch.center.y) < BANANA_MAGNET_TOL) {
+                magnetPull(snake, bunch, elapsedTime);
+            }
+
+            if (Math.abs(snake.head.center.x - bunch.center.x) > BANANA_EAT_TOL || Math.abs(snake.head.center.y - bunch.center.y) > BANANA_EAT_TOL) {
+                newBunchBananas.push(bunch);
+            }
+        }
+        bunchBananas = newBunchBananas;
+    }
+
     // Currently spawns bananas on body segments only, no head
     function createDeathBananas(snake) {
         for (let segment of snake.body) {
@@ -149,6 +186,27 @@ MyGame.main = function (objects, input, renderer, graphics) {
             });
 
             bunchBananas.push(deathBunch);
+        }
+    }
+
+    function spawnNewBanana() {
+        let bananaSpawnX = Math.random() * graphics.getCanvas().width;
+        let bananaSpawnY = Math.random() * graphics.getCanvas().height;
+
+        let newBanana = objects.Food({
+            size: { x: 30, y: 30 },
+            center: { x: bananaSpawnX, y: bananaSpawnY },
+            rotation: 0
+        });
+
+        singleBananas.push(newBanana);
+    }
+
+    function updateTime(elapsedTime) {
+        timer += elapsedTime;
+        if (timer >= 1000) {
+            timer -= 1000;
+            spawnNewBanana();
         }
     }
 
@@ -168,9 +226,11 @@ MyGame.main = function (objects, input, renderer, graphics) {
 
     function update(elapsedTime) {
         updateFood(elapsedTime);
+        updateTime(elapsedTime)
 
         if (playerSnake.isAlive()) {
             testSnakeWallCollision(playerSnake);
+            testBananaCollision(playerSnake, elapsedTime);
             playerSnake.update(elapsedTime);
         }
 
