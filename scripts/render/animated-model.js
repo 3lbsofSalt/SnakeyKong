@@ -53,7 +53,7 @@ MyGame.render.AnimatedModel = function (spec, graphics) {
 
     let api = {
         update: update,
-        render: render
+        render: render,
     };
 
     return api;

@@ -8,6 +8,9 @@ MyGame.objects.Food = function (spec) {
         get size() {
             return spec.size;
         },
+        get color() {
+            return spec.color;
+        },
         get image() {
             return spec.image;
         },

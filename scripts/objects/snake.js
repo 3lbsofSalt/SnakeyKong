@@ -87,6 +87,9 @@ MyGame.objects.Head = function (spec) {
         set newTurnInstruction(val) {
             spec.newTurnInstruction = val;
         },
+        set desiredRotation(val) {
+            return (spec.desiredRotation = val);
+        },
         set rotation(val) {
             return (spec.rotation = val);
         },
@@ -252,6 +255,10 @@ MyGame.objects.Snake = function (spec) {
     snake.setDirectionRight = function (elapsedTime) {
         snake.head.setDirectionRight(elapsedTime);
     };
+    snake.setRotation = function (rotation) {
+        console.log("desired in functino", rotation);
+        snake.head.desiredRotation = rotation;
+    };
 
     snake.updateRotation = function (elapsedTime) {
         snake.head.rotation = snake.head.rotation % (2 * Math.PI);
@@ -301,23 +308,23 @@ MyGame.objects.Snake = function (spec) {
 
     snake.kill = function () {
         spec.alive = false;
-        let deathSound = new Audio('assets/audio/deathSound.mp3');
+        let deathSound = new Audio("assets/audio/deathSound.mp3");
         deathSound.play();
     };
 
     snake.eatSingleBanana = function () {
         snake.score += 1;
         console.log("score: " + snake.score);
-        let eatSound = new Audio('assets/audio/eatSingle.mp3');
+        let eatSound = new Audio("assets/audio/eatSingle.mp3");
         eatSound.play();
-    }
+    };
 
     snake.eatBananaBunch = function () {
         snake.score += 10;
         console.log("score: " + snake.score);
-        let eatSound = new Audio('assets/audio/eatBunch.mp3');
+        let eatSound = new Audio("assets/audio/eatBunch.mp3");
         eatSound.play();
-    }
+    };
 
     return snake;
 };

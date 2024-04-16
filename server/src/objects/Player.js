@@ -3,12 +3,11 @@ const starting_directions = [0, Math.PI / 2, Math.PI, (Math.PI * 3) / 2];
 
 Head = function (spec) {
     function moveForward(elapsedTime) {
-        //
         // Create a normalized direction vector
         let vectorX = Math.cos(spec.rotation);
         let vectorY = Math.sin(spec.rotation);
         let magnitude = Math.sqrt(vectorX * vectorX + vectorY * vectorY);
-        //
+
         // With the normalized direction vector, move the center of the sprite
         let moveX = (vectorX / magnitude) * spec.moveRate * elapsedTime;
         let moveY = (vectorY / magnitude) * spec.moveRate * elapsedTime;
@@ -165,32 +164,49 @@ Snake = function (spec) {
     };
 
     const lastLocationsTracker = [];
-    for (let i = 0; i < spec.startingSegments; i++) {
-        const yDiff = Math.sin(spec.direction) * spec.segmentDistance;
-        const xDiff = Math.cos(spec.direction) * spec.segmentDistance;
+    if (!spec?.body?.length) {
+        for (let i = 0; i < spec.startingSegments; i++) {
+            const yDiff = Math.sin(spec.direction) * spec.segmentDistance;
+            const xDiff = Math.cos(spec.direction) * spec.segmentDistance;
 
-        const lastLocation =
-            i == 0 ? { ...snake.head.center } : { ...snake.body[i - 1].center };
-        lastLocationsTracker.unshift(lastLocation);
+            const lastLocation =
+                i == 0
+                    ? { ...snake.head.center }
+                    : { ...snake.body[i - 1].center };
+            lastLocationsTracker.unshift(lastLocation);
 
-        const queue = Queue.createQueue();
-        for (const location of lastLocationsTracker) {
-            queue.push(location);
+            const queue = Queue.createQueue();
+            for (const location of lastLocationsTracker) {
+                queue.push(location);
+            }
+
+            snake.body.push(
+                Body({
+                    size: { x: 50, y: 50 }, // Size in pixels
+                    center: {
+                        x: lastLocation.x - xDiff,
+                        y: lastLocation.y - yDiff,
+                    },
+                    rotation: spec.direction,
+                    moveRate: spec.moveRate, // Pixels per second
+                    rotateRate: spec.rotateRate, // Radians per second
+                    nextLocations: queue,
+                }),
+            );
         }
-
-        snake.body.push(
-            Body({
-                size: { x: 50, y: 50 }, // Size in pixels
-                center: {
-                    x: lastLocation.x - xDiff,
-                    y: lastLocation.y - yDiff,
-                },
-                rotation: spec.direction,
-                moveRate: spec.moveRate, // Pixels per second
-                rotateRate: spec.rotateRate, // Radians per second
-                nextLocations: queue,
-            }),
-        );
+    } else {
+        for (const segment of spec.body) {
+            snake.body.push(
+                BodY({
+                    size: { ...segment.size },
+                    center: { ...segment.center },
+                    rotation: segment.rotation,
+                    moveRate: segment.moveRate,
+                    rotateRate: spec.rotateRate,
+                    nextLocations: segment.nextLocations,
+                }),
+            );
+        }
     }
 
     snake.moveForward = function (elapsedTime) {
