@@ -115,7 +115,7 @@ MyGame.objects.Body = function (spec) {
     // Move in the direction of the rotation.
     //
     //------------------------------------------------------------------
-    function moveForward(elapsedTime, nextSegment, segmentDistance) {
+    function moveForward(elapsedTime, nextSegment) {
         const nextLocation = spec.nextLocations.empty()
             ? nextSegment.center
             : spec.nextLocations.peek();
@@ -135,8 +135,23 @@ MyGame.objects.Body = function (spec) {
         moveX = Math.round(moveX);
         moveY = Math.round(moveY);
 
+    if(isNaN(moveX) || isNaN(moveY)) {
+    console.log('BIGGGEST BOI!');
+      console.log(spec.nextLocations.empty());
+      console.log(spec.center);
+      console.log(nextLocation);
+      console.log(vectorX);
+      console.log(vectorY);
+      console.log(magnitude);
+      console.log(normalizedVectorX);
+      console.log(normalizedVectorY);
+      //debugger;
+    }
+
+    if(!isNaN(moveX) && !isNaN(moveY)) {
         spec.center.x += moveX;
         spec.center.y += moveY;
+    }
 
         const moveMag = Math.sqrt(moveX * moveX + moveY * moveY);
         if (moveMag >= magnitude) {
@@ -314,14 +329,12 @@ MyGame.objects.Snake = function (spec) {
 
     snake.eatSingleBanana = function () {
         snake.score += 1;
-        console.log("score: " + snake.score);
         let eatSound = new Audio("assets/audio/eatSingle.mp3");
         eatSound.play();
     };
 
     snake.eatBananaBunch = function () {
         snake.score += 10;
-        console.log("score: " + snake.score);
         let eatSound = new Audio("assets/audio/eatBunch.mp3");
         eatSound.play();
     };
