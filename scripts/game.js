@@ -12,17 +12,46 @@ MyGame.main = function (objects, input, renderer, graphics) {
         socket.emit("join-request");
     });
 
+
+
+    const yellowBunch = new Image();
+    const dkhead = new Image();
+    const dkbody = new Image();
+
+    dkhead.onload = function () {
+        dkhead.isReady = true;
+        dkhead.subTextureWidth = dkhead.width;
+    };
+    dkhead.src = "assets/dkhead.png";
+
+    dkbody.onload = function () {
+        dkbody.isReady = true;
+        dkbody.subTextureWidth = dkbody.width;
+    };
+    dkbody.src = "assets/dkbody.png";
+
+    yellowBunch.onload = function () {
+        yellowBunch.isReady = true;
+        yellowBunch.subTextureWidth = yellowBunch.width / BUNCH_SPRITE_COUNT;
+    };
+    yellowBunch.src = "assets/spritesheet-bananaYellowBunch.png";
+
+
+
     // This event should only be recieved after a join request event is emitted.
     socket.on("join", (data) => {
         playerSnake = objects.Snake({
             direction: 3 * Math.PI / 2,
             center: { x: 500, y: 300 },
+            headimage: dkhead,
+            bodyimage: dkbody,
             moveRate: data.moveRate,
             rotateRate: data.rotateRate,
             segmentDistance: data.segmentDistance,
             startingSegments: 10,
             headRenderer: dkHeadRender,
             bodyRenderer: dkBodyRender,
+            score: 0,
             alive: true,
         });
 
@@ -60,7 +89,7 @@ MyGame.main = function (objects, input, renderer, graphics) {
 
     const dkHeadRender = renderer.AnimatedModel(
         {
-            spriteSheet: "assets/dkhead.png",
+            //spriteSheet: "assets/dkhead.png",
             spriteCount: 1,
             spriteTime: [1000], // ms per frame
         },
@@ -68,49 +97,90 @@ MyGame.main = function (objects, input, renderer, graphics) {
     );
     const dkBodyRender = renderer.AnimatedModel(
         {
-            spriteSheet: "assets/dkbody.png",
+            //spriteSheet: "assets/dkbody.png",
             spriteCount: 1,
             spriteTime: [1000], // ms per frame
         },
         graphics,
     );
-    let littleFood = objects.Food({
-        size: { x: 30, y: 30 }, // Size in pixels
-        center: { x: 50, y: 150 },
-        rotation: 0,
-    });
-    let littleFood2 = objects.Food({
-        size: { x: 30, y: 30 }, // Size in pixels
-        center: { x: 450, y: 150 },
-        rotation: 0,
-    });
-    let bigFood = objects.Food({
-        size: { x: 40, y: 40 }, // Size in pixels
-        center: { x: 50, y: 350 },
-        rotation: 0,
-    });
+    
+
+    const SINGLE_SPRITE_COUNT = 8;
+    const BUNCH_SPRITE_COUNT = 12;
 
     let singleBananaRender = renderer.AnimatedModel(
         {
-            spriteSheet: "assets/spritesheet-bananaGreenSingle.png",
-            spriteCount: 8,
+            //spriteSheet: "assets/spritesheet-bananaYellowSingle.png",
+            spriteCount: SINGLE_SPRITE_COUNT,
             spriteTime: [150, 150, 150, 150, 150, 150, 150, 150], // ms per frame
         },
         graphics,
     );
     let bunchBananaRender = renderer.AnimatedModel(
         {
-            spriteSheet: "assets/spritesheet-bananaYellowBunch.png",
-            spriteCount: 12,
-            spriteTime: [
-                100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,
-            ], // ms per frame
+            //spriteSheet: "assets/spritesheet-bananaYellowBunch.png",
+            spriteCount: BUNCH_SPRITE_COUNT,
+            spriteTime: [100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100], // ms per frame
         },
         graphics,
     );
 
+    const yellowSingle = new Image();
+    const redSingle = new Image();
+    const blueSingle = new Image();
+    const purpleSingle = new Image();
+    const greenSingle = new Image();
 
-    let singleBananas = [littleFood, littleFood2];
+
+    
+    yellowSingle.onload = function () {
+        yellowSingle.isReady = true;
+        yellowSingle.subTextureWidth = yellowSingle.width / SINGLE_SPRITE_COUNT;
+    };
+    yellowSingle.src = "assets/spritesheet-bananaYellowSingle.png";
+
+    redSingle.onload = function () {
+        redSingle.isReady = true;
+        redSingle.subTextureWidth = redSingle.width / SINGLE_SPRITE_COUNT;
+    };
+    redSingle.src = "assets/spritesheet-bananaRedSingle.png";
+
+    blueSingle.onload = function () {
+        blueSingle.isReady = true;
+        blueSingle.subTextureWidth = blueSingle.width / SINGLE_SPRITE_COUNT;
+    };
+    blueSingle.src = "assets/spritesheet-bananaBlueSingle.png";
+
+    purpleSingle.onload = function () {
+        purpleSingle.isReady = true;
+        purpleSingle.subTextureWidth = purpleSingle.width / SINGLE_SPRITE_COUNT;
+    };
+    purpleSingle.src = "assets/spritesheet-bananaPurpleSingle.png";
+
+    greenSingle.onload = function () {
+        greenSingle.isReady = true;
+        greenSingle.subTextureWidth = greenSingle.width / SINGLE_SPRITE_COUNT;
+    };
+    greenSingle.src = "assets/spritesheet-bananaGreenSingle.png";
+
+    let singleColorImages = [yellowSingle, redSingle, blueSingle, purpleSingle, greenSingle];
+    let bunchColorImages = [yellowBunch];
+
+    let testFood = objects.Food({
+        size: { x: 30, y: 30 }, // Size in pixels
+        image: singleColorImages[0],
+        center: { x: 50, y: 350 },
+        rotation: 0,
+    });
+
+    let bigFood = objects.Food({
+        size: { x: 40, y: 40 }, // Size in pixels
+        image: bunchColorImages[0],
+        center: { x: 50, y: 350 },
+        rotation: 0,
+    });
+
+    let singleBananas = [testFood];
     let bunchBananas = [bigFood];
 
 
@@ -161,6 +231,8 @@ MyGame.main = function (objects, input, renderer, graphics) {
             if (Math.abs(snake.head.center.x - banana.center.x) > BANANA_EAT_TOL || Math.abs(snake.head.center.y - banana.center.y) > BANANA_EAT_TOL) {
                 newSingleBananas.push(banana);
             }
+
+            else { snake.eatSingleBanana(); }
         }
         singleBananas = newSingleBananas;
 
@@ -172,6 +244,8 @@ MyGame.main = function (objects, input, renderer, graphics) {
             if (Math.abs(snake.head.center.x - bunch.center.x) > BANANA_EAT_TOL || Math.abs(snake.head.center.y - bunch.center.y) > BANANA_EAT_TOL) {
                 newBunchBananas.push(bunch);
             }
+
+            else { snake.eatBananaBunch(); }
         }
         bunchBananas = newBunchBananas;
     }
@@ -181,6 +255,7 @@ MyGame.main = function (objects, input, renderer, graphics) {
         for (let segment of snake.body) {
             let deathBunch = objects.Food({
                 size: { x: 40, y: 40 }, // Size in pixels
+                image: bunchColorImages[0],
                 center: { x: segment.center.x, y: segment.center.y },
                 rotation: 0,
             });
@@ -193,8 +268,11 @@ MyGame.main = function (objects, input, renderer, graphics) {
         let bananaSpawnX = Math.random() * graphics.getCanvas().width;
         let bananaSpawnY = Math.random() * graphics.getCanvas().height;
 
+        let bananaColor = Math.floor(Math.random() * 6);
+
         let newBanana = objects.Food({
             size: { x: 30, y: 30 },
+            image: singleColorImages[bananaColor],
             center: { x: bananaSpawnX, y: bananaSpawnY },
             rotation: 0
         });
@@ -224,9 +302,14 @@ MyGame.main = function (objects, input, renderer, graphics) {
         }
     }
 
+    function updateScore(elapsedTime) {
+        document.getElementById("Score").textContent = "Score: " + playerSnake.score;
+    }
+
     function update(elapsedTime) {
         updateFood(elapsedTime);
-        updateTime(elapsedTime)
+        updateTime(elapsedTime);
+        updateScore(elapsedTime);
 
         if (playerSnake.isAlive()) {
             testSnakeWallCollision(playerSnake);
@@ -259,7 +342,6 @@ MyGame.main = function (objects, input, renderer, graphics) {
     });
 
     function start() {
-        console.log("yarg");
         //socket.emit(NetworkAction.CLIENT_JOIN_REQUEST, {});
     }
     myKeyboard.register(MyGame.input.keys.right, () => {
