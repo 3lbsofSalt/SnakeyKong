@@ -121,12 +121,17 @@ MyGame.graphics = (function () {
         return canvas;
     }
 
+    function getContext() {
+        return context;
+    }
+
     let api = {
         clear: clear,
         drawTexture: drawTexture,
         drawSubTexture: drawSubTexture,
         drawRectangle: drawRectangle,
         getCanvas: getCanvas,
+        getContext: getContext,
     };
 
     return api;
