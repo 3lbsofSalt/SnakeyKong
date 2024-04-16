@@ -112,22 +112,22 @@ function processInput(elapsedTime) {
                 client.player.snake.setDirectionUp();
                 break;
             case "right":
-                client.player.player.snake.setDirectionRight();
+                client.player.snake.setDirectionRight();
                 break;
             case "left":
-                client.player.player.snake.setDirectionLeft();
+                client.player.snake.setDirectionLeft();
                 break;
             case "up-left":
-                client.player.player.snake.setDirectionUpLeft();
+                client.player.snake.setDirectionUpLeft();
                 break;
             case "down-left":
-                client.player.player.snake.setDirectionDownLeft();
+                client.player.snake.setDirectionDownLeft();
                 break;
             case "up-right":
-                client.player.player.snake.setDirectionUpRight();
+                client.player.snake.setDirectionUpRight();
                 break;
             case "up-left":
-                client.player.player.snake.setDirectionUpLeft();
+                client.player.snake.setDirectionUpLeft();
                 break;
         }
     }
