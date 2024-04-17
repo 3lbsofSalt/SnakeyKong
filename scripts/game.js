@@ -59,6 +59,7 @@ MyGame.main = function (objects, input, renderer, graphics) {
   }
   ("use strict");
 
+  const UPDATE_RATE_MS = 30;
   let cancelNextRequest = true;
   const socket = io();
   let playerSnake = {};
@@ -67,14 +68,130 @@ MyGame.main = function (objects, input, renderer, graphics) {
 
   socket.on("connect-ack", () => {
     console.log("Connected to the Server!");
-    socket.emit("join-request");
   });
+
+  let canvas = graphics.getCanvas();
+  let context = graphics.getContext();
+
+  let particle_system = particleSystem();
+  let banana_particles = [];
+
+  const WORLD_WIDTH = 4800;
+  const WORLD_HEIGHT = 2600;
+
+  const camera = {
+    x: 0,
+    y: 0,
+    width: canvas.width,
+    height: canvas.height
+  };
+
+  const backgroundImage = new Image();
+
+  backgroundImage.onload = function () {
+    backgroundImage.isReady = true;
+    backgroundImage.subTextureWidth = backgroundImage.width;
+  };
+  backgroundImage.src = "assets/gameBackdropDK.png";
+
+  const yellowBunch = new Image();
+  const redBunch = new Image();
+  const blueBunch = new Image();
+  const purpleBunch = new Image();
+  const greenBunch = new Image();
+
+  const yellowParticle = new Image();
+  const redParticle = new Image();
+  const blueParticle = new Image();
+  const purpleParticle = new Image();
+  const greenParticle = new Image();
+
+  const dkhead = new Image();
+  const dkbody = new Image();
+
+  dkhead.onload = function () {
+    dkhead.isReady = true;
+    dkhead.subTextureWidth = dkhead.width;
+  };
+  dkhead.src = "assets/dkhead.png";
+
+  dkbody.onload = function () {
+    dkbody.isReady = true;
+    dkbody.subTextureWidth = dkbody.width;
+  };
+  dkbody.src = "assets/dkbody.png";
+
+
+
+  yellowParticle.onload = function () {
+    yellowParticle.isReady = true;
+    yellowParticle.subTextureWidth = yellowParticle.width;
+  };
+  yellowParticle.src = "assets/yellowParticle.png";
+
+  redParticle.onload = function () {
+    redParticle.isReady = true;
+    redParticle.subTextureWidth = redParticle.width;
+  };
+  redParticle.src = "assets/redParticle.png";
+
+  blueParticle.onload = function () {
+    blueParticle.isReady = true;
+    blueParticle.subTextureWidth = blueParticle.width;
+  };
+  blueParticle.src = "assets/blueParticle.png";
+
+  purpleParticle.onload = function () {
+    purpleParticle.isReady = true;
+    purpleParticle.subTextureWidth = purpleParticle.width;
+  };
+  purpleParticle.src = "assets/purpleParticle.png";
+
+  greenParticle.onload = function () {
+    greenParticle.isReady = true;
+    greenParticle.subTextureWidth = greenParticle.width;
+  };
+  greenParticle.src = "assets/greenParticle.png";
+
+
+
+  yellowBunch.onload = function () {
+    yellowBunch.isReady = true;
+    yellowBunch.subTextureWidth = yellowBunch.width / BUNCH_SPRITE_COUNT;
+  };
+  yellowBunch.src = "assets/spritesheet-bananaYellowBunch.png";
+
+  redBunch.onload = function () {
+    redBunch.isReady = true;
+    redBunch.subTextureWidth = redBunch.width / BUNCH_SPRITE_COUNT;
+  };
+  redBunch.src = "assets/spritesheet-bananaRedBunch.png";
+
+  blueBunch.onload = function () {
+    blueBunch.isReady = true;
+    blueBunch.subTextureWidth = blueBunch.width / BUNCH_SPRITE_COUNT;
+  };
+  blueBunch.src = "assets/spritesheet-bananaBlueBunch.png";
+
+  purpleBunch.onload = function () {
+    purpleBunch.isReady = true;
+    purpleBunch.subTextureWidth = purpleBunch.width / BUNCH_SPRITE_COUNT;
+  };
+  purpleBunch.src = "assets/spritesheet-bananaPurpleBunch.png";
+
+  greenBunch.onload = function () {
+    greenBunch.isReady = true;
+    greenBunch.subTextureWidth = greenBunch.width / BUNCH_SPRITE_COUNT;
+  };
+  greenBunch.src = "assets/spritesheet-bananaGreenBunch.png";
+
+
 
   // This event should only be recieved after a join request event is emitted.
   socket.on("join", (data) => {
     playerSnake = objects.Snake({
       direction: data.rotation,
-      center: { ...data.position },
+      center: {...data.position},
       headimage: dkhead,
       bodyimage: dkbody,
       moveRate: data.moveRate,
@@ -86,141 +203,6 @@ MyGame.main = function (objects, input, renderer, graphics) {
       score: 0,
       alive: true,
     });
-})
-
-    let canvas = graphics.getCanvas();
-    let context = graphics.getContext();
-
-    let particle_system = particleSystem();
-    let banana_particles = [];
-
-    const WORLD_WIDTH = 4800;
-    const WORLD_HEIGHT = 2600;
-
-    const camera = {
-        x: 0,
-        y: 0,
-        width: canvas.width,
-        height: canvas.height
-    };
-
-    const backgroundImage = new Image();
-
-    backgroundImage.onload = function () {
-        backgroundImage.isReady = true;
-        backgroundImage.subTextureWidth = backgroundImage.width;
-    };
-    backgroundImage.src = "assets/gameBackdropDK.png";
-
-    const yellowBunch = new Image();
-    const redBunch = new Image();
-    const blueBunch = new Image();
-    const purpleBunch = new Image();
-    const greenBunch = new Image();
-
-    const yellowParticle = new Image();
-    const redParticle = new Image();
-    const blueParticle = new Image();
-    const purpleParticle = new Image();
-    const greenParticle = new Image();
-
-    const dkhead = new Image();
-    const dkbody = new Image();
-
-    dkhead.onload = function () {
-        dkhead.isReady = true;
-        dkhead.subTextureWidth = dkhead.width;
-    };
-    dkhead.src = "assets/dkhead.png";
-
-    dkbody.onload = function () {
-        dkbody.isReady = true;
-        dkbody.subTextureWidth = dkbody.width;
-    };
-    dkbody.src = "assets/dkbody.png";
-
-
-
-    yellowParticle.onload = function () {
-        yellowParticle.isReady = true;
-        yellowParticle.subTextureWidth = yellowParticle.width;
-    };
-    yellowParticle.src = "assets/yellowParticle.png";
-
-    redParticle.onload = function () {
-        redParticle.isReady = true;
-        redParticle.subTextureWidth = redParticle.width;
-    };
-    redParticle.src = "assets/redParticle.png";
-
-    blueParticle.onload = function () {
-        blueParticle.isReady = true;
-        blueParticle.subTextureWidth = blueParticle.width;
-    };
-    blueParticle.src = "assets/blueParticle.png";
-
-    purpleParticle.onload = function () {
-        purpleParticle.isReady = true;
-        purpleParticle.subTextureWidth = purpleParticle.width;
-    };
-    purpleParticle.src = "assets/purpleParticle.png";
-
-    greenParticle.onload = function () {
-        greenParticle.isReady = true;
-        greenParticle.subTextureWidth = greenParticle.width;
-    };
-    greenParticle.src = "assets/greenParticle.png";
-
-
-
-    yellowBunch.onload = function () {
-        yellowBunch.isReady = true;
-        yellowBunch.subTextureWidth = yellowBunch.width / BUNCH_SPRITE_COUNT;
-    };
-    yellowBunch.src = "assets/spritesheet-bananaYellowBunch.png";
-
-    redBunch.onload = function () {
-        redBunch.isReady = true;
-        redBunch.subTextureWidth = redBunch.width / BUNCH_SPRITE_COUNT;
-    };
-    redBunch.src = "assets/spritesheet-bananaRedBunch.png";
-
-    blueBunch.onload = function () {
-        blueBunch.isReady = true;
-        blueBunch.subTextureWidth = blueBunch.width / BUNCH_SPRITE_COUNT;
-    };
-    blueBunch.src = "assets/spritesheet-bananaBlueBunch.png";
-
-    purpleBunch.onload = function () {
-        purpleBunch.isReady = true;
-        purpleBunch.subTextureWidth = purpleBunch.width / BUNCH_SPRITE_COUNT;
-    };
-    purpleBunch.src = "assets/spritesheet-bananaPurpleBunch.png";
-
-    greenBunch.onload = function () {
-        greenBunch.isReady = true;
-        greenBunch.subTextureWidth = greenBunch.width / BUNCH_SPRITE_COUNT;
-    };
-    greenBunch.src = "assets/spritesheet-bananaGreenBunch.png";
-
-
-
-    // This event should only be recieved after a join request event is emitted.
-    socket.on("join", (data) => {
-        playerSnake = objects.Snake({
-            direction: 3 * Math.PI / 2,
-            center: { x: 500, y: 300 },
-            headimage: dkhead,
-            bodyimage: dkbody,
-            moveRate: data.moveRate,
-            rotateRate: data.rotateRate,
-            segmentDistance: data.segmentDistance,
-            startingSegments: 10,
-            headRenderer: dkHeadRender,
-            bodyRenderer: dkBodyRender,
-            score: 0,
-            alive: true,
-        });
 
     registerKeys();
     cancelNextRequest = false;
@@ -248,9 +230,7 @@ MyGame.main = function (objects, input, renderer, graphics) {
   });
 
   socket.on("update_other", (data) => {
-    console.log("desired in socket", data.desired);
     otherSnakes[data.player_id].setRotation(data.desired);
-    console.log(otherSnakes[data.player_id].head);
   });
 
   let lastTimeStamp = performance.now();
@@ -376,7 +356,9 @@ MyGame.main = function (objects, input, renderer, graphics) {
     lastTimeStamp = time;
 
     if (!cancelNextRequest) {
-      requestAnimationFrame(gameLoop);
+      setTimeout(() => {
+        requestAnimationFrame(gameLoop);
+      }, UPDATE_RATE_MS - elapsed);
     }
   }
 
@@ -485,11 +467,11 @@ MyGame.main = function (objects, input, renderer, graphics) {
     singleBananas.push(newBanana);
   }
 
-    function renderBackground() {
-        if (backgroundImage.isReady) {
-            context.drawImage(backgroundImage, 0, 0, backgroundImage.width, backgroundImage.height);
-        }
+  function renderBackground() {
+    if (backgroundImage.isReady) {
+      context.drawImage(backgroundImage, 0, 0, backgroundImage.width, backgroundImage.height);
     }
+  }
 
   function updateTime(elapsedTime) {
     timer += elapsedTime;
@@ -518,58 +500,58 @@ MyGame.main = function (objects, input, renderer, graphics) {
       "Score: " + playerSnake.score;
   }
 
-    function update(elapsedTime) {
-        updateFood(elapsedTime);
-        updateTime(elapsedTime);
-        updateScore(elapsedTime);
-        updateParticles(elapsedTime);
-        updateCamera();
+  function update(elapsedTime) {
+    updateFood(elapsedTime);
+    updateTime(elapsedTime);
+    updateScore(elapsedTime);
+    updateParticles(elapsedTime);
+    updateCamera();
 
-        if (playerSnake.isAlive()) {
-            testSnakeWallCollision(playerSnake);
-            testBananaCollision(playerSnake, elapsedTime);
-            playerSnake.update(elapsedTime);
-        }
-
-        for (const snake of Object.values(otherSnakes)) {
-            snake.update(elapsedTime);
-        }
+    if (playerSnake.isAlive()) {
+      testSnakeWallCollision(playerSnake);
+      testBananaCollision(playerSnake, elapsedTime);
+      playerSnake.update(elapsedTime);
     }
 
-    function render() {
-        graphics.clear();
+    for (const snake of Object.values(otherSnakes)) {
+      snake.update(elapsedTime);
+    }
+  }
 
-        context.translate(-camera.x, -camera.y);
-        renderBackground();
-        renderFood();
-        renderParticles();
+  function render() {
+    graphics.clear();
 
-        // Render segments from last to first
-        if (playerSnake.isAlive()) {
-            playerSnake.render();
-        }
+    context.translate(-camera.x, -camera.y);
+    renderBackground();
+    renderFood();
+    renderParticles();
 
-        for (const snake of Object.values(otherSnakes)) {
-            snake.render();
-        }
-
-        context.translate(camera.x, camera.y);
+    // Render segments from last to first
+    if (playerSnake.isAlive()) {
+      playerSnake.render();
     }
 
-
-    // This will have to be updated once we have a whole world with camera scrolling.
-    function testSnakeWallCollision(snake) {
-        let hitHorizontalWall =
-            snake.head.center.x < 0 ||
-            snake.head.center.x > WORLD_WIDTH;
-        let hitVerticalWall =
-            snake.head.center.y < 0 ||
-            snake.head.center.y > WORLD_HEIGHT;
-        if (hitHorizontalWall || hitVerticalWall) {
-            snake.kill();
-            createDeathBananas(snake);
-        }
+    for (const snake of Object.values(otherSnakes)) {
+      snake.render();
     }
+
+    context.translate(camera.x, camera.y);
+  }
+
+
+  // This will have to be updated once we have a whole world with camera scrolling.
+  function testSnakeWallCollision(snake) {
+    let hitHorizontalWall =
+      snake.head.center.x < 0 ||
+        snake.head.center.x > WORLD_WIDTH;
+    let hitVerticalWall =
+      snake.head.center.y < 0 ||
+        snake.head.center.y > WORLD_HEIGHT;
+    if (hitHorizontalWall || hitVerticalWall) {
+      snake.kill();
+      createDeathBananas(snake);
+    }
+  }
 
   myKeyboard.register("Escape", function () {
     cancelNextRequest = true;
@@ -577,157 +559,152 @@ MyGame.main = function (objects, input, renderer, graphics) {
   });
 
   function start() {
-    //socket.emit(NetworkAction.CLIENT_JOIN_REQUEST, {});
+    socket.emit("join-request");
   }
 
-
   // Particle system - put in own file later
-    function magnetPull(snake, banana, elapsedTime) {
-        banana.center.x +=
-            ((snake.head.center.x - banana.center.x) * elapsedTime) / 150;
-        banana.center.y +=
-            ((snake.head.center.y - banana.center.y) * elapsedTime) / 150;
+  function magnetPull(snake, banana, elapsedTime) {
+    banana.center.x +=
+    ((snake.head.center.x - banana.center.x) * elapsedTime) / 150;
+    banana.center.y +=
+    ((snake.head.center.y - banana.center.y) * elapsedTime) / 150;
+  }
+
+  function testBananaCollision(snake, elapsedTime) {
+    let newSingleBananas = [];
+    let newBunchBananas = [];
+
+    for (let banana of singleBananas) {
+      if (
+        Math.abs(snake.head.center.x - banana.center.x) <
+          BANANA_MAGNET_TOL &&
+          Math.abs(snake.head.center.y - banana.center.y) <
+            BANANA_MAGNET_TOL
+      ) {
+        magnetPull(snake, banana, elapsedTime);
+      }
+
+      if (
+        Math.abs(snake.head.center.x - banana.center.x) >
+          BANANA_EAT_TOL ||
+          Math.abs(snake.head.center.y - banana.center.y) > BANANA_EAT_TOL
+      ) {
+        newSingleBananas.push(banana);
+      } else {
+        snake.eatSingleBanana();
+        particle_system.eatBanana(banana);
+      }
     }
+    singleBananas = newSingleBananas;
 
-    function testBananaCollision(snake, elapsedTime) {
-        let newSingleBananas = [];
-        let newBunchBananas = [];
+    for (let bunch of bunchBananas) {
+      if (
+        Math.abs(snake.head.center.x - bunch.center.x) <
+          BANANA_MAGNET_TOL &&
+          Math.abs(snake.head.center.y - bunch.center.y) <
+            BANANA_MAGNET_TOL
+      ) {
+        magnetPull(snake, bunch, elapsedTime);
+      }
 
-        for (let banana of singleBananas) {
-            if (
-                Math.abs(snake.head.center.x - banana.center.x) <
-                    BANANA_MAGNET_TOL &&
-                Math.abs(snake.head.center.y - banana.center.y) <
-                    BANANA_MAGNET_TOL
-            ) {
-                magnetPull(snake, banana, elapsedTime);
-            }
-
-            if (
-                Math.abs(snake.head.center.x - banana.center.x) >
-                    BANANA_EAT_TOL ||
-                Math.abs(snake.head.center.y - banana.center.y) > BANANA_EAT_TOL
-            ) {
-                newSingleBananas.push(banana);
-            } else {
-                snake.eatSingleBanana();
-                particle_system.eatBanana(banana);
-            }
-        }
-        singleBananas = newSingleBananas;
-
-        for (let bunch of bunchBananas) {
-            if (
-                Math.abs(snake.head.center.x - bunch.center.x) <
-                    BANANA_MAGNET_TOL &&
-                Math.abs(snake.head.center.y - bunch.center.y) <
-                    BANANA_MAGNET_TOL
-            ) {
-                magnetPull(snake, bunch, elapsedTime);
-            }
-
-            if (
-                Math.abs(snake.head.center.x - bunch.center.x) >
-                    BANANA_EAT_TOL ||
-                Math.abs(snake.head.center.y - bunch.center.y) > BANANA_EAT_TOL
-            ) {
-                newBunchBananas.push(bunch);
-            } else {
-                snake.eatBananaBunch();
-                particle_system.eatBanana(bunch);
-            }
-        }
-        bunchBananas = newBunchBananas;
+      if (
+        Math.abs(snake.head.center.x - bunch.center.x) >
+          BANANA_EAT_TOL ||
+          Math.abs(snake.head.center.y - bunch.center.y) > BANANA_EAT_TOL
+      ) {
+        newBunchBananas.push(bunch);
+      } else {
+        snake.eatBananaBunch();
+        particle_system.eatBanana(bunch);
+      }
     }
+    bunchBananas = newBunchBananas;
+  }
 
-    // Currently spawns bananas on body segments only, no head
-    function createDeathBananas(snake) {
-        let bananaColor = Math.floor(Math.random() * 6);
+  // Currently spawns bananas on body segments only, no head
+  function createDeathBananas(snake) {
+    let bananaColor = Math.floor(Math.random() * 6);
 
-        for (let segment of snake.body) {
-            let deathBunch = objects.Food({
-                size: { x: 40, y: 40 }, // Size in pixels
-                image: bunchColorImages[bananaColor],
-                center: { x: segment.center.x, y: segment.center.y },
-                rotation: 0,
-            });
+    for (let segment of snake.body) {
+      let deathBunch = objects.Food({
+        size: { x: 40, y: 40 }, // Size in pixels
+        image: bunchColorImages[bananaColor],
+        center: { x: segment.center.x, y: segment.center.y },
+        rotation: 0,
+      });
 
-            bunchBananas.push(deathBunch);
-        }
+      bunchBananas.push(deathBunch);
     }
+  }
 
-    function spawnNewBanana() {
-        let bananaSpawnX = Math.random() * WORLD_WIDTH;
-        let bananaSpawnY = Math.random() * WORLD_HEIGHT;
+  function spawnNewBanana() {
+    let bananaSpawnX = Math.random() * WORLD_WIDTH;
+    let bananaSpawnY = Math.random() * WORLD_HEIGHT;
 
-        let bananaColor = Math.floor(Math.random() * 6);
+    let bananaColor = Math.floor(Math.random() * 6);
 
-        let newBanana = objects.Food({
-            size: { x: 30, y: 30 },
-            color: bananaColor,
-            image: singleColorImages[bananaColor],
-            center: { x: bananaSpawnX, y: bananaSpawnY },
-            rotation: 0,
-        });
-
-        singleBananas.push(newBanana);
-    }
-
-    function updateTime(elapsedTime) {
-        timer += elapsedTime;
-        if (timer >= 250) {
-            timer -= 250;
-            spawnNewBanana();
-        }
-    }
-
-    function updateFood(elapsedTime) {
-        singleBananaRender.update(elapsedTime);
-        bunchBananaRender.update(elapsedTime);
-    }
-
-    function updateCamera() {
-        // Adjust camera position based on player's position
-        camera.x = playerSnake.head.center.x - camera.width / 2;
-        camera.y = playerSnake.head.center.y - camera.height / 2;
-    
-        // Ensure camera doesn't go out of bounds
-        if (camera.x < 0) {
-            camera.x = 0;
-        }
-        if (camera.y < 0) {
-            camera.y = 0;
-        }
-        if (camera.x + camera.width > WORLD_WIDTH) {
-            camera.x = WORLD_WIDTH - camera.width;
-        }
-        if (camera.y + camera.height > WORLD_HEIGHT) {
-            camera.y = WORLD_HEIGHT - camera.height;
-        }
-    }
-
-    function renderFood() {
-        for (let banana of singleBananas) {
-            singleBananaRender.render(banana);
-        }
-        for (let bunch of bunchBananas) {
-            bunchBananaRender.render(bunch);
-        }
-    }
-
-    function updateScore(elapsedTime) {
-        document.getElementById("Score").textContent =
-            "Score: " + playerSnake.score;
-    }
-
-    myKeyboard.register("Escape", function () {
-        cancelNextRequest = true;
-        MyGame.manager.showScreen("main-menu");
+    let newBanana = objects.Food({
+      size: { x: 30, y: 30 },
+      color: bananaColor,
+      image: singleColorImages[bananaColor],
+      center: { x: bananaSpawnX, y: bananaSpawnY },
+      rotation: 0,
     });
 
-    function start() {
-        //socket.emit(NetworkAction.CLIENT_JOIN_REQUEST, {});
+    singleBananas.push(newBanana);
+  }
+
+  function updateTime(elapsedTime) {
+    timer += elapsedTime;
+    if (timer >= 250) {
+      timer -= 250;
+      spawnNewBanana();
     }
+  }
+
+  function updateFood(elapsedTime) {
+    singleBananaRender.update(elapsedTime);
+    bunchBananaRender.update(elapsedTime);
+  }
+
+  function updateCamera() {
+    // Adjust camera position based on player's position
+    camera.x = playerSnake.head.center.x - camera.width / 2;
+    camera.y = playerSnake.head.center.y - camera.height / 2;
+
+    // Ensure camera doesn't go out of bounds
+    if (camera.x < 0) {
+      camera.x = 0;
+    }
+    if (camera.y < 0) {
+      camera.y = 0;
+    }
+    if (camera.x + camera.width > WORLD_WIDTH) {
+      camera.x = WORLD_WIDTH - camera.width;
+    }
+    if (camera.y + camera.height > WORLD_HEIGHT) {
+      camera.y = WORLD_HEIGHT - camera.height;
+    }
+  }
+
+  function renderFood() {
+    for (let banana of singleBananas) {
+      singleBananaRender.render(banana);
+    }
+    for (let bunch of bunchBananas) {
+      bunchBananaRender.render(bunch);
+    }
+  }
+
+  function updateScore(elapsedTime) {
+    document.getElementById("Score").textContent =
+      "Score: " + playerSnake.score;
+  }
+
+  myKeyboard.register("Escape", function () {
+    cancelNextRequest = true;
+    MyGame.manager.showScreen("main-menu");
+  });
 
   function Particle(spec) {
     spec.size = { x: 30, y: 30 };
