@@ -11,6 +11,8 @@ const collisions = [];
 const WORLD_WIDTH = 4800;
 const WORLD_HEIGHT = 2600;
 
+let timer = 0;
+
 const segmentDistance = 30;
 const rotateRate = Math.PI / 1000; // Radians per second
 const moveRate = 200 / 1000; // Pixels per second
@@ -144,7 +146,29 @@ function processInput(elapsedTime) {
     }
 }
 
+function spawnNewBanana() {
+    let bananaSpawnX = Math.random() * WORLD_WIDTH;
+    let bananaSpawnY = Math.random() * WORLD_HEIGHT;
+    let bananaColor = Math.floor(Math.random() * 6);
+
+    updateQueue.push({
+        type: "spawn_new_banana",
+        bananaSpawnX,
+        bananaSpawnY,
+        bananaColor,
+    });
+}
+
+function updateTime(elapsedTime) {
+    timer += elapsedTime;
+    if (timer >= 1000) {
+        timer -= 1000;
+        spawnNewBanana();
+    }
+}
+
 function update(elapsedTime, currentTime) {
+    updateTime(elapsedTime);
     for (const [id, activeClient] of Object.entries(activeClients)) {
         activeClient.player.snake.update(elapsedTime);
     }
@@ -159,6 +183,9 @@ function updateClients(elapsedTime) {
             if (clientId == event.player_id) continue;
             if (event.type === "input") {
                 client.socket.emit("update_other", event);
+            }
+            if (event.type === "spawn_new_banana") {
+                client.socket.emit("new_single", event);
             }
         }
     }
