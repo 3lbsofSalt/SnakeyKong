@@ -165,7 +165,7 @@ MyGame.main = function (objects, input, renderer, graphics) {
             objects.Food({
                 size: { x: 30, y: 30 },
                 color: data.bananaColor,
-                image: singleColorImages[bananaColor],
+                image: singleColorImages[data.bananaColor],
                 center: { x: data.bananaSpawnX, y: data.bananaSpawnY },
                 rotation: 0,
             }),
