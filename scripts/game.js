@@ -209,7 +209,147 @@ deathParticle.src = "assets/deathParticle.png";
       bodyRenderer: dkBodyRender,
       score: 0,
       alive: true,
+      name: localStorage.getItem('name')
     });
+<<<<<<< HEAD
+})
+
+    let canvas = graphics.getCanvas();
+    let context = graphics.getContext();
+
+    let particle_system = particleSystem();
+    let banana_particles = [];
+
+    const WORLD_WIDTH = 4800;
+    const WORLD_HEIGHT = 2600;
+
+    const camera = {
+        x: 0,
+        y: 0,
+        width: canvas.width,
+        height: canvas.height
+    };
+
+    const backgroundImage = new Image();
+
+    backgroundImage.onload = function () {
+        backgroundImage.isReady = true;
+        backgroundImage.subTextureWidth = backgroundImage.width;
+    };
+    backgroundImage.src = "assets/gameBackdropDK.png";
+
+    const yellowBunch = new Image();
+    const redBunch = new Image();
+    const blueBunch = new Image();
+    const purpleBunch = new Image();
+    const greenBunch = new Image();
+
+    const yellowParticle = new Image();
+    const redParticle = new Image();
+    const blueParticle = new Image();
+    const purpleParticle = new Image();
+    const greenParticle = new Image();
+
+    const dkhead = new Image();
+    const dkbody = new Image();
+
+    dkhead.onload = function () {
+        dkhead.isReady = true;
+        dkhead.subTextureWidth = dkhead.width;
+    };
+    dkhead.src = "assets/dkhead.png";
+
+    dkbody.onload = function () {
+        dkbody.isReady = true;
+        dkbody.subTextureWidth = dkbody.width;
+    };
+    dkbody.src = "assets/dkbody.png";
+
+
+
+    yellowParticle.onload = function () {
+        yellowParticle.isReady = true;
+        yellowParticle.subTextureWidth = yellowParticle.width;
+    };
+    yellowParticle.src = "assets/yellowParticle.png";
+
+    redParticle.onload = function () {
+        redParticle.isReady = true;
+        redParticle.subTextureWidth = redParticle.width;
+    };
+    redParticle.src = "assets/redParticle.png";
+
+    blueParticle.onload = function () {
+        blueParticle.isReady = true;
+        blueParticle.subTextureWidth = blueParticle.width;
+    };
+    blueParticle.src = "assets/blueParticle.png";
+
+    purpleParticle.onload = function () {
+        purpleParticle.isReady = true;
+        purpleParticle.subTextureWidth = purpleParticle.width;
+    };
+    purpleParticle.src = "assets/purpleParticle.png";
+
+    greenParticle.onload = function () {
+        greenParticle.isReady = true;
+        greenParticle.subTextureWidth = greenParticle.width;
+    };
+    greenParticle.src = "assets/greenParticle.png";
+
+
+
+    yellowBunch.onload = function () {
+        yellowBunch.isReady = true;
+        yellowBunch.subTextureWidth = yellowBunch.width / BUNCH_SPRITE_COUNT;
+    };
+    yellowBunch.src = "assets/spritesheet-bananaYellowBunch.png";
+
+    redBunch.onload = function () {
+        redBunch.isReady = true;
+        redBunch.subTextureWidth = redBunch.width / BUNCH_SPRITE_COUNT;
+    };
+    redBunch.src = "assets/spritesheet-bananaRedBunch.png";
+
+    blueBunch.onload = function () {
+        blueBunch.isReady = true;
+        blueBunch.subTextureWidth = blueBunch.width / BUNCH_SPRITE_COUNT;
+    };
+    blueBunch.src = "assets/spritesheet-bananaBlueBunch.png";
+
+    purpleBunch.onload = function () {
+        purpleBunch.isReady = true;
+        purpleBunch.subTextureWidth = purpleBunch.width / BUNCH_SPRITE_COUNT;
+    };
+    purpleBunch.src = "assets/spritesheet-bananaPurpleBunch.png";
+
+    greenBunch.onload = function () {
+        greenBunch.isReady = true;
+        greenBunch.subTextureWidth = greenBunch.width / BUNCH_SPRITE_COUNT;
+    };
+    greenBunch.src = "assets/spritesheet-bananaGreenBunch.png";
+
+
+
+    // This event should only be recieved after a join request event is emitted.
+    socket.on("join", (data) => {
+        playerSnake = objects.Snake({
+            direction: 3 * Math.PI / 2,
+            center: { x: 500, y: 300 },
+            headimage: dkhead,
+            bodyimage: dkbody,
+            moveRate: data.moveRate,
+            rotateRate: data.rotateRate,
+            segmentDistance: data.segmentDistance,
+            startingSegments: 10,
+            headRenderer: dkHeadRender,
+            bodyRenderer: dkBodyRender,
+            score: 0,
+            alive: true,
+            name: localStorage.getItem('name')
+        });
+=======
+>>>>>>> 2fc0dceb07733b40cdeb5c1b8f496c764028e703
 
     registerKeys();
     cancelNextRequest = false;
