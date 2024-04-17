@@ -20,7 +20,6 @@ MyGame.render.AnimatedModel = function (spec, graphics) {
       // When switching sprites, keep the leftover time because
       // it needs to be accounted for the next sprite animation frame.
       animationTime -= spec.spriteTime[subImageIndex];
-      //console.log("SPEC SPRITE TIME:  " + spec.spriteTime[subImageIndex])
       subImageIndex += 1;
       //
       // Wrap around from the last back to the first sprite as needed
@@ -43,17 +42,6 @@ MyGame.render.AnimatedModel = function (spec, graphics) {
         model.rotation,
         model.size,
       );
-      if(!model.image || (!subImageIndex && subImageIndex !== 0) || !model.image.subTextureWidth || !model.center
-        || (!model.rotation && model.rotation !== 0) || !model.size
-      ) {
-        console.log(model.image);
-        console.log(subImageIndex);
-        console.log(model.image.subTextureWidth);
-        console.log(model.center);
-        console.log(model.rotation);
-        console.log(model.size);
-        debugger;
-      }
     }
   }
 
