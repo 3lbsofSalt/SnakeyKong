@@ -198,10 +198,10 @@ MyGame.main = function (objects, input, renderer, graphics) {
         myKeyboard.update(elapsedTime);
     }
 
-    const UPDATE_RATE_MS = 27;
+    const UPDATE_RATE_MS = 30;
 
     function gameLoop(time) {
-        let elapsed = (time - lastTimeStamp) / 1000;
+        let elapsed = time - lastTimeStamp;
         processInput(elapsed);
         update(elapsed);
         render();
