@@ -173,6 +173,12 @@ MyGame.main = function (objects, input, renderer, graphics) {
         );
     });
 
+  let magneted_bananas = [];
+  socket.on('magnet_pull', data => {
+    const banana = singleBananas.find(nana => data.banana_id === nana.id);
+    magnetPull(data.bananaX, data.bananaY, banana, )
+  })
+
     socket.on("update_other", (data) => {
         otherSnakes[data.player_id].setRotation(data.desired);
     });
@@ -221,7 +227,7 @@ MyGame.main = function (objects, input, renderer, graphics) {
                 Math.abs(snake.head.center.y - banana.center.y) <
                     BANANA_MAGNET_TOL
             ) {
-                magnetPull(snake, banana, elapsedTime);
+                magnetPull(snake.head.center.x, snake.head.center.y, banana, elapsedTime);
             }
 
             if (
@@ -244,7 +250,7 @@ MyGame.main = function (objects, input, renderer, graphics) {
                 Math.abs(snake.head.center.y - bunch.center.y) <
                     BANANA_MAGNET_TOL
             ) {
-                magnetPull(snake, bunch, elapsedTime);
+                magnetPull(snake.head.center.x, snake.head.center.y, bunch, elapsedTime);
             }
 
             if (
@@ -366,12 +372,11 @@ MyGame.main = function (objects, input, renderer, graphics) {
         socket.emit("join-request");
     }
 
+
     // Particle system - put in own file later
-    function magnetPull(snake, banana, elapsedTime) {
-        banana.center.x +=
-            ((snake.head.center.x - banana.center.x) * elapsedTime) / 150;
-        banana.center.y +=
-            ((snake.head.center.y - banana.center.y) * elapsedTime) / 150;
+    function magnetPull(x, y, banana, elapsedTime) {
+        banana.center.x += ((x - banana.center.x) * elapsedTime) / 150;
+        banana.center.y += ((y - banana.center.y) * elapsedTime) / 150;
     }
 
     // Currently spawns bananas on body segments only, no head

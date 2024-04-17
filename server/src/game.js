@@ -152,14 +152,14 @@ function spawnNewBanana() {
     let bananaSpawnX = Math.random() * WORLD_WIDTH;
     let bananaSpawnY = Math.random() * WORLD_HEIGHT;
     let bananaColor = Math.floor(Math.random() * 6);
-    id++;
+    food_id++;
 
     updateQueue.push({
         type: "spawn_new_banana",
         bananaSpawnX,
         bananaSpawnY,
         bananaColor,
-        food_id,
+        id: food_id
     });
 }
 
