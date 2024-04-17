@@ -20,6 +20,9 @@ MyGame.objects.Food = function (spec) {
         get rotation() {
             return spec.rotation;
         },
+        get id() {
+            return spec.id;
+        },
     };
 
     return api;
