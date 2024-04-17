@@ -1,12 +1,5 @@
 //const createQueue = require(["server/src/shared/Queue.js"]);
 MyGame.objects.Head = function (spec) {
-  //------------------------------------------------------------------
-  //
-  // Move in the direction of the rotation.
-  //
-  //------------------------------------------------------------------
-
-  //------------------------------------------------------------------
   function moveForward(elapsedTime) {
     //
     // Create a normalized direction vector
@@ -116,16 +109,18 @@ MyGame.objects.Body = function (spec) {
   //
   //------------------------------------------------------------------
   function moveForward(elapsedTime, nextSegment) {
-    const nextLocation = spec.nextLocations.empty()
-      ? nextSegment.center
-      : spec.nextLocations.peek();
+    let nextLocation, vectorX, vectorY;
+    while(true) {
+      nextLocation = spec.nextLocations.empty()
+        ? nextSegment.center
+        : spec.nextLocations.peek();
 
-    // Create a normalized direction vector
-    let vectorX = nextLocation.x - spec.center.x;
-    let vectorY = nextLocation.y - spec.center.y;
+      // Create a normalized direction vector
+      vectorX = nextLocation.x - spec.center.x;
+      vectorY = nextLocation.y - spec.center.y;
 
-    if(vectorX == 0 && vectorY == 0) {
-      spec.nextLocations.pop();
+      if(vectorX != 0 || vectorY != 0) break;
+      spec.nextLocations.pop(); // nextLocation is the same as the current location
     }
 
     let magnitude = Math.sqrt(vectorX * vectorX + vectorY * vectorY);
@@ -138,6 +133,11 @@ MyGame.objects.Body = function (spec) {
 
     moveX = Math.round(moveX);
     moveY = Math.round(moveY);
+    if(isNaN(moveX) || isNaN(moveY)) {
+      console.log(spec);
+      console.log(magnitude);
+      debugger;
+    }
 
     spec.center.x += moveX;
     spec.center.y += moveY;

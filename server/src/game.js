@@ -30,6 +30,7 @@ function initializeSocketIO(server) {
           playerId: socket.id,
         });
 
+        console.log(Date.now);
         socket.emit("connect_other", {
           playerId: client.socket.id,
           snake: client.player.snake,
