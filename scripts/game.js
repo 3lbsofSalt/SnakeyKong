@@ -160,7 +160,6 @@ MyGame.main = function (objects, input, renderer, graphics) {
         otherSnakes[data.playerId] = newSnake;
     });
 
-<<<<<<< HEAD
     socket.on("new_single", (data) => {
         singleBananas.push(
             objects.Food({
@@ -177,12 +176,6 @@ MyGame.main = function (objects, input, renderer, graphics) {
         otherSnakes[data.player_id].setRotation(data.desired);
     });
 
-=======
-    socket.on("update_other", (data) => {
-        otherSnakes[data.player_id].setRotation(data.desired);
-    });
-
->>>>>>> e9c27d5c16528bca3a8212616e06fc077e187a58
     let lastTimeStamp = performance.now();
     let myKeyboard = input.Keyboard();
     let timer = 0;
