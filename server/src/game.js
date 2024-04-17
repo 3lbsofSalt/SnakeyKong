@@ -1,7 +1,5 @@
 const NetworkAction = require("./shared/NetworkActions.js");
 const present = require("present");
-const canvas = graphics.getCanvas();
-const context = graphics.getContext();
 
 const { createPlayer } = require("./objects/Player.js");
 const createFood = require("./objects/Food.js");

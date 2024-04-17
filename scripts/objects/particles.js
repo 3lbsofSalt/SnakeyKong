@@ -134,7 +134,7 @@ function Particle(spec) {
     return api;
 }
 
-function particleSystem() {
+function particleSystem(playerSnake) {
     function eatBanana(banana) {
         // Generate some new particles
         for (let particle = 0; particle < 20; particle++) {
