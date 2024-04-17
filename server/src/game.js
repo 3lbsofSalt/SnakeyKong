@@ -159,6 +159,16 @@ function spawnNewBanana() {
     });
 }
 
+function magnetPull(snake, banana, elapsedTime) {
+
+        updateQueue.push({
+            type: "magnet_pull",
+            bananaX: banana.center.x,
+            bananaY: banana.center.y,
+            banana_id: banana.id
+        });
+}
+
 function updateTime(elapsedTime) {
     timer += elapsedTime;
     if (timer >= 100) {
@@ -186,6 +196,9 @@ function updateClients(elapsedTime) {
             }
             if (event.type === "spawn_new_banana") {
                 client.socket.emit("new_single", event);
+            }
+            if (event.type === "magnet_pull") {
+                client.socket.emit("magnet_pull", event);
             }
         }
     }
