@@ -294,6 +294,14 @@ Snake = function (spec) {
         return spec.alive;
     };
 
+    snake.eatSingleBanana = function () {
+        snake.score += 1;
+    };
+
+    snake.eatBananaBunch = function () {
+        snake.score += 10;
+    };
+
     snake.kill = function () {
         spec.alive = false;
     };

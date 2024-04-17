@@ -175,8 +175,8 @@ MyGame.main = function (objects, input, renderer, graphics) {
 
   let magneted_bananas = [];
   socket.on('magnet_pull', data => {
-    const banana = singleBananas.find(nana => data.banana_id === nana.id);
-    magnetPull(data.bananaX, data.bananaY, banana, )
+    console.log(data)
+    magneted_bananas.push(data);
   })
 
     socket.on("update_other", (data) => {
@@ -214,57 +214,6 @@ MyGame.main = function (objects, input, renderer, graphics) {
                 requestAnimationFrame(gameLoop);
             }, UPDATE_RATE_MS - elapsed);
         }
-    }
-
-    function testBananaCollision(snake, elapsedTime) {
-        let newSingleBananas = [];
-        let newBunchBananas = [];
-
-        for (let banana of singleBananas) {
-            if (
-                Math.abs(snake.head.center.x - banana.center.x) <
-                    BANANA_MAGNET_TOL &&
-                Math.abs(snake.head.center.y - banana.center.y) <
-                    BANANA_MAGNET_TOL
-            ) {
-                magnetPull(snake.head.center.x, snake.head.center.y, banana, elapsedTime);
-            }
-
-            if (
-                Math.abs(snake.head.center.x - banana.center.x) >
-                    BANANA_EAT_TOL ||
-                Math.abs(snake.head.center.y - banana.center.y) > BANANA_EAT_TOL
-            ) {
-                newSingleBananas.push(banana);
-            } else {
-                snake.eatSingleBanana();
-                particle_system.eatBanana(banana);
-            }
-        }
-        singleBananas = newSingleBananas;
-
-        for (let bunch of bunchBananas) {
-            if (
-                Math.abs(snake.head.center.x - bunch.center.x) <
-                    BANANA_MAGNET_TOL &&
-                Math.abs(snake.head.center.y - bunch.center.y) <
-                    BANANA_MAGNET_TOL
-            ) {
-                magnetPull(snake.head.center.x, snake.head.center.y, bunch, elapsedTime);
-            }
-
-            if (
-                Math.abs(snake.head.center.x - bunch.center.x) >
-                    BANANA_EAT_TOL ||
-                Math.abs(snake.head.center.y - bunch.center.y) > BANANA_EAT_TOL
-            ) {
-                newBunchBananas.push(bunch);
-            } else {
-                snake.eatBananaBunch();
-                particle_system.eatBanana(bunch);
-            }
-        }
-        bunchBananas = newBunchBananas;
     }
 
     // Currently spawns bananas on body segments only, no head
@@ -320,9 +269,16 @@ MyGame.main = function (objects, input, renderer, graphics) {
         updateParticles(elapsedTime);
         updateCamera();
 
+    const magnet_now = [...magneted_bananas];
+    magneted_bananas = [];
+    for(const magneted of magnet_now) {
+      const banana = singleBananas.find(nana => magneted.banana_id === nana.id);
+      if(!banana) continue;
+      magnetPull(magneted.pullLoc.x, magneted.pullLoc.y, banana, elapsedTime);
+    }
+
         if (playerSnake.isAlive()) {
             testSnakeWallCollision(playerSnake);
-            testBananaCollision(playerSnake, elapsedTime);
             playerSnake.update(elapsedTime);
         }
 
