@@ -178,7 +178,6 @@ MyGame.main = function (objects, input, renderer, graphics) {
 
     let lastTimeStamp = performance.now();
     let myKeyboard = input.Keyboard();
-    let timer = 0;
     let BANANA_EAT_TOL = 20;
     let BANANA_MAGNET_TOL = 75;
 
