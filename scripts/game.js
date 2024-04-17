@@ -152,6 +152,7 @@ MyGame.main = function (objects, input, renderer, graphics) {
             headRenderer: dkHeadRender,
             bodyRenderer: dkBodyRender,
             alive: true,
+            name: snake.name,
         });
 
         otherSnakes[data.playerId] = newSnake;
