@@ -198,6 +198,7 @@ MyGame.objects.Snake = function (spec) {
         segmentDistance: spec.segmentDistance,
         score: spec.score,
         body: [],
+        name: spec.name,
         headRenderer: spec.headRenderer,
         bodyRenderer: spec.bodyRenderer,
     };
@@ -315,6 +316,8 @@ MyGame.objects.Snake = function (spec) {
             snake.bodyRenderer.render(snake.body[i]);
         }
         snake.headRenderer.render(snake.head);
+        // render name above head here
+        MyGame.graphics.drawText(snake.head.center.x, snake.head.center.y - 80, snake.name, 'white')
     };
 
     snake.isAlive = function () {

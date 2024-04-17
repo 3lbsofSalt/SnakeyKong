@@ -85,6 +85,7 @@ MyGame.main = function (objects, input, renderer, graphics) {
       bodyRenderer: dkBodyRender,
       score: 0,
       alive: true,
+      name: localStorage.getItem('name')
     });
 })
 
@@ -220,6 +221,7 @@ MyGame.main = function (objects, input, renderer, graphics) {
             bodyRenderer: dkBodyRender,
             score: 0,
             alive: true,
+            name: localStorage.getItem('name')
         });
 
     registerKeys();
