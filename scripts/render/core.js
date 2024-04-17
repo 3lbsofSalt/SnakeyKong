@@ -120,10 +120,10 @@ MyGame.graphics = (function () {
     function drawText(x, y, text, color) {
         var width = context.measureText(text).width;
 
-        context.font = '30px Courier';
+        context.font = "30px Courier";
         context.fillStyle = color;
-        context.textBaseline = 'top';
-        context.fillText(text, x - width/2, y);
+        context.textBaseline = "top";
+        context.fillText(text, x - width / 2, y);
     }
 
     function getCanvas() {
