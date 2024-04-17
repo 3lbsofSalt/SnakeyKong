@@ -171,6 +171,28 @@ MyGame.objects.Body = function (spec) {
 };
 
 MyGame.objects.Snake = function (spec) {
+<<<<<<< HEAD
+    const snake = {
+        direction: spec.direction,
+        moveRate: spec.moveRate,
+        rotateRate: spec.rotateRate,
+        head: MyGame.objects.Head({
+            size: { x: 75, y: 50 }, // Size in pixels
+            center: { ...spec.center },
+            rotation: spec.direction,
+            image: spec.headimage,
+            desiredRotation: spec.direction,
+            moveRate: spec.moveRate, // Pixels per second
+            rotateRate: spec.rotateRate, // Radians per second
+        }),
+        segmentDistance: spec.segmentDistance,
+        score: spec.score,
+        body: [],
+        name: spec.name,
+        headRenderer: spec.headRenderer,
+        bodyRenderer: spec.bodyRenderer,
+    };
+=======
   const snake = {
     direction: spec.direction,
     moveRate: spec.moveRate,
@@ -190,6 +212,7 @@ MyGame.objects.Snake = function (spec) {
     headRenderer: spec.headRenderer,
     bodyRenderer: spec.bodyRenderer,
   };
+>>>>>>> 2fc0dceb07733b40cdeb5c1b8f496c764028e703
 
   const lastLocationsTracker = [];
   for (let i = 0; i < spec.startingSegments; i++) {
@@ -291,12 +314,23 @@ MyGame.objects.Snake = function (spec) {
     }
   };
 
+<<<<<<< HEAD
+    snake.render = function () {
+        for (let i = snake.body.length - 1; i >= 0; i--) {
+            snake.bodyRenderer.render(snake.body[i]);
+        }
+        snake.headRenderer.render(snake.head);
+        // render name above head here
+        MyGame.graphics.drawText(snake.head.center.x, snake.head.center.y - 80, snake.name, 'white')
+    };
+=======
   snake.update = function (elapsedTime) {
     snake.headRenderer.update(elapsedTime);
     snake.bodyRenderer.update(elapsedTime);
     snake.moveForward(elapsedTime);
     snake.updateRotation(elapsedTime);
   };
+>>>>>>> 2fc0dceb07733b40cdeb5c1b8f496c764028e703
 
   snake.render = function () {
     for (let i = snake.body.length - 1; i >= 0; i--) {
