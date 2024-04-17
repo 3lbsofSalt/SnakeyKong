@@ -161,8 +161,8 @@ function spawnNewBanana() {
 
 function updateTime(elapsedTime) {
     timer += elapsedTime;
-    if (timer >= 10) {
-        timer -= 10;
+    if (timer >= 100) {
+        timer -= 100;
         spawnNewBanana();
     }
 }
