@@ -88,7 +88,6 @@ MyGame.main = function (objects, input, renderer, graphics) {
     }
     ("use strict");
 
-    const UPDATE_RATE_MS = 30;
     let cancelNextRequest = true;
     const socket = io();
     let playerSnake = {};
@@ -175,7 +174,6 @@ MyGame.main = function (objects, input, renderer, graphics) {
 
     let magneted_bananas = [];
     socket.on("magnet_pull", (data) => {
-        console.log(data);
         magneted_bananas.push(data);
     });
 
@@ -185,8 +183,6 @@ MyGame.main = function (objects, input, renderer, graphics) {
 
     let lastTimeStamp = performance.now();
     let myKeyboard = input.Keyboard();
-    let BANANA_EAT_TOL = 20;
-    let BANANA_MAGNET_TOL = 75;
 
     let singleBananas = [];
     let bunchBananas = [];
@@ -202,8 +198,10 @@ MyGame.main = function (objects, input, renderer, graphics) {
         myKeyboard.update(elapsedTime);
     }
 
+    const UPDATE_RATE_MS = 27;
+
     function gameLoop(time) {
-        let elapsed = time - lastTimeStamp;
+        let elapsed = (time - lastTimeStamp) / 1000;
         processInput(elapsed);
         update(elapsed);
         render();
@@ -212,7 +210,7 @@ MyGame.main = function (objects, input, renderer, graphics) {
         if (!cancelNextRequest) {
             setTimeout(() => {
                 requestAnimationFrame(gameLoop);
-            }, UPDATE_RATE_MS - elapsed);
+            }, UPDATE_RATE_MS - (performance.now() - time));
         }
     }
 

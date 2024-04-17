@@ -151,6 +151,7 @@ function processInput(elapsedTime) {
 let food_id = 0;
 
 function spawnNewBanana() {
+  if(singleBananas.length >= 1000) return;
     let bananaSpawnX = Math.random() * WORLD_WIDTH;
     let bananaSpawnY = Math.random() * WORLD_HEIGHT;
     let bananaColor = Math.floor(Math.random() * 6);
@@ -277,15 +278,17 @@ function updateClients(elapsedTime) {
 }
 
 function gameLoop(currentTime, elapsedTime) {
+  console.log(elapsedTime);
     processInput(elapsedTime);
     update(elapsedTime, currentTime);
     updateClients(elapsedTime);
 
+  let tmp_now = present();
     if (!quit) {
         setTimeout(() => {
             let now = present();
             gameLoop(now, now - currentTime);
-        }, UPDATE_RATE_MS - elapsedTime);
+        }, UPDATE_RATE_MS - (tmp_now - currentTime));
     }
 }
 
