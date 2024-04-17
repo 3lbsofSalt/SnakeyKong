@@ -173,11 +173,11 @@ MyGame.main = function (objects, input, renderer, graphics) {
         );
     });
 
-  let magneted_bananas = [];
-  socket.on('magnet_pull', data => {
-    console.log(data)
-    magneted_bananas.push(data);
-  })
+    let magneted_bananas = [];
+    socket.on("magnet_pull", (data) => {
+        console.log(data);
+        magneted_bananas.push(data);
+    });
 
     socket.on("update_other", (data) => {
         otherSnakes[data.player_id].setRotation(data.desired);
@@ -269,13 +269,20 @@ MyGame.main = function (objects, input, renderer, graphics) {
         updateParticles(elapsedTime);
         updateCamera();
 
-    const magnet_now = [...magneted_bananas];
-    magneted_bananas = [];
-    for(const magneted of magnet_now) {
-      const banana = singleBananas.find(nana => magneted.banana_id === nana.id);
-      if(!banana) continue;
-      magnetPull(magneted.pullLoc.x, magneted.pullLoc.y, banana, elapsedTime);
-    }
+        const magnet_now = [...magneted_bananas];
+        magneted_bananas = [];
+        for (const magneted of magnet_now) {
+            const banana = singleBananas.find(
+                (nana) => magneted.banana_id === nana.id,
+            );
+            if (!banana) continue;
+            magnetPull(
+                magneted.pullLoc.x,
+                magneted.pullLoc.y,
+                banana,
+                elapsedTime,
+            );
+        }
 
         if (playerSnake.isAlive()) {
             testSnakeWallCollision(playerSnake);
@@ -327,7 +334,6 @@ MyGame.main = function (objects, input, renderer, graphics) {
     function start() {
         socket.emit("join-request");
     }
-
 
     // Particle system - put in own file later
     function magnetPull(x, y, banana, elapsedTime) {
