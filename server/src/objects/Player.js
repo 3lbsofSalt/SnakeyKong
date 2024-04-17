@@ -161,6 +161,7 @@ Snake = function (spec) {
         }),
         segmentDistance: spec.segmentDistance,
         body: [],
+        name: spec.name,
     };
 
     const lastLocationsTracker = [];
@@ -312,6 +313,7 @@ function createPlayer(
                 y: Math.random() * 1000,
             },
             alive: true,
+            name: "test",
         }),
     };
 
