@@ -1,4 +1,18 @@
-//const createQueue = require(["server/src/shared/Queue.js"]);
+const dkhead = new Image();
+const dkbody = new Image();
+
+dkhead.onload = function () {
+    dkhead.isReady = true;
+    dkhead.subTextureWidth = dkhead.width;
+};
+dkhead.src = "assets/dkhead.png";
+
+dkbody.onload = function () {
+    dkbody.isReady = true;
+    dkbody.subTextureWidth = dkbody.width;
+};
+dkbody.src = "assets/dkbody.png";
+
 MyGame.objects.Head = function (spec) {
     function moveForward(elapsedTime) {
         //

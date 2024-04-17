@@ -308,8 +308,8 @@ function createPlayer(
             segmentDistance,
             startingSegments,
             center: {
-                x: Math.random() * 1000,
-                y: Math.random() * 1000,
+                x: Math.random() * 4800,
+                y: Math.random() * 2600,
             },
             alive: true,
         }),

@@ -1,5 +1,7 @@
 const NetworkAction = require("./shared/NetworkActions.js");
 const present = require("present");
+const canvas = graphics.getCanvas();
+const context = graphics.getContext();
 
 const { createPlayer } = require("./objects/Player.js");
 const createFood = require("./objects/Food.js");
@@ -7,6 +9,9 @@ const createFood = require("./objects/Food.js");
 const food = [];
 const eats = [];
 const collisions = [];
+
+const WORLD_WIDTH = 4800;
+const WORLD_HEIGHT = 2600;
 
 const segmentDistance = 30;
 const rotateRate = Math.PI / 1000; // Radians per second
@@ -30,7 +35,6 @@ function initializeSocketIO(server) {
                     playerId: socket.id,
                 });
 
-                console.log(Date.now);
                 socket.emit("connect_other", {
                     playerId: client.socket.id,
                     snake: client.player.snake,
