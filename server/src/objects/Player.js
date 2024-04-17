@@ -226,10 +226,7 @@ Snake = function (spec) {
         snake.head.moveForward(elapsedTime);
         for (let i = 0; i < snake.body.length; i++) {
             const nextSegment = i === 0 ? snake.head : snake.body[i - 1];
-            snake.body[i].moveForward(
-                elapsedTime,
-                nextSegment,
-            );
+            snake.body[i].moveForward(elapsedTime, nextSegment);
         }
     };
 
@@ -320,10 +317,10 @@ function createPlayer(
             segmentDistance,
             startingSegments,
             center: {
-              x: 1000,
-              y: 1000
+                x: 1000,
+                y: 1000,
             },
-      /*
+            /*
             center: {
                 x: Math.random() * 4800,
                 y: Math.random() * 2600,
