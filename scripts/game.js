@@ -168,6 +168,7 @@ MyGame.main = function (objects, input, renderer, graphics) {
                 image: singleColorImages[data.bananaColor],
                 center: { x: data.bananaSpawnX, y: data.bananaSpawnY },
                 rotation: 0,
+                id: data.id,
             }),
         );
     });
