@@ -173,6 +173,13 @@ MyGame.main = function (objects, input, renderer, graphics) {
   let singleBananas = [];
   let bunchBananas = [];
 
+  startMusic();
+
+  function startMusic() {
+    let jungleJapes = new Audio("assets/audio/jungleJapesMusic.mp3");
+        jungleJapes.play();
+  }
+
   function processInput(elapsedTime) {
     myKeyboard.update(elapsedTime);
   }
