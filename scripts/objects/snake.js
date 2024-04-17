@@ -15,12 +15,11 @@ dkbody.src = "assets/dkbody.png";
 
 MyGame.objects.Head = function (spec) {
     function moveForward(elapsedTime) {
-        //
         // Create a normalized direction vector
         let vectorX = Math.cos(spec.rotation);
         let vectorY = Math.sin(spec.rotation);
         let magnitude = Math.sqrt(vectorX * vectorX + vectorY * vectorY);
-        //
+
         // With the normalized direction vector, move the center of the sprite
         let moveX = (vectorX / magnitude) * spec.moveRate * elapsedTime;
         let moveY = (vectorY / magnitude) * spec.moveRate * elapsedTime;

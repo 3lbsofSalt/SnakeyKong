@@ -131,8 +131,8 @@ function processInput(elapsedTime) {
             case "up-right":
                 client.player.snake.setDirectionUpRight();
                 break;
-            case "up-left":
-                client.player.snake.setDirectionUpLeft();
+            case "down-right":
+                client.player.snake.setDirectionDownRight();
                 break;
         }
         updateQueue.push({

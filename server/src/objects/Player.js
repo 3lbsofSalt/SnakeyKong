@@ -6,6 +6,7 @@ Head = function (spec) {
         // Create a normalized direction vector
         let vectorX = Math.cos(spec.rotation);
         let vectorY = Math.sin(spec.rotation);
+
         let magnitude = Math.sqrt(vectorX * vectorX + vectorY * vectorY);
 
         // With the normalized direction vector, move the center of the sprite
@@ -98,14 +99,20 @@ Head = function (spec) {
 };
 
 Body = function (spec) {
-    function moveForward(elapsedTime, nextSegment, segmentDistance) {
-        const nextLocation = spec.nextLocations.empty()
-            ? nextSegment.center
-            : spec.nextLocations.peek();
+    function moveForward(elapsedTime, nextSegment) {
+        let nextLocation, vectorX, vectorY;
+        while (true) {
+            nextLocation = spec.nextLocations.empty()
+                ? nextSegment.center
+                : spec.nextLocations.peek();
 
-        // Create a normalized direction vector
-        let vectorX = nextLocation.x - spec.center.x;
-        let vectorY = nextLocation.y - spec.center.y;
+            // Create a normalized direction vector
+            vectorX = nextLocation.x - spec.center.x;
+            vectorY = nextLocation.y - spec.center.y;
+
+            if (vectorX != 0 || vectorY != 0) break;
+            spec.nextLocations.pop(); // nextLocation is the same as the current location
+        }
 
         let magnitude = Math.sqrt(vectorX * vectorX + vectorY * vectorY);
 
@@ -117,6 +124,11 @@ Body = function (spec) {
 
         moveX = Math.round(moveX);
         moveY = Math.round(moveY);
+        if (isNaN(moveX) || isNaN(moveY)) {
+            console.log(spec);
+            console.log(magnitude);
+            debugger;
+        }
 
         spec.center.x += moveX;
         spec.center.y += moveY;
@@ -217,7 +229,6 @@ Snake = function (spec) {
             snake.body[i].moveForward(
                 elapsedTime,
                 nextSegment,
-                snake.segmentDistance,
             );
         }
     };
@@ -309,9 +320,15 @@ function createPlayer(
             segmentDistance,
             startingSegments,
             center: {
+              x: 1000,
+              y: 1000
+            },
+      /*
+            center: {
                 x: Math.random() * 4800,
                 y: Math.random() * 2600,
             },
+      */
             alive: true,
             name: "test",
         }),

@@ -55,7 +55,7 @@ MyGame.main = function (objects, input, renderer, graphics) {
         socket.emit("input", { command: "down-left" });
       } else if (myKeyboard.keys.hasOwnProperty(input.keys.right)) {
         playerSnake.setDirectionDownRight();
-        socket.emit("input", { command: "up-right" });
+        socket.emit("input", { command: "down-right" });
       } else {
         playerSnake.setDirectionDown();
         socket.emit("input", { command: "down" });
@@ -140,6 +140,7 @@ MyGame.main = function (objects, input, renderer, graphics) {
 
   socket.on("connect_other", (data) => {
     const snake = data.snake;
+    console.log(snake.head.center)
     const newSnake = objects.Snake({
       direction: snake.head.rotation,
       center: snake.head.center,
