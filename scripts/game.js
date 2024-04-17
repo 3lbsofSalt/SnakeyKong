@@ -93,6 +93,7 @@ MyGame.main = function (objects, input, renderer, graphics) {
 
     let particle_system = particleSystem();
     let banana_particles = [];
+    let death_particles = [];
 
     const WORLD_WIDTH = 4800;
     const WORLD_HEIGHT = 2600;
@@ -118,6 +119,7 @@ MyGame.main = function (objects, input, renderer, graphics) {
     const purpleBunch = new Image();
     const greenBunch = new Image();
 
+    const deathParticle = new Image();
     const yellowParticle = new Image();
     const redParticle = new Image();
     const blueParticle = new Image();
@@ -140,6 +142,11 @@ MyGame.main = function (objects, input, renderer, graphics) {
     dkbody.src = "assets/dkbody.png";
 
 
+    deathParticle.onload = function () {
+        deathParticle.isReady = true;
+        deathParticle.subTextureWidth = deathParticle.width;
+    };
+    deathParticle.src = "assets/deathParticle.png";
 
     yellowParticle.onload = function () {
         yellowParticle.isReady = true;
@@ -380,20 +387,6 @@ MyGame.main = function (objects, input, renderer, graphics) {
     }
   }
 
-  // This will have to be updated once we had a whole world with camera scrolling.
-  function testSnakeWallCollision(snake) {
-    let hitHorizontalWall =
-      snake.head.center.x < 0 ||
-        snake.head.center.x > graphics.getCanvas().width;
-    let hitVerticalWall =
-      snake.head.center.y < 0 ||
-        snake.head.center.y > graphics.getCanvas().height;
-    if (hitHorizontalWall || hitVerticalWall) {
-      snake.kill();
-      createDeathBananas(snake);
-    }
-  }
-
   function magnetPull(snake, banana, elapsedTime) {
     banana.center.x +=
     ((snake.head.center.x - banana.center.x) * elapsedTime) / 150;
@@ -557,17 +550,13 @@ MyGame.main = function (objects, input, renderer, graphics) {
     }
 
 
-    // This will have to be updated once we have a whole world with camera scrolling.
     function testSnakeWallCollision(snake) {
-        let hitHorizontalWall =
-            snake.head.center.x < 0 ||
-            snake.head.center.x > WORLD_WIDTH;
-        let hitVerticalWall =
-            snake.head.center.y < 0 ||
-            snake.head.center.y > WORLD_HEIGHT;
+        let hitHorizontalWall = snake.head.center.x < 0 || snake.head.center.x > WORLD_WIDTH;
+        let hitVerticalWall = snake.head.center.y < 0 || snake.head.center.y > WORLD_HEIGHT;
         if (hitHorizontalWall || hitVerticalWall) {
             snake.kill();
             createDeathBananas(snake);
+            particle_system.snakeCrash();
         }
     }
 
@@ -583,10 +572,8 @@ MyGame.main = function (objects, input, renderer, graphics) {
 
   // Particle system - put in own file later
     function magnetPull(snake, banana, elapsedTime) {
-        banana.center.x +=
-            ((snake.head.center.x - banana.center.x) * elapsedTime) / 150;
-        banana.center.y +=
-            ((snake.head.center.y - banana.center.y) * elapsedTime) / 150;
+        banana.center.x += ((snake.head.center.x - banana.center.x) * elapsedTime) / 150;
+        banana.center.y += ((snake.head.center.y - banana.center.y) * elapsedTime) / 150;
     }
 
     function testBananaCollision(snake, elapsedTime) {
@@ -734,23 +721,20 @@ MyGame.main = function (objects, input, renderer, graphics) {
     spec.alive = 0;
 
     function update(elapsed_time) {
-      //
+
       // We work with time in seconds, elapsedTime comes in as milliseconds
       elapsed_time = elapsed_time / 1000;
-      //
+
       // Update how long it has been alive
       spec.alive += elapsed_time;
 
-      //
       // Update its center
       spec.center.x += elapsed_time * spec.speed * spec.direction.x;
       spec.center.y += elapsed_time * spec.speed * spec.direction.y;
 
-      //
       // Rotate proportional to its speed
       spec.rotation += spec.speed / 500;
 
-      //
       // Return true if this particle is still alive
       return spec.alive < spec.lifetime;
     }
@@ -804,28 +788,32 @@ MyGame.main = function (objects, input, renderer, graphics) {
       }
     }
 
-    /*
-        function snakeCrash() {
-            // Generate some new particles
-            if (timerSeconds < 1 && timer < 100) {
-                for (let particle = 0; particle < 8; particle++) {
-                    let negX = Math.random() < 0.5 ? 1 : -1;
-                    let negY = Math.random() < 0.5 ? 1 : -1;
-                    let p = {
-                        center: { x: texturePlayer.center.x + negX * 10 * Math.random(), y: texturePlayer.center.y + negY * 10 * Math.random()},
-                        direction: { x: Math.random() * negX, y: Math.random() * negY},
-                        speed: Math.random() * 200, // pixels per second
-                        rotation: texturePlayer.rotation.angle,
-                        lifetime:  Math.random() * 5    // seconds
-                    };
-                    death_particles.push(Particle(p));
-                }
-            }
+    function snakeCrash() {
+    // Generate some new particles
+        for (let particle = 0; particle < 30; particle++) {
+            let negX = Math.random() < 0.5 ? 1 : -1;
+            let negY = Math.random() < 0.5 ? 1 : -1;
+            let p = {
+                center: {
+                    x: playerSnake.head.center.x,
+                    y: playerSnake.head.center.y,
+                },
+                direction: {
+                x: Math.random() * negX,
+                y: Math.random() * negY,
+                },
+                image: deathParticle,
+                speed: Math.random() * 200, // pixels per second
+                rotation: playerSnake.head.direction,
+                lifetime:  Math.random() * 5    // seconds
+            };
+            death_particles.push(Particle(p));
         }
-        */
+    }
+
     return {
       eatBanana: eatBanana,
-      //snakeCrash: snakeCrash
+      snakeCrash: snakeCrash
     };
   }
 
@@ -833,8 +821,7 @@ MyGame.main = function (objects, input, renderer, graphics) {
     let particle = 0;
     let aliveParticles = [];
 
-    // Go through and update each of the currently alive particles
-    aliveParticles.length = 0;
+    // Update banana particles
     for (particle = 0; particle < banana_particles.length; particle++) {
       // A return value of true indicates this particle is still alive
       if (banana_particles[particle].update(elapsed_time)) {
@@ -842,63 +829,45 @@ MyGame.main = function (objects, input, renderer, graphics) {
       }
     }
     banana_particles = aliveParticles;
-  }
 
-  /*
-    function updateDeathParticles(elapsed_time) {
-        let particle = 0;
-        let aliveParticles = [];
+    aliveParticles = [];
 
-        // Go through and update each of the currently alive particles
-        aliveParticles.length = 0;
-        for (particle = 0; particle < death_particles.length; particle++) {
-            // A return value of true indicates this particle is still alive
-            if (death_particles[particle].update(elapsed_time)) {
-                aliveParticles.push(death_particles[particle]);
-            }
+    // Update death particles
+    for (particle = 0; particle < death_particles.length; particle++) {
+        // A return value of true indicates this particle is still alive
+        if (death_particles[particle].update(elapsed_time)) {
+            aliveParticles.push(death_particles[particle]);
         }
-        death_particles = aliveParticles;
     }
-    */
+    death_particles = aliveParticles;
+}
+  
 
   function renderParticles() {
-    for (
-    let particle = banana_particles.length - 1;
-    particle >= 0;
-    particle--
-  ) {
+    for (let particle = banana_particles.length - 1; particle >= 0; particle--) {
       let curr_particle = banana_particles[particle];
       if (curr_particle.image?.isReady) {
         let drawX = curr_particle.center.x - curr_particle.size.x / 2;
         let drawY = curr_particle.center.y - curr_particle.size.y / 2;
         let opacity = 1 - 2 * curr_particle.age;
         context.globalAlpha = Math.max(0, opacity);
-        context.drawImage(
-          curr_particle.image,
-          drawX,
-          drawY,
-          curr_particle.size.x,
-          curr_particle.size.y,
-        );
+        context.drawImage(curr_particle.image, drawX, drawY, curr_particle.size.x, curr_particle.size.y);
         context.globalAlpha = 1;
-      }
+        }
     }
-  }
 
-  /*
-    function renderDeathParticles() {
-        for (let particle = death_particles.length - 1; particle >= 0; particle--) {
-            if (death_particle.image.isReady) {
-                drawX = death_particles[particle].center.x - death_particles[particle].size.x / 2;
-                drawY = death_particles[particle].center.y - death_particles[particle].size.y / 2;
-                opacity = 1 - (death_particles[particle].age);
-                context.globalAlpha = Math.max(0, opacity);
-                context.drawImage(death_particle.image, drawX, drawY, 2 * death_particles[particle].size.x, 2 * death_particles[particle].size.y);
-                context.globalAlpha = 1;
+    for (let particle = death_particles.length - 1; particle >= 0; particle--) {
+        curr_particle = death_particles[particle];
+        if (curr_particle.image?.isReady) {
+            let drawX = curr_particle.center.x - curr_particle.size.x / 2;
+            let drawY = curr_particle.center.y - curr_particle.size.y / 2;
+            let opacity = 1 - (curr_particle.age);
+            context.globalAlpha = Math.max(0, opacity);
+            context.drawImage(curr_particle.image, drawX, drawY, 2 * curr_particle.size.x, 2 * curr_particle.size.y);
+            context.globalAlpha = 1;
             }
         }
     }
-    */
 
   return {
     processInput: processInput,
@@ -908,3 +877,4 @@ MyGame.main = function (objects, input, renderer, graphics) {
     dkHead: playerSnake,
   };
 };
+
