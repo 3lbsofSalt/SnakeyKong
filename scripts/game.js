@@ -338,12 +338,17 @@ MyGame.main = function (objects, input, renderer, graphics) {
         if (playerSnake.isAlive()) {
             playerSnake.render();
         }
+        else {
+            // render game over screen
+        }
 
         for (const snake of Object.values(otherSnakes)) {
             snake.render();
         }
 
         context.translate(camera.x, camera.y);
+
+
     }
 
     function testSnakeWallCollision(snake) {
@@ -360,7 +365,7 @@ MyGame.main = function (objects, input, renderer, graphics) {
 
     myKeyboard.register("Escape", function () {
         cancelNextRequest = true;
-        manager.showScreen("main-menu");
+        MyGame.manager.showScreen("main-menu");
     });
 
     function start() {
@@ -375,26 +380,6 @@ MyGame.main = function (objects, input, renderer, graphics) {
         banana.center.y += ((y - banana.center.y) * elapsedTime) / 150;
     }
 
-    // Currently spawns bananas on body segments only, no head
-    function createDeathBananas(snake) {
-        let bananaColor = Math.floor(Math.random() * 6);
-
-        for (let segment of snake.body) {
-            let deathBunch = objects.Food({
-                size: { x: 40, y: 40 }, // Size in pixels
-                image: bunchColorImages[bananaColor],
-                center: { x: segment.center.x, y: segment.center.y },
-                rotation: 0,
-            });
-
-            bunchBananas.push(deathBunch);
-        }
-    }
-
-    function updateFood(elapsedTime) {
-        singleBananaRender.update(elapsedTime);
-        bunchBananaRender.update(elapsedTime);
-    }
 
     function updateCamera() {
         // Adjust camera position based on player's position
@@ -414,20 +399,6 @@ MyGame.main = function (objects, input, renderer, graphics) {
         if (camera.y + camera.height > WORLD_HEIGHT) {
             camera.y = WORLD_HEIGHT - camera.height;
         }
-    }
-
-    function renderFood() {
-        for (let banana of singleBananas) {
-            singleBananaRender.render(banana);
-        }
-        for (let bunch of bunchBananas) {
-            bunchBananaRender.render(bunch);
-        }
-    }
-
-    function updateScore(elapsedTime) {
-        document.getElementById("Score").textContent =
-            "Score: " + playerSnake.score;
     }
 
     myKeyboard.register("Escape", function () {
