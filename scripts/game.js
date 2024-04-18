@@ -131,6 +131,20 @@ MyGame.main = function (objects, input, renderer, graphics) {
             name: localStorage.getItem("name"),
         });
 
+        for (const banana of data.single_bananas) {
+            console.log(banana);
+            singleBananas.push(
+                objects.Food({
+                    size: { x: 30, y: 30 },
+                    color: banana.bananaColor,
+                    image: singleColorImages[banana.bananaColor],
+                    center: { x: banana.bananaX, y: banana.bananaY },
+                    rotation: 0,
+                    id: banana.id,
+                }),
+            );
+        }
+
         particle_system = particleSystem(playerSnake);
         registerKeys();
         cancelNextRequest = false;
@@ -160,11 +174,14 @@ MyGame.main = function (objects, input, renderer, graphics) {
     });
 
     socket.on("eat_single", (data) => {
+        console.log("yary");
         const banana = singleBananas.findIndex(
             (nana) => data.banana_id === nana.id,
         );
 
-        particleSystem.eatBanana(singleBananas[banana]);
+        if (banana === -1) return;
+
+        particle_system.eatBanana(singleBananas[banana]);
 
         singleBananas.splice(banana, 1);
 
@@ -347,7 +364,9 @@ MyGame.main = function (objects, input, renderer, graphics) {
     });
 
     function start() {
-        socket.emit("join-request");
+        socket.emit("join-request", {
+            name: localStorage.getItem("name"),
+        });
     }
 
     // Particle system - put in own file later

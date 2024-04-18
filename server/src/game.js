@@ -9,7 +9,7 @@ let bunchBananas = [];
 const WORLD_WIDTH = 4800;
 const WORLD_HEIGHT = 2600;
 
-const BANANA_EAT_TOL = 20;
+const BANANA_EAT_TOL = 75;
 //const BANANA_MAGNET_TOL = 75;
 const BANANA_MAGNET_TOL = 150;
 
@@ -59,12 +59,13 @@ function initializeSocketIO(server) {
 
         socket.emit("connect-ack", {});
 
-        socket.on("join-request", function () {
+        socket.on("join-request", function (data) {
             const newPlayer = createPlayer(
                 socket.id,
                 moveRate,
                 rotateRate,
                 segmentDistance,
+                data.name,
             );
             activeClients[socket.id] = {
                 socket: socket,
@@ -81,6 +82,7 @@ function initializeSocketIO(server) {
                 rotateRate,
                 segmentDistance,
                 startingSegments: 3,
+                single_bananas: singleBananas,
             });
 
             notifyConnect(socket, newPlayer);
@@ -160,6 +162,7 @@ function spawnNewBanana() {
     const banana = {
         bananaX: bananaSpawnX,
         bananaY: bananaSpawnY,
+        bananaColor,
         id: food_id,
     };
 
@@ -174,7 +177,7 @@ function spawnNewBanana() {
     });
 }
 
-function testBananaCollision(snake, elapsedTime) {
+function testBananaCollision(snake, elapsedTime, clientId) {
     let newSingleBananas = [];
     let newBunchBananas = [];
 
@@ -200,10 +203,11 @@ function testBananaCollision(snake, elapsedTime) {
             newSingleBananas.push(banana);
             // eat banana
         } else {
+            console.log("arseitnaioresntioearsnt");
             updateQueue.push({
                 type: "eat_single",
                 banana_id: banana.id,
-                snake_id: socket.id,
+                snake_id: clientId,
             });
         }
     }
@@ -257,7 +261,7 @@ function update(elapsedTime, currentTime) {
     updateTime(elapsedTime);
     for (const [id, activeClient] of Object.entries(activeClients)) {
         activeClient.player.snake.update(elapsedTime);
-        testBananaCollision(activeClient.player.snake, elapsedTime);
+        testBananaCollision(activeClient.player.snake, elapsedTime, id);
     }
 }
 
@@ -278,6 +282,7 @@ function updateClients(elapsedTime) {
                 client.socket.emit("magnet_pull", event);
             }
             if (event.type === "eat_single") {
+                console.log("yargyarg");
                 client.socket.emit("eat_single", event);
             }
         }

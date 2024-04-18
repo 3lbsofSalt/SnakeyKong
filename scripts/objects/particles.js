@@ -144,8 +144,8 @@ function particleSystem(playerSnake) {
             let yDrift = (Math.random() / 2) * negY;
             let p = {
                 center: {
-                    x: playerSnake.head.center.x,
-                    y: playerSnake.head.center.y,
+                    x: banana.center.x,
+                    y: banana.center.y,
                 },
                 direction: {
                     x: Math.random() * negX,

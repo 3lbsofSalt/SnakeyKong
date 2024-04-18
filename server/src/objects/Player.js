@@ -314,6 +314,7 @@ function createPlayer(
     moveRate,
     rotateRate,
     segmentDistance,
+    name,
     startingSegments = 3,
 ) {
     const player = {
@@ -335,7 +336,7 @@ function createPlayer(
             },
       */
             alive: true,
-            name: "test",
+            name,
         }),
     };
 

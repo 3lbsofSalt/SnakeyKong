@@ -23,12 +23,6 @@ MyGame.objects.Head = function (spec) {
         // With the normalized direction vector, move the center of the sprite
         let moveX = (vectorX / magnitude) * spec.moveRate * elapsedTime;
         let moveY = (vectorY / magnitude) * spec.moveRate * elapsedTime;
-        console.log(
-            "Movement magnitude:",
-            Math.sqrt(moveX ** 2 + moveY ** 2),
-            "elapsed:",
-            elapsedTime,
-        );
 
         moveX = Math.round(moveX);
         moveY = Math.round(moveY);
