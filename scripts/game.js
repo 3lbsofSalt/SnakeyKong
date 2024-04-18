@@ -208,9 +208,12 @@ MyGame.main = function (objects, input, renderer, graphics) {
         lastTimeStamp = time;
 
         if (!cancelNextRequest) {
-            setTimeout(() => {
-                requestAnimationFrame(gameLoop);
-            }, UPDATE_RATE_MS - (performance.now() - time));
+            setTimeout(
+                () => {
+                    requestAnimationFrame(gameLoop);
+                },
+                UPDATE_RATE_MS - (performance.now() - time),
+            );
         }
     }
 

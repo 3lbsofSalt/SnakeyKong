@@ -151,7 +151,7 @@ function processInput(elapsedTime) {
 let food_id = 0;
 
 function spawnNewBanana() {
-  if(singleBananas.length >= 1000) return;
+    if (singleBananas.length >= 1000) return;
     let bananaSpawnX = Math.random() * WORLD_WIDTH;
     let bananaSpawnY = Math.random() * WORLD_HEIGHT;
     let bananaColor = Math.floor(Math.random() * 6);
@@ -180,6 +180,7 @@ function testBananaCollision(snake, elapsedTime) {
 
     for (let banana of singleBananas) {
         console.log(banana);
+        // pull in banana
         if (
             Math.abs(snake.head.center.x - banana.bananaX) <
                 BANANA_MAGNET_TOL &&
@@ -199,8 +200,13 @@ function testBananaCollision(snake, elapsedTime) {
             Math.abs(snake.head.center.y - banana.bananaY) > BANANA_EAT_TOL
         ) {
             newSingleBananas.push(banana);
+            // eat banana
         } else {
-            snake.eatSingleBanana();
+            updateQueue.push({
+                type: "eat_single",
+                banana_id: banana.id,
+                snake_id: socket.id,
+            });
         }
     }
     singleBananas = newSingleBananas;
@@ -273,22 +279,28 @@ function updateClients(elapsedTime) {
             if (event.type === "magnet_pull") {
                 client.socket.emit("magnet_pull", event);
             }
+            if (event.type === "eat_single") {
+                client.socket.emit("eat_single", event);
+            }
         }
     }
 }
 
 function gameLoop(currentTime, elapsedTime) {
-  console.log(elapsedTime);
+    console.log(elapsedTime);
     processInput(elapsedTime);
     update(elapsedTime, currentTime);
     updateClients(elapsedTime);
 
-  let tmp_now = present();
+    let tmp_now = present();
     if (!quit) {
-        setTimeout(() => {
-            let now = present();
-            gameLoop(now, now - currentTime);
-        }, UPDATE_RATE_MS - (tmp_now - currentTime));
+        setTimeout(
+            () => {
+                let now = present();
+                gameLoop(now, now - currentTime);
+            },
+            UPDATE_RATE_MS - (tmp_now - currentTime),
+        );
     }
 }
 
