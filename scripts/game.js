@@ -159,6 +159,20 @@ MyGame.main = function (objects, input, renderer, graphics) {
         otherSnakes[data.playerId] = newSnake;
     });
 
+    socket.on("eat_single", (data) => {
+        const banana = singleBananas.findIndex(
+            (nana) => data.banana_id === nana.id,
+        );
+
+        particleSystem.eatBanana(singleBananas[banana]);
+
+        singleBananas.splice(banana, 1);
+
+        if (data.snake_id === socket.id) {
+            playerSnake.eatSingleBanana();
+        }
+    });
+
     socket.on("new_single", (data) => {
         singleBananas.push(
             objects.Food({
@@ -208,9 +222,12 @@ MyGame.main = function (objects, input, renderer, graphics) {
         lastTimeStamp = time;
 
         if (!cancelNextRequest) {
-            setTimeout(() => {
-                requestAnimationFrame(gameLoop);
-            }, UPDATE_RATE_MS - (performance.now() - time));
+            setTimeout(
+                () => {
+                    requestAnimationFrame(gameLoop);
+                },
+                UPDATE_RATE_MS - (performance.now() - time),
+            );
         }
     }
 
