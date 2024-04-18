@@ -179,6 +179,7 @@ function testBananaCollision(snake, elapsedTime) {
     let newBunchBananas = [];
 
     for (let banana of singleBananas) {
+        // pull in banana
         if (
             Math.abs(snake.head.center.x - banana.bananaX) <
                 BANANA_MAGNET_TOL &&
@@ -197,8 +198,13 @@ function testBananaCollision(snake, elapsedTime) {
             Math.abs(snake.head.center.y - banana.bananaY) > BANANA_EAT_TOL
         ) {
             newSingleBananas.push(banana);
+            // eat banana
         } else {
-            snake.eatSingleBanana();
+            updateQueue.push({
+                type: "eat_single",
+                banana_id: banana.id,
+                snake_id: socket.id,
+            });
         }
     }
     singleBananas = newSingleBananas;
@@ -270,6 +276,9 @@ function updateClients(elapsedTime) {
             }
             if (event.type === "magnet_pull") {
                 client.socket.emit("magnet_pull", event);
+            }
+            if (event.type === "eat_single") {
+                client.socket.emit("eat_single", event);
             }
         }
     }
