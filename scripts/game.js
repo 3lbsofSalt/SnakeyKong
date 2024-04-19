@@ -290,14 +290,8 @@ MyGame.main = function (objects, input, renderer, graphics) {
         }
     }
 
-    function updateScore(elapsedTime) {
-        document.getElementById("Score").textContent =
-            "Score: " + playerSnake.score;
-    }
-
     function update(elapsedTime) {
         updateFood(elapsedTime);
-        updateScore(elapsedTime);
         updateParticles(elapsedTime);
         updateCamera();
 
@@ -348,7 +342,7 @@ MyGame.main = function (objects, input, renderer, graphics) {
 
         context.translate(camera.x, camera.y);
 
-        renderScoreboard(playerSnake, Object.values(otherSnakes))
+        renderScoreboard(playerSnake, Object.values(otherSnakes));
     }
 
     function testSnakeWallCollision(snake) {
