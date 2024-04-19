@@ -348,7 +348,7 @@ MyGame.main = function (objects, input, renderer, graphics) {
 
         context.translate(camera.x, camera.y);
 
-
+        renderScoreboard(playerSnake, Object.values(otherSnakes))
     }
 
     function testSnakeWallCollision(snake) {

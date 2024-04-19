@@ -1,0 +1,3 @@
+function renderScoreboard(playerSnake, otherSnakes) {
+    
+}
