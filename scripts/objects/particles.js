@@ -160,7 +160,7 @@ function particleSystem(playerSnake) {
         }
     }
 
-    function snakeCrash(playerSnake) {
+    function snakeCrash() {
         // Generate some new particles
         for (let particle = 0; particle < 30; particle++) {
             let negX = Math.random() < 0.5 ? 1 : -1;

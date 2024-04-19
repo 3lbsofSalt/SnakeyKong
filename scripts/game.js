@@ -103,6 +103,9 @@ MyGame.main = function (objects, input, renderer, graphics) {
 
     let particle_system = particleSystem(playerSnake);
 
+    const SINGLE_SIZE = 30;
+    const BUNCH_SIZE = 40;
+
     const WORLD_WIDTH = 4800;
     const WORLD_HEIGHT = 2600;
 
@@ -134,12 +137,26 @@ MyGame.main = function (objects, input, renderer, graphics) {
         for (const banana of data.single_bananas) {
             singleBananas.push(
                 objects.Food({
-                    size: { x: 30, y: 30 },
+                    size: { x: SINGLE_SIZE, y: SINGLE_SIZE },
                     color: banana.bananaColor,
                     image: singleColorImages[banana.bananaColor],
                     center: { x: banana.bananaX, y: banana.bananaY },
                     rotation: 0,
                     id: banana.id,
+                }),
+            );
+        }
+
+        for (const bunch of data.bunch_bananas) {
+            //console.log(banana);
+            bunchBananas.push(
+                objects.Food({
+                    size: { x: BUNCH_SIZE, y: BUNCH_SIZE },
+                    color: bunch.bananaColor,
+                    image: bunchColorImages[bunch.bananaColor],
+                    center: { x: bunch.bananaX, y: bunch.bananaY },
+                    rotation: 0,
+                    id: bunch.id,
                 }),
             );
         }
@@ -195,10 +212,26 @@ MyGame.main = function (objects, input, renderer, graphics) {
         }
     });
 
+    socket.on("eat_bunch", (data) => {
+        const banana = bunchBananas.findIndex(
+            (nana) => data.banana_id === nana.id,
+        );
+
+        if (banana === -1) return;
+
+        particle_system.eatBanana(bunchBananas[banana]);
+
+        bunchBananas.splice(banana, 1);
+
+        if (data.snake_id === socket.id) {
+            playerSnake.eatBananaBunch();
+        }
+    });
+
     socket.on("new_single", (data) => {
         singleBananas.push(
             objects.Food({
-                size: { x: 30, y: 30 },
+                size: { x: SINGLE_SIZE, y: SINGLE_SIZE },
                 color: data.bananaColor,
                 image: singleColorImages[data.bananaColor],
                 center: { x: data.bananaSpawnX, y: data.bananaSpawnY },
@@ -206,6 +239,27 @@ MyGame.main = function (objects, input, renderer, graphics) {
                 id: data.id,
             }),
         );
+    });
+
+    socket.on("new_bunch", (data) => {
+        bunchBananas.push(
+            objects.Food({
+                size: { x: BUNCH_SIZE, y: BUNCH_SIZE },
+                color: data.bananaColor,
+                image: bunchColorImages[data.bananaColor],
+                center: { x: data.bananaSpawnX, y: data.bananaSpawnY },
+                rotation: 0,
+                id: data.id,
+            }),
+        );
+    });
+
+    socket.on("snake_kill", (data) => {
+        if (data.snake_id === socket.id) {
+            playerSnake.kill();
+            // createDeathBananas(playerSnake);
+            particle_system.snakeCrash();
+        }
     });
 
     let magneted_bananas = [];
@@ -258,6 +312,7 @@ MyGame.main = function (objects, input, renderer, graphics) {
     }
 
     // Currently spawns bananas on body segments only, no head
+    /*
     function createDeathBananas(snake) {
         let bananaColor = Math.floor(Math.random() * 6);
 
@@ -272,6 +327,7 @@ MyGame.main = function (objects, input, renderer, graphics) {
             bunchBananas.push(deathBunch);
         }
     }
+    */
 
     function renderBackground() {
         if (backgroundImage.isReady) {
@@ -307,10 +363,17 @@ MyGame.main = function (objects, input, renderer, graphics) {
         const magnet_now = [...magneted_bananas];
         magneted_bananas = [];
         for (const magneted of magnet_now) {
-            const banana = singleBananas.find(
+            let banana = singleBananas.find(
                 (nana) => magneted.banana_id === nana.id,
             );
-            if (!banana) continue;
+            if (!banana) {
+                banana = bunchBananas.find(
+                    (nana) => magneted.banana_id === nana.id,
+                );
+            }
+            if (!banana) {
+                continue;
+            }
             magnetPull(
                 magneted.pullLoc.x,
                 magneted.pullLoc.y,
@@ -320,7 +383,7 @@ MyGame.main = function (objects, input, renderer, graphics) {
         }
 
         if (playerSnake.isAlive()) {
-            testSnakeWallCollision(playerSnake);
+            // testSnakeWallCollision(playerSnake);
             playerSnake.update(elapsedTime);
         }
 
@@ -353,6 +416,7 @@ MyGame.main = function (objects, input, renderer, graphics) {
         renderScoreboard(playerSnake, Object.values(otherSnakes));
     }
 
+    /*
     function testSnakeWallCollision(snake) {
         let hitHorizontalWall =
             snake.head.center.x < 0 || snake.head.center.x > WORLD_WIDTH;
@@ -361,9 +425,10 @@ MyGame.main = function (objects, input, renderer, graphics) {
         if (hitHorizontalWall || hitVerticalWall) {
             snake.kill();
             createDeathBananas(snake);
-            particle_system.snakeCrash(playerSnake);
+            particle_system.snakeCrash();
         }
     }
+    */
 
     myKeyboard.register("Escape", function () {
         cancelNextRequest = true;
