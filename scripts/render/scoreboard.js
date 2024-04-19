@@ -7,7 +7,6 @@ scoreboardImage.onload = function () {
 
 function renderScoreboard(playerSnake, otherSnakes) {
     if (scoreboardImage.ready) {
-        console.log('rendering scoreboard');
         MyGame.graphics.drawTexture(scoreboardImage, {x: 1070, y: 130}, 0, {x: 250, y: 250})
         MyGame.graphics.drawText(1070, 25, "Score: " + playerSnake.score, 'white')
     }
