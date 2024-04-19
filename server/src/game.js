@@ -83,6 +83,7 @@ function initializeSocketIO(server) {
                 segmentDistance,
                 startingSegments: 3,
                 single_bananas: singleBananas,
+                alive: true,
             });
 
             notifyConnect(socket, newPlayer);
@@ -169,12 +170,33 @@ function spawnNewBanana() {
     singleBananas.push(banana);
 
     updateQueue.push({
-        type: "spawn_new_banana",
+        type: "new_single",
         bananaSpawnX,
         bananaSpawnY,
         bananaColor,
         id: food_id,
     });
+}
+
+function testSnakeWallCollision(snake, clientId) {
+    if (snake.isAlive()) {
+        let hitHorizontalWall =
+            snake.head.center.x < 0 || snake.head.center.x > WORLD_WIDTH;
+        let hitVerticalWall =
+            snake.head.center.y < 0 || snake.head.center.y > WORLD_HEIGHT;
+        if (hitHorizontalWall || hitVerticalWall) {
+            snake.kill();
+            createDeathBananas(snake);
+            updateQueue.push({
+                type: "snake_kill",
+                snake_id: clientId,
+            });
+        }
+    }
+}
+
+function testSnakeCollision(snake, elapsedTime, clientId) {
+    // take care of this after snake death is moved to server
 }
 
 function testBananaCollision(snake, elapsedTime, clientId) {
@@ -203,7 +225,6 @@ function testBananaCollision(snake, elapsedTime, clientId) {
             newSingleBananas.push(banana);
             // eat banana
         } else {
-            console.log("arseitnaioresntioearsnt");
             updateQueue.push({
                 type: "eat_single",
                 banana_id: banana.id,
@@ -239,6 +260,34 @@ function testBananaCollision(snake, elapsedTime, clientId) {
     */
 }
 
+function createDeathBananas(snake) {
+    let bananaColor = Math.floor(Math.random() * 6);
+
+    for (let segment of snake.body) {
+        let bananaSpawnX = segment.center.x;
+        let bananaSpawnY = segment.center.y;
+        food_id++;
+
+        const bunch = {
+            bananaX: bananaSpawnX,
+            bananaY: bananaSpawnY,
+            bananaColor,
+            id: food_id,
+        };
+
+        bunchBananas.push(bunch);
+        //console.log("ADDING BUNCH");
+
+        updateQueue.push({
+            type: "new_bunch",
+            bananaSpawnX,
+            bananaSpawnY,
+            bananaColor,
+            id: food_id,
+        });
+    }
+}
+
 function magnetPull(x, y, banana) {
     updateQueue.push({
         type: "magnet_pull",
@@ -261,6 +310,8 @@ function update(elapsedTime, currentTime) {
     updateTime(elapsedTime);
     for (const [id, activeClient] of Object.entries(activeClients)) {
         activeClient.player.snake.update(elapsedTime);
+        testSnakeWallCollision(activeClient.player.snake, id);
+        testSnakeCollision(activeClient.player.snake, elapsedTime, id);
         testBananaCollision(activeClient.player.snake, elapsedTime, id);
     }
 }
@@ -275,15 +326,20 @@ function updateClients(elapsedTime) {
             if (event.type === "input") {
                 client.socket.emit("update_other", event);
             }
-            if (event.type === "spawn_new_banana") {
+            if (event.type === "new_single") {
                 client.socket.emit("new_single", event);
+            }
+            if (event.type === "new_bunch") {
+                client.socket.emit("new_bunch", event);
             }
             if (event.type === "magnet_pull") {
                 client.socket.emit("magnet_pull", event);
             }
             if (event.type === "eat_single") {
-                console.log("yargyarg");
                 client.socket.emit("eat_single", event);
+            }
+            if (event.type === "snake_kill") {
+                client.socket.emit("snake_kill", event);
             }
         }
     }
