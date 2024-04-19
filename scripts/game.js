@@ -268,10 +268,12 @@ MyGame.main = function (objects, input, renderer, graphics) {
     });
 
     socket.on("update_other_head", (data) => {
+        if(!otherSnakes[data.player_id]) return;
         otherSnakes[data.player_id].head.center = data.position;
     });
 
     socket.on("update_other", (data) => {
+        if(!otherSnakes[data.player_id]) return;
         otherSnakes[data.player_id].setRotation(data.desired);
     });
 
