@@ -83,6 +83,7 @@ function initializeSocketIO(server) {
                 segmentDistance,
                 startingSegments: 3,
                 single_bananas: singleBananas,
+                bunch_bananas: bunchBananas,
                 alive: true,
             });
 
@@ -178,6 +179,31 @@ function spawnNewBanana() {
     });
 }
 
+function spawnNewBunch() {
+    if (singleBananas.length >= 1000) return;
+    let bananaSpawnX = Math.random() * WORLD_WIDTH;
+    let bananaSpawnY = Math.random() * WORLD_HEIGHT;
+    let bananaColor = Math.floor(Math.random() * 6);
+    food_id++;
+
+    const banana = {
+        bananaX: bananaSpawnX,
+        bananaY: bananaSpawnY,
+        bananaColor,
+        id: food_id,
+    };
+
+    bunchBananas.push(banana);
+
+    updateQueue.push({
+        type: "new_bunch",
+        bananaSpawnX,
+        bananaSpawnY,
+        bananaColor,
+        id: food_id,
+    });
+}
+
 function testSnakeWallCollision(snake, clientId) {
     if (snake.isAlive()) {
         let hitHorizontalWall =
@@ -234,30 +260,34 @@ function testBananaCollision(snake, elapsedTime, clientId) {
     }
     singleBananas = newSingleBananas;
 
-    /*
-  for (let bunch of bunchBananas) {
-    if (
-      Math.abs(snake.head.center.x - bunch.center.x) <
-        BANANA_MAGNET_TOL &&
-        Math.abs(snake.head.center.y - bunch.center.y) <
-          BANANA_MAGNET_TOL
-    ) {
-      magnetPull(snake.head.center.x, snake.head.center.y, bunch, elapsedTime);
-    }
+    for (let bunch of bunchBananas) {
+        if (
+            Math.abs(snake.head.center.x - bunch.bananaX) < BANANA_MAGNET_TOL &&
+            Math.abs(snake.head.center.y - bunch.bananaY) < BANANA_MAGNET_TOL
+        ) {
+            //console.log("MAGNETING BUNCH!");
+            magnetPull(
+                snake.head.center.x,
+                snake.head.center.y,
+                bunch,
+                elapsedTime,
+            );
+        }
 
-    if (
-      Math.abs(snake.head.center.x - bunch.center.x) >
-        BANANA_EAT_TOL ||
-        Math.abs(snake.head.center.y - bunch.center.y) > BANANA_EAT_TOL
-    ) {
-      newBunchBananas.push(bunch);
-    } else {
-      snake.eatBananaBunch();
-      particle_system.eatBanana(bunch);
+        if (
+            Math.abs(snake.head.center.x - bunch.bananaX) > BANANA_EAT_TOL ||
+            Math.abs(snake.head.center.y - bunch.bananaY) > BANANA_EAT_TOL
+        ) {
+            newBunchBananas.push(bunch);
+        } else {
+            updateQueue.push({
+                type: "eat_bunch",
+                banana_id: bunch.id,
+                snake_id: clientId,
+            });
+        }
     }
-  }
-  bunchBananas = newBunchBananas;
-    */
+    bunchBananas = newBunchBananas;
 }
 
 function createDeathBananas(snake) {
@@ -303,6 +333,7 @@ function updateTime(elapsedTime) {
     if (timer >= 100) {
         timer -= 100;
         spawnNewBanana();
+        spawnNewBunch();
     }
 }
 
@@ -337,6 +368,9 @@ function updateClients(elapsedTime) {
             }
             if (event.type === "eat_single") {
                 client.socket.emit("eat_single", event);
+            }
+            if (event.type === "eat_bunch") {
+                client.socket.emit("eat_bunch", event);
             }
             if (event.type === "snake_kill") {
                 client.socket.emit("snake_kill", event);

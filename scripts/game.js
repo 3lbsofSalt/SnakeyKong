@@ -148,6 +148,20 @@ MyGame.main = function (objects, input, renderer, graphics) {
             );
         }
 
+        for (const bunch of data.bunch_bananas) {
+            //console.log(banana);
+            bunchBananas.push(
+                objects.Food({
+                    size: { x: BUNCH_SIZE, y: BUNCH_SIZE },
+                    color: bunch.bananaColor,
+                    image: bunchColorImages[bunch.bananaColor],
+                    center: { x: bunch.bananaX, y: bunch.bananaY },
+                    rotation: 0,
+                    id: bunch.id,
+                }),
+            );
+        }
+
         particle_system = particleSystem(playerSnake);
         registerKeys();
         cancelNextRequest = false;
@@ -189,6 +203,22 @@ MyGame.main = function (objects, input, renderer, graphics) {
 
         if (data.snake_id === socket.id) {
             playerSnake.eatSingleBanana();
+        }
+    });
+
+    socket.on("eat_bunch", (data) => {
+        const banana = bunchBananas.findIndex(
+            (nana) => data.banana_id === nana.id,
+        );
+
+        if (banana === -1) return;
+
+        particle_system.eatBanana(bunchBananas[banana]);
+
+        bunchBananas.splice(banana, 1);
+
+        if (data.snake_id === socket.id) {
+            playerSnake.eatBananaBunch();
         }
     });
 
@@ -323,10 +353,17 @@ MyGame.main = function (objects, input, renderer, graphics) {
         const magnet_now = [...magneted_bananas];
         magneted_bananas = [];
         for (const magneted of magnet_now) {
-            const banana = singleBananas.find(
+            let banana = singleBananas.find(
                 (nana) => magneted.banana_id === nana.id,
             );
-            if (!banana) continue;
+            if (!banana) {
+                banana = bunchBananas.find(
+                    (nana) => magneted.banana_id === nana.id,
+                );
+            }
+            if (!banana) {
+                continue;
+            }
             magnetPull(
                 magneted.pullLoc.x,
                 magneted.pullLoc.y,
