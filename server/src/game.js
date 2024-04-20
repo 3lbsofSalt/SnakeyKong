@@ -243,10 +243,20 @@ function testSnakeWallCollision(snake, clientId) {
     }
 }
 
-function snakeTooCloseToOtherSnake(snake, otherSnake) {
-    console.log("YOU VS THEM:");
-    console.log(snake.renderSize);
-    console.log(otherSnake.renderSize);
+function snakeHitOtherSnakeHead(snake, otherSnake) {
+    let tooCloseX =
+        Math.abs(snake.center.x - otherSnake.center.x) <
+        otherSnake.renderSize / 2;
+    let tooCloseY =
+        Math.abs(snake.center.y - otherSnake.center.y) <
+        otherSnake.renderSize / 2;
+    if (tooCloseX && tooCloseY) {
+        return true;
+    }
+    return false;
+}
+
+function snakeHitOtherSnakeBody(snake, otherSnake) {
     for (segment of otherSnake.body) {
         let tooCloseX =
             Math.abs(snake.center.x - segment.center.x) <
@@ -261,13 +271,28 @@ function snakeTooCloseToOtherSnake(snake, otherSnake) {
     return false;
 }
 
-function testSnakeCollision(snake, elapsedTime, clientId) {
+function testSnakeCollision(snake, clientId) {
     // For every snake in the lobby...
     for (const [id, activeClient] of Object.entries(activeClients)) {
         // ...except for yourself...
         if (clientId != id) {
+            otherSnake = activeClient.player.snake;
             // ...check and see if you have collided into a part of the other snake
-            if (snakeTooCloseToOtherSnake(snake, activeClient.player.snake)) {
+            if (snakeHitOtherSnakeHead(snake, otherSnake)) {
+                snake.kill();
+                createDeathBananas(snake);
+                updateQueue.push({
+                    type: "snake_kill",
+                    snake_id: clientId,
+                });
+
+                otherSnake.kill();
+                createDeathBananas(otherSnake);
+                updateQueue.push({
+                    type: "snake_kill",
+                    snake_id: id,
+                });
+            } else if (snakeHitOtherSnakeBody(snake, otherSnake)) {
                 snake.kill();
                 createDeathBananas(snake);
                 updateQueue.push({
@@ -434,7 +459,7 @@ function update(elapsedTime, currentTime) {
 
         if (activeClient.player.snake.isAlive()) {
             testSnakeWallCollision(activeClient.player.snake, id);
-            testSnakeCollision(activeClient.player.snake, elapsedTime, id);
+            testSnakeCollision(activeClient.player.snake, id);
             testBananaCollision(activeClient.player.snake, elapsedTime, id);
         }
     }
