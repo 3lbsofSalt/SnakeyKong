@@ -1,520 +1,507 @@
 MyGame.main = function (objects, input, renderer, graphics) {
-  let singleBananaRender = renderer.AnimatedModel(
-    {
-      spriteCount: SINGLE_SPRITE_COUNT,
-      spriteTime: [150, 150, 150, 150, 150, 150, 150, 150], // ms per frame
-    },
-    graphics,
-  );
-  let bunchBananaRender = renderer.AnimatedModel(
-    {
-      spriteCount: BUNCH_SPRITE_COUNT,
-      spriteTime: [
-        100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,
-      ], // ms per frame
-    },
-    graphics,
-  );
-
-  const dkHeadRender = renderer.AnimatedModel(
-    {
-      spriteCount: 1,
-      spriteTime: [1000], // ms per frame
-    },
-    graphics,
-  );
-
-  const dkBodyRender = renderer.AnimatedModel(
-    {
-      spriteCount: 1,
-      spriteTime: [1000], // ms per frame
-    },
-    graphics,
-  );
-
-  function registerKeys() {
-    myKeyboard.register(" ", () => {
-      console.log(playerSnake);
-      debugger;
-    });
-    myKeyboard.register(input.keys.right, () => {
-      if (myKeyboard.keys.hasOwnProperty(input.keys.up)) {
-        playerSnake.setDirectionUpRight();
-        socket.emit("input", { command: "up-right" });
-      } else if (myKeyboard.keys.hasOwnProperty(input.keys.down)) {
-        playerSnake.setDirectionDownRight();
-        socket.emit("input", { command: "down-right" });
-      } else {
-        playerSnake.setDirectionRight();
-        socket.emit("input", { command: "right" });
-      }
-    });
-    myKeyboard.register(input.keys.down, () => {
-      if (myKeyboard.keys.hasOwnProperty(input.keys.left)) {
-        playerSnake.setDirectionDownLeft();
-        socket.emit("input", { command: "down-left" });
-      } else if (myKeyboard.keys.hasOwnProperty(input.keys.right)) {
-        playerSnake.setDirectionDownRight();
-        socket.emit("input", { command: "down-right" });
-      } else {
-        playerSnake.setDirectionDown();
-        socket.emit("input", { command: "down" });
-      }
-    });
-    myKeyboard.register(input.keys.left, () => {
-      if (myKeyboard.keys.hasOwnProperty(input.keys.up)) {
-        playerSnake.setDirectionUpLeft();
-        socket.emit("input", { command: "up-left" });
-      } else if (myKeyboard.keys.hasOwnProperty(input.keys.down)) {
-        playerSnake.setDirectionDownLeft();
-        socket.emit("input", { command: "down-left" });
-      } else {
-        playerSnake.setDirectionLeft();
-        socket.emit("input", { command: "left" });
-      }
-    });
-    myKeyboard.register(input.keys.up, () => {
-      if (myKeyboard.keys.hasOwnProperty(input.keys.left)) {
-        playerSnake.setDirectionUpLeft();
-        socket.emit("input", { command: "up-left" });
-      } else if (myKeyboard.keys.hasOwnProperty(input.keys.right)) {
-        playerSnake.setDirectionUpRight();
-        socket.emit("input", { command: "up-right" });
-      } else {
-        playerSnake.setDirectionUp();
-        socket.emit("input", { command: "up" });
-      }
-    });
-  }
-  ("use strict");
-
-  let cancelNextRequest = true;
-  const socket = io();
-  let playerSnake = {};
-  const otherSnakes = {};
-  console.log("game initializing...");
-
-  socket.on("connect-ack", () => {
-    console.log("Connected to the Server!");
-  });
-
-  const canvas = graphics.getCanvas();
-  const context = graphics.getContext();
-
-  let particle_system = particleSystem(playerSnake);
-
-  const SINGLE_SIZE = 30;
-  const BUNCH_SIZE = 40;
-
-  const WORLD_WIDTH = 4800;
-  const WORLD_HEIGHT = 2600;
-
-  const camera = {
-    x: 0,
-    y: 0,
-    width: canvas.width,
-    height: canvas.height,
-  };
-
-  // This event should only be recieved after a join request event is emitted.
-  socket.on("join", (data) => {
-    playerSnake = objects.Snake(
-      { ...data.position }, // center
-      data.rotation, // direction
-      data.moveRate, // moveRate
-      data.rotateRate, // rotateRate
-      data.rotationTolerance,
-      localStorage.getItem("name"),
-      dkHeadRender,
-      dkBodyRender,
-      dkhead, // Head Image
-      dkbody, // Body Image
-      data.startingSegments,
-      0, // Score
-    );
-
-    for (const banana of data.single_bananas) {
-      singleBananas.push(
-        objects.Food({
-          size: { x: SINGLE_SIZE, y: SINGLE_SIZE },
-          color: banana.bananaColor,
-          image: singleColorImages[banana.bananaColor],
-          center: { x: banana.bananaX, y: banana.bananaY },
-          rotation: 0,
-          id: banana.id,
-        }),
-      );
-    }
-
-    for (const bunch of data.bunch_bananas) {
-      bunchBananas.push(
-        objects.Food({
-          size: { x: BUNCH_SIZE, y: BUNCH_SIZE },
-          color: bunch.bananaColor,
-          image: bunchColorImages[bunch.bananaColor],
-          center: { x: bunch.bananaX, y: bunch.bananaY },
-          rotation: 0,
-          id: bunch.id,
-        }),
-      );
-    }
-
-    particle_system = particleSystem(playerSnake);
-    registerKeys();
-    cancelNextRequest = false;
-    requestAnimationFrame(gameLoop);
-  });
-
-  socket.on("update_head", (data) => {
-    playerSnake.center = data.position;
-    playerSnake.adjustPosition({
-      x: data.position.x - playerSnake.center.x,
-      y: data.position.y - playerSnake.center.y
-    })
-  });
-
-  socket.on("grow_snake", (data) => {
-    playerSnake.body.push(createBody(
-      {...data.center},
-      [...inflection_points]
-    ));
-  });
-
-  socket.on("grow_other", (data) => {
-    if(!otherSnakes[data.player_id]) return;
-    !otherSnakes[data.player_id].body.push(createBody(
-      {...data.center},
-      [...inflection_points]
-    ));
-  });
-
-  socket.on("connect_other", (data) => {
-    const snake = data.snake;
-    const newSnake = objects.Snake(
-      snake.center,
-      snake.direction,
-      snake.moveRate,
-      snake.rotateRate,
-      snake.rotationTolerance,
-      snake.name,
-      dkHeadRender,
-      dkBodyRender,
-      dkhead,
-      dkbody,
-      //segmentDistance: snake.segmentDistance,
-      snake.body.length,
-      snake.score,
-      snake.body
-    );
-
-    otherSnakes[data.playerId] = newSnake;
-  });
-
-  socket.on('disconnect_other', (data) => {
-    console.log(data);
-    console.log(otherSnakes)
-    if(otherSnakes[data.clientId]) {
-      console.log('')
-      delete otherSnakes[data.clientId];
-    }
-  })
-
-  socket.on("add_turn", (data) => {
-    playerSnake.addTurnPoint(data.turnPoint);
-  });
-
-  socket.on("add_other_turn", (data) => {
-    if(!otherSnakes[data.player_id]) return;
-    otherSnakes[data.player_id].addTurnPoint(data.turnPoint);
-  })
-
-  socket.on("eat_single", (data) => {
-    const banana = singleBananas.findIndex(
-      (nana) => data.banana_id === nana.id,
-    );
-
-    if (banana === -1) return;
-
-    particle_system.eatBanana(singleBananas[banana]);
-    singleBananas.splice(banana, 1);
-
-    if (data.snake_id === socket.id) {
-      playerSnake.eatSingleBanana();
-    }
-  });
-
-  socket.on("eat_bunch", (data) => {
-    const banana = bunchBananas.findIndex(
-      (nana) => data.banana_id === nana.id,
-    );
-
-    if (banana === -1) return;
-
-    particle_system.eatBanana(bunchBananas[banana]);
-
-    bunchBananas.splice(banana, 1);
-
-    if (data.snake_id === socket.id) {
-      playerSnake.eatBananaBunch();
-    }
-  });
-
-  socket.on("new_single", (data) => {
-    singleBananas.push(
-      objects.Food({
-        size: { x: SINGLE_SIZE, y: SINGLE_SIZE },
-        color: data.bananaColor,
-        image: singleColorImages[data.bananaColor],
-        center: { x: data.bananaSpawnX, y: data.bananaSpawnY },
-        rotation: 0,
-        id: data.id,
-      }),
-    );
-  });
-
-  socket.on("new_bunch", (data) => {
-    bunchBananas.push(
-      objects.Food({
-        size: { x: BUNCH_SIZE, y: BUNCH_SIZE },
-        color: data.bananaColor,
-        image: bunchColorImages[data.bananaColor],
-        center: { x: data.bananaSpawnX, y: data.bananaSpawnY },
-        rotation: 0,
-        id: data.id,
-      }),
-    );
-  });
-
-  socket.on("snake_kill", (data) => {
-    playerSnake.kill();
-    particle_system.snakeCrash();
-  });
-
-  socket.on("other_snake_kill", (data) => {
-      console.log(data)
-    if(otherSnakes[data.snake_id]) {
-      otherSnakes[data.snake_id].kill();
-      //particle_system.snakeCrash();
-    }
-  });
-
-  let magneted_bananas = [];
-  socket.on("magnet_pull", (data) => {
-    magneted_bananas.push(data);
-  });
-
-  socket.on('add_body', (data) => {
-    playerSnake.body.push(createBody(
-      {...data.piece.center},
-      [...data.piece.inflection_points]
-    ))
-  });
-
-  socket.on('add_other_body', (data) => {
-    if(!otherSnakes[data.player_id]) return;
-    otherSnakes[data.player_id].body.push(createBody(
-      {...data.piece.center},
-      [...data.piece.inflection_points]
-    ));
-  });
-
-  socket.on("update_other_head", (data) => {
-    if(!otherSnakes[data.player_id]) return;
-    otherSnakes[data.player_id].center = data.position;
-  });
-
-  socket.on("update_other", (data) => {
-    if(!otherSnakes[data.player_id]) return;
-    otherSnakes[data.player_id].setRotation(data.desired);
-  });
-
-  let lastTimeStamp = performance.now();
-  let myKeyboard = input.Keyboard();
-
-  let singleBananas = [];
-  let bunchBananas = [];
-
-  startMusic();
-
-  function startMusic() {
-    let jungleJapes = new Audio("assets/audio/jungleJapesMusic.mp3");
-    jungleJapes.play();
-  }
-
-  function processInput(elapsedTime) {
-    myKeyboard.update(elapsedTime);
-  }
-
-  const UPDATE_RATE_MS = 30;
-
-  function gameLoop(time) {
-    let elapsed = time - lastTimeStamp;
-    processInput(elapsed);
-    update(elapsed);
-    render();
-    lastTimeStamp = time;
-
-    if (!cancelNextRequest) {
-      setTimeout(
-        () => {
-          requestAnimationFrame(gameLoop);
+    let singleBananaRender = renderer.AnimatedModel(
+        {
+            spriteCount: SINGLE_SPRITE_COUNT,
+            spriteTime: [150, 150, 150, 150, 150, 150, 150, 150], // ms per frame
         },
-        UPDATE_RATE_MS - (performance.now() - time),
-      );
+        graphics,
+    );
+    let bunchBananaRender = renderer.AnimatedModel(
+        {
+            spriteCount: BUNCH_SPRITE_COUNT,
+            spriteTime: [
+                100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,
+            ], // ms per frame
+        },
+        graphics,
+    );
+
+    const dkHeadRender = renderer.AnimatedModel(
+        {
+            spriteCount: 1,
+            spriteTime: [1000], // ms per frame
+        },
+        graphics,
+    );
+
+    const dkBodyRender = renderer.AnimatedModel(
+        {
+            spriteCount: 1,
+            spriteTime: [1000], // ms per frame
+        },
+        graphics,
+    );
+
+    function registerKeys() {
+        myKeyboard.register(" ", () => {
+            console.log(playerSnake);
+            debugger;
+        });
+        myKeyboard.register(input.keys.right, () => {
+            if (myKeyboard.keys.hasOwnProperty(input.keys.up)) {
+                playerSnake.setDirectionUpRight();
+                socket.emit("input", { command: "up-right" });
+            } else if (myKeyboard.keys.hasOwnProperty(input.keys.down)) {
+                playerSnake.setDirectionDownRight();
+                socket.emit("input", { command: "down-right" });
+            } else {
+                playerSnake.setDirectionRight();
+                socket.emit("input", { command: "right" });
+            }
+        });
+        myKeyboard.register(input.keys.down, () => {
+            if (myKeyboard.keys.hasOwnProperty(input.keys.left)) {
+                playerSnake.setDirectionDownLeft();
+                socket.emit("input", { command: "down-left" });
+            } else if (myKeyboard.keys.hasOwnProperty(input.keys.right)) {
+                playerSnake.setDirectionDownRight();
+                socket.emit("input", { command: "down-right" });
+            } else {
+                playerSnake.setDirectionDown();
+                socket.emit("input", { command: "down" });
+            }
+        });
+        myKeyboard.register(input.keys.left, () => {
+            if (myKeyboard.keys.hasOwnProperty(input.keys.up)) {
+                playerSnake.setDirectionUpLeft();
+                socket.emit("input", { command: "up-left" });
+            } else if (myKeyboard.keys.hasOwnProperty(input.keys.down)) {
+                playerSnake.setDirectionDownLeft();
+                socket.emit("input", { command: "down-left" });
+            } else {
+                playerSnake.setDirectionLeft();
+                socket.emit("input", { command: "left" });
+            }
+        });
+        myKeyboard.register(input.keys.up, () => {
+            if (myKeyboard.keys.hasOwnProperty(input.keys.left)) {
+                playerSnake.setDirectionUpLeft();
+                socket.emit("input", { command: "up-left" });
+            } else if (myKeyboard.keys.hasOwnProperty(input.keys.right)) {
+                playerSnake.setDirectionUpRight();
+                socket.emit("input", { command: "up-right" });
+            } else {
+                playerSnake.setDirectionUp();
+                socket.emit("input", { command: "up" });
+            }
+        });
     }
-  }
+    ("use strict");
 
-  function renderBackground() {
-    if (backgroundImage.isReady) {
-      context.drawImage(
-        backgroundImage,
-        0,
-        0,
-        backgroundImage.width,
-        backgroundImage.height,
-      );
-    }
-  }
+    let cancelNextRequest = true;
+    const socket = io();
+    let playerSnake = {};
+    const otherSnakes = {};
+    console.log("game initializing...");
 
-  function updateFood(elapsedTime) {
-    singleBananaRender.update(elapsedTime);
-    bunchBananaRender.update(elapsedTime);
-  }
-
-  function renderFood() {
-    for (let banana of singleBananas) {
-      singleBananaRender.render(banana);
-    }
-    for (let bunch of bunchBananas) {
-      bunchBananaRender.render(bunch);
-    }
-  }
-
-  function update(elapsedTime) {
-    updateFood(elapsedTime);
-    updateParticles(elapsedTime);
-    updateCamera();
-
-    const magnet_now = [...magneted_bananas];
-    magneted_bananas = [];
-    for (const magneted of magnet_now) {
-      let banana = singleBananas.find(
-        (nana) => magneted.banana_id === nana.id,
-      );
-      if (!banana) {
-        banana = bunchBananas.find(
-          (nana) => magneted.banana_id === nana.id,
-        );
-      }
-      if (!banana) {
-        continue;
-      }
-      magnetPull(
-        magneted.pullLoc.x,
-        magneted.pullLoc.y,
-        banana,
-        elapsedTime,
-      );
-    }
-
-    if (playerSnake.isAlive()) {
-      playerSnake.update(elapsedTime);
-    }
-
-    for (const snake of Object.values(otherSnakes)) {
-      if(snake.isAlive()) {
-        snake.update(elapsedTime);
-      }
-    }
-  }
-
-  function render() {
-    graphics.clear();
-
-    context.translate(-camera.x, -camera.y);
-    renderBackground();
-    renderFood();
-    renderParticles(context);
-
-    // Render segments from last to first
-    if (playerSnake.isAlive()) {
-      playerSnake.render();
-    } else {
-      // render game over screen
-    }
-
-    for (const snake of Object.values(otherSnakes)) {
-      if(snake.isAlive()) {
-        snake.render();
-      }
-    }
-
-    context.translate(camera.x, camera.y);
-
-    renderScoreboard(playerSnake, Object.values(otherSnakes));
-  }
-
-  /*
-function testSnakeWallCollision(snake) {
-let hitHorizontalWall =
-snake.center.x < 0 || snake.center.x > WORLD_WIDTH;
-let hitVerticalWall =
-snake.center.y < 0 || snake.center.y > WORLD_HEIGHT;
-if (hitHorizontalWall || hitVerticalWall) {
-snake.kill();
-createDeathBananas(snake);
-particle_system.snakeCrash();
-}
-}
-*/
-
-  myKeyboard.register("Escape", function () {
-    cancelNextRequest = true;
-    MyGame.manager.showScreen("main-menu");
-  });
-
-  function start() {
-    socket.emit("join-request", {
-      name: localStorage.getItem("name"),
+    socket.on("connect-ack", () => {
+        console.log("Connected to the Server!");
     });
-  }
 
-  // Particle system - put in own file later
-  function magnetPull(x, y, banana, elapsedTime) {
-    banana.center.x += ((x - banana.center.x) * elapsedTime) / 150;
-    banana.center.y += ((y - banana.center.y) * elapsedTime) / 150;
-  }
+    const canvas = graphics.getCanvas();
+    const context = graphics.getContext();
 
-  function updateCamera() {
-    // Adjust camera position based on player's position
-    camera.x = playerSnake.center.x - camera.width / 2;
-    camera.y = playerSnake.center.y - camera.height / 2;
+    let particle_system = particleSystem(playerSnake);
 
-    // Ensure camera doesn't go out of bounds
-    if (camera.x < 0) {
-      camera.x = 0;
+    const SINGLE_SIZE = 30;
+    const BUNCH_SIZE = 40;
+
+    const WORLD_WIDTH = 4800;
+    const WORLD_HEIGHT = 2600;
+
+    const camera = {
+        x: 0,
+        y: 0,
+        width: canvas.width,
+        height: canvas.height,
+    };
+
+    // This event should only be recieved after a join request event is emitted.
+    socket.on("join", (data) => {
+        playerSnake = objects.Snake(
+            { ...data.position }, // center
+            data.rotation, // direction
+            data.moveRate, // moveRate
+            data.rotateRate, // rotateRate
+            data.rotationTolerance,
+            data.renderSize,
+            localStorage.getItem("name"),
+            dkHeadRender,
+            dkBodyRender,
+            dkhead, // Head Image
+            dkbody, // Body Image
+            data.startingSegments,
+            0, // Score
+        );
+
+        for (const banana of data.single_bananas) {
+            singleBananas.push(
+                objects.Food({
+                    size: { x: SINGLE_SIZE, y: SINGLE_SIZE },
+                    color: banana.bananaColor,
+                    image: singleColorImages[banana.bananaColor],
+                    center: { x: banana.bananaX, y: banana.bananaY },
+                    rotation: 0,
+                    id: banana.id,
+                }),
+            );
+        }
+
+        for (const bunch of data.bunch_bananas) {
+            bunchBananas.push(
+                objects.Food({
+                    size: { x: BUNCH_SIZE, y: BUNCH_SIZE },
+                    color: bunch.bananaColor,
+                    image: bunchColorImages[bunch.bananaColor],
+                    center: { x: bunch.bananaX, y: bunch.bananaY },
+                    rotation: 0,
+                    id: bunch.id,
+                }),
+            );
+        }
+
+        particle_system = particleSystem(playerSnake);
+        registerKeys();
+        cancelNextRequest = false;
+        requestAnimationFrame(gameLoop);
+    });
+
+    socket.on("update_head", (data) => {
+        playerSnake.center = data.position;
+        playerSnake.adjustPosition({
+            x: data.position.x - playerSnake.center.x,
+            y: data.position.y - playerSnake.center.y,
+        });
+    });
+
+    socket.on("grow_snake", (data) => {
+        playerSnake.body.push(
+            createBody({ ...data.center }, [...inflection_points]),
+        );
+    });
+
+    socket.on("grow_other", (data) => {
+        if (!otherSnakes[data.player_id]) return;
+        !otherSnakes[data.player_id].body.push(
+            createBody({ ...data.center }, [...inflection_points]),
+        );
+    });
+
+    socket.on("connect_other", (data) => {
+        const snake = data.snake;
+        const newSnake = objects.Snake(
+            snake.center,
+            snake.direction,
+            snake.moveRate,
+            snake.rotateRate,
+            snake.rotationTolerance,
+            snake.renderSize,
+            snake.name,
+            dkHeadRender,
+            dkBodyRender,
+            dkhead,
+            dkbody,
+            //segmentDistance: snake.segmentDistance,
+            snake.body.length,
+            snake.score,
+            snake.body,
+        );
+
+        otherSnakes[data.playerId] = newSnake;
+    });
+
+    socket.on("disconnect_other", (data) => {
+        console.log(data);
+        console.log(otherSnakes);
+        if (otherSnakes[data.clientId]) {
+            console.log("");
+            delete otherSnakes[data.clientId];
+        }
+    });
+
+    socket.on("add_turn", (data) => {
+        playerSnake.addTurnPoint(data.turnPoint);
+    });
+
+    socket.on("add_other_turn", (data) => {
+        if (!otherSnakes[data.player_id]) return;
+        otherSnakes[data.player_id].addTurnPoint(data.turnPoint);
+    });
+
+    socket.on("eat_single", (data) => {
+        const banana = singleBananas.findIndex(
+            (nana) => data.banana_id === nana.id,
+        );
+
+        if (banana === -1) return;
+
+        particle_system.eatBanana(singleBananas[banana]);
+        singleBananas.splice(banana, 1);
+
+        if (data.snake_id === socket.id) {
+            playerSnake.eatSingleBanana();
+        }
+    });
+
+    socket.on("eat_bunch", (data) => {
+        const banana = bunchBananas.findIndex(
+            (nana) => data.banana_id === nana.id,
+        );
+
+        if (banana === -1) return;
+
+        particle_system.eatBanana(bunchBananas[banana]);
+
+        bunchBananas.splice(banana, 1);
+
+        if (data.snake_id === socket.id) {
+            playerSnake.eatBananaBunch();
+        }
+    });
+
+    socket.on("new_single", (data) => {
+        singleBananas.push(
+            objects.Food({
+                size: { x: SINGLE_SIZE, y: SINGLE_SIZE },
+                color: data.bananaColor,
+                image: singleColorImages[data.bananaColor],
+                center: { x: data.bananaSpawnX, y: data.bananaSpawnY },
+                rotation: 0,
+                id: data.id,
+            }),
+        );
+    });
+
+    socket.on("new_bunch", (data) => {
+        bunchBananas.push(
+            objects.Food({
+                size: { x: BUNCH_SIZE, y: BUNCH_SIZE },
+                color: data.bananaColor,
+                image: bunchColorImages[data.bananaColor],
+                center: { x: data.bananaSpawnX, y: data.bananaSpawnY },
+                rotation: 0,
+                id: data.id,
+            }),
+        );
+    });
+
+    socket.on("snake_kill", (data) => {
+        playerSnake.kill();
+        particle_system.snakeCrash();
+    });
+
+    socket.on("other_snake_kill", (data) => {
+        console.log(data);
+        if (otherSnakes[data.snake_id]) {
+            otherSnakes[data.snake_id].kill();
+            //particle_system.snakeCrash();
+        }
+    });
+
+    let magneted_bananas = [];
+    socket.on("magnet_pull", (data) => {
+        magneted_bananas.push(data);
+    });
+
+    socket.on("add_body", (data) => {
+        playerSnake.body.push(
+            createBody({ ...data.piece.center }, [
+                ...data.piece.inflection_points,
+            ]),
+        );
+    });
+
+    socket.on("add_other_body", (data) => {
+        if (!otherSnakes[data.player_id]) return;
+        otherSnakes[data.player_id].body.push(
+            createBody({ ...data.piece.center }, [
+                ...data.piece.inflection_points,
+            ]),
+        );
+    });
+
+    socket.on("update_other_head", (data) => {
+        if (!otherSnakes[data.player_id]) return;
+        otherSnakes[data.player_id].center = data.position;
+    });
+
+    socket.on("update_other", (data) => {
+        if (!otherSnakes[data.player_id]) return;
+        otherSnakes[data.player_id].setRotation(data.desired);
+    });
+
+    let lastTimeStamp = performance.now();
+    let myKeyboard = input.Keyboard();
+
+    let singleBananas = [];
+    let bunchBananas = [];
+
+    startMusic();
+
+    function startMusic() {
+        let jungleJapes = new Audio("assets/audio/jungleJapesMusic.mp3");
+        jungleJapes.play();
     }
-    if (camera.y < 0) {
-      camera.y = 0;
-    }
-    if (camera.x + camera.width > WORLD_WIDTH) {
-      camera.x = WORLD_WIDTH - camera.width;
-    }
-    if (camera.y + camera.height > WORLD_HEIGHT) {
-      camera.y = WORLD_HEIGHT - camera.height;
-    }
-  }
 
-  myKeyboard.register("Escape", function () {
-    cancelNextRequest = true;
-    MyGame.manager.showScreen("main-menu");
-  });
+    function processInput(elapsedTime) {
+        myKeyboard.update(elapsedTime);
+    }
 
-  return {
-    processInput: processInput,
-    update: update,
-    render: render,
-    start: start,
-    dkHead: playerSnake,
-  };
+    const UPDATE_RATE_MS = 30;
+
+    function gameLoop(time) {
+        let elapsed = time - lastTimeStamp;
+        processInput(elapsed);
+        update(elapsed);
+        render();
+        lastTimeStamp = time;
+
+        if (!cancelNextRequest) {
+            setTimeout(
+                () => {
+                    requestAnimationFrame(gameLoop);
+                },
+                UPDATE_RATE_MS - (performance.now() - time),
+            );
+        }
+    }
+
+    function renderBackground() {
+        if (backgroundImage.isReady) {
+            context.drawImage(
+                backgroundImage,
+                0,
+                0,
+                backgroundImage.width,
+                backgroundImage.height,
+            );
+        }
+    }
+
+    function updateFood(elapsedTime) {
+        singleBananaRender.update(elapsedTime);
+        bunchBananaRender.update(elapsedTime);
+    }
+
+    function renderFood() {
+        for (let banana of singleBananas) {
+            singleBananaRender.render(banana);
+        }
+        for (let bunch of bunchBananas) {
+            bunchBananaRender.render(bunch);
+        }
+    }
+
+    function update(elapsedTime) {
+        updateFood(elapsedTime);
+        updateParticles(elapsedTime);
+        updateCamera();
+
+        const magnet_now = [...magneted_bananas];
+        magneted_bananas = [];
+        for (const magneted of magnet_now) {
+            let banana = singleBananas.find(
+                (nana) => magneted.banana_id === nana.id,
+            );
+            if (!banana) {
+                banana = bunchBananas.find(
+                    (nana) => magneted.banana_id === nana.id,
+                );
+            }
+            if (!banana) {
+                continue;
+            }
+            magnetPull(
+                magneted.pullLoc.x,
+                magneted.pullLoc.y,
+                banana,
+                elapsedTime,
+            );
+        }
+
+        if (playerSnake.isAlive()) {
+            playerSnake.update(elapsedTime);
+        }
+
+        for (const snake of Object.values(otherSnakes)) {
+            if (snake.isAlive()) {
+                snake.update(elapsedTime);
+            }
+        }
+    }
+
+    function render() {
+        graphics.clear();
+
+        context.translate(-camera.x, -camera.y);
+        renderBackground();
+        renderFood();
+        renderParticles(context);
+
+        // Render segments from last to first
+        if (playerSnake.isAlive()) {
+            playerSnake.render();
+        } else {
+            // render game over screen
+        }
+
+        for (const snake of Object.values(otherSnakes)) {
+            if (snake.isAlive()) {
+                snake.render();
+            }
+        }
+
+        context.translate(camera.x, camera.y);
+
+        renderScoreboard(playerSnake, Object.values(otherSnakes));
+    }
+
+    myKeyboard.register("Escape", function () {
+        cancelNextRequest = true;
+        MyGame.manager.showScreen("main-menu");
+    });
+
+    function start() {
+        socket.emit("join-request", {
+            name: localStorage.getItem("name"),
+        });
+    }
+
+    function magnetPull(x, y, banana, elapsedTime) {
+        banana.center.x += ((x - banana.center.x) * elapsedTime) / 150;
+        banana.center.y += ((y - banana.center.y) * elapsedTime) / 150;
+    }
+
+    function updateCamera() {
+        // Adjust camera position based on player's position
+        camera.x = playerSnake.center.x - camera.width / 2;
+        camera.y = playerSnake.center.y - camera.height / 2;
+
+        // Ensure camera doesn't go out of bounds
+        if (camera.x < 0) {
+            camera.x = 0;
+        }
+        if (camera.y < 0) {
+            camera.y = 0;
+        }
+        if (camera.x + camera.width > WORLD_WIDTH) {
+            camera.x = WORLD_WIDTH - camera.width;
+        }
+        if (camera.y + camera.height > WORLD_HEIGHT) {
+            camera.y = WORLD_HEIGHT - camera.height;
+        }
+    }
+
+    myKeyboard.register("Escape", function () {
+        cancelNextRequest = true;
+        MyGame.manager.showScreen("main-menu");
+    });
+
+    return {
+        processInput: processInput,
+        update: update,
+        render: render,
+        start: start,
+        dkHead: playerSnake,
+    };
 };
