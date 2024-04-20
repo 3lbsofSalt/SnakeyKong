@@ -214,7 +214,7 @@ MyGame.main = function (objects, input, renderer, graphics) {
     console.log(data);
     console.log(otherSnakes)
     if(otherSnakes[data.clientId]) {
-      console.log('deleted')
+      console.log('')
       delete otherSnakes[data.clientId];
     }
   })
@@ -286,10 +286,15 @@ MyGame.main = function (objects, input, renderer, graphics) {
   });
 
   socket.on("snake_kill", (data) => {
-    if (data.snake_id === socket.id) {
-      playerSnake.kill();
-      // createDeathBananas(playerSnake);
-      particle_system.snakeCrash();
+    playerSnake.kill();
+    particle_system.snakeCrash();
+  });
+
+  socket.on("other_snake_kill", (data) => {
+      console.log(data)
+    if(otherSnakes[data.snake_id]) {
+      otherSnakes[data.snake_id].kill();
+      //particle_system.snakeCrash();
     }
   });
 
@@ -417,7 +422,9 @@ MyGame.main = function (objects, input, renderer, graphics) {
     }
 
     for (const snake of Object.values(otherSnakes)) {
-      snake.update(elapsedTime);
+      if(snake.isAlive()) {
+        snake.update(elapsedTime);
+      }
     }
   }
 
@@ -437,7 +444,9 @@ MyGame.main = function (objects, input, renderer, graphics) {
     }
 
     for (const snake of Object.values(otherSnakes)) {
-      snake.render();
+      if(snake.isAlive()) {
+        snake.render();
+      }
     }
 
     context.translate(camera.x, camera.y);

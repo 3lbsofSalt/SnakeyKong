@@ -443,7 +443,11 @@ function updateClients(elapsedTime) {
       } else if (event.type === "eat_bunch") {
         client.socket.emit("eat_bunch", event);
       } else if (event.type === "snake_kill") {
-        client.socket.emit("snake_kill", event);
+        if (clientId == event?.snake_id) {
+          client.socket.emit("snake_kill", event);
+        } else {
+          client.socket.emit("other_snake_kill", event);
+        }
       } else if (event.type === 'add_body') {
         if (clientId == event?.player_id) {
           client.socket.emit("add_body", event);
