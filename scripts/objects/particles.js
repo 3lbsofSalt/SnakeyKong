@@ -153,7 +153,7 @@ function particleSystem(playerSnake) {
                 },
                 image: particleColorImages[banana.color], // determinesColor
                 speed: Math.random() * 600, // pixels per second
-                rotation: playerSnake.head.direction,
+                rotation: playerSnake.direction,
                 lifetime: Math.random(), // seconds
             };
             banana_particles.push(Particle(p));
@@ -167,8 +167,8 @@ function particleSystem(playerSnake) {
             let negY = Math.random() < 0.5 ? 1 : -1;
             let p = {
                 center: {
-                    x: playerSnake.head.center.x,
-                    y: playerSnake.head.center.y,
+                    x: playerSnake.center.x,
+                    y: playerSnake.center.y,
                 },
                 direction: {
                     x: Math.random() * negX,
@@ -176,7 +176,7 @@ function particleSystem(playerSnake) {
                 },
                 image: deathParticle,
                 speed: Math.random() * 200, // pixels per second
-                rotation: playerSnake.head.direction,
+                rotation: playerSnake.direction,
                 lifetime: Math.random() * 5, // seconds
             };
             death_particles.push(Particle(p));

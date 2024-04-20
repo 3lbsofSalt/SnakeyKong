@@ -9,9 +9,9 @@ let bunchBananas = [];
 const WORLD_WIDTH = 4800;
 const WORLD_HEIGHT = 2600;
 
-const BANANA_EAT_TOL = 75;
+const BANANA_EAT_TOL = 100;
 //const BANANA_MAGNET_TOL = 75;
-const BANANA_MAGNET_TOL = 150;
+const BANANA_MAGNET_TOL = 100;
 
 let timer = 0;
 let positionTimer = 0;
@@ -75,12 +75,13 @@ function initializeSocketIO(server) {
 
       socket.emit("join", {
         position: {
-          x: newPlayer.snake.head.center.x,
-          y: newPlayer.snake.head.center.y,
+          x: newPlayer.snake.center.x,
+          y: newPlayer.snake.center.y,
         },
         rotation: newPlayer.snake.direction,
         moveRate,
         rotateRate,
+        rotationTolerance: newPlayer.snake.rotationTolerance,
         segmentDistance,
         startingSegments: 3,
         single_bananas: singleBananas,
@@ -147,9 +148,11 @@ function processInput(elapsedTime) {
     updateQueue.push({
       type: "input",
       player_id: client.socket.id,
-      desired: client.player.snake.head.desiredRotation,
-      turnPoint: { ...client.player.snake.head.center },
+      desired: client.player.snake.desiredDirection,
+      turnPoint: { ...client.player.snake.center },
     });
+
+    client.player.snake.addTurnPoint({...client.player.snake.center });
   }
 }
 
@@ -160,7 +163,7 @@ function informClientPosition() {
     updateQueue.push({
       type: "head_position",
       player_id: clientId,
-      position: { ...client.player.snake.head.center },
+      position: { ...client.player.snake.center },
     });
   }
 }
@@ -193,7 +196,6 @@ function spawnNewBanana() {
 }
 
 function spawnNewBunch() {
-  if (singleBananas.length >= 1000) return;
   let bananaSpawnX = Math.random() * WORLD_WIDTH;
   let bananaSpawnY = Math.random() * WORLD_HEIGHT;
   let bananaColor = Math.floor(Math.random() * 6);
@@ -220,9 +222,9 @@ function spawnNewBunch() {
 function testSnakeWallCollision(snake, clientId) {
   if (snake.isAlive()) {
     let hitHorizontalWall =
-      snake.head.center.x < 0 || snake.head.center.x > WORLD_WIDTH;
+      snake.center.x < 0 || snake.center.x > WORLD_WIDTH;
     let hitVerticalWall =
-      snake.head.center.y < 0 || snake.head.center.y > WORLD_HEIGHT;
+      snake.center.y < 0 || snake.center.y > WORLD_HEIGHT;
     if (hitHorizontalWall || hitVerticalWall) {
       snake.kill();
       createDeathBananas(snake);
@@ -245,21 +247,21 @@ function testBananaCollision(snake, elapsedTime, clientId) {
   for (let banana of singleBananas) {
     // pull in banana
     if (
-      Math.abs(snake.head.center.x - banana.bananaX) <
+      Math.abs(snake.center.x - banana.bananaX) <
         BANANA_MAGNET_TOL &&
-        Math.abs(snake.head.center.y - banana.bananaY) < BANANA_MAGNET_TOL
+        Math.abs(snake.center.y - banana.bananaY) < BANANA_MAGNET_TOL
     ) {
       magnetPull(
-        snake.head.center.x,
-        snake.head.center.y,
+        snake.center.x,
+        snake.center.y,
         banana,
         elapsedTime,
       );
     }
 
     if (
-      Math.abs(snake.head.center.x - banana.bananaX) > BANANA_EAT_TOL ||
-        Math.abs(snake.head.center.y - banana.bananaY) > BANANA_EAT_TOL
+      Math.abs(snake.center.x - banana.bananaX) > BANANA_EAT_TOL ||
+        Math.abs(snake.center.y - banana.bananaY) > BANANA_EAT_TOL
     ) {
       newSingleBananas.push(banana);
       // eat banana
@@ -275,21 +277,21 @@ function testBananaCollision(snake, elapsedTime, clientId) {
 
   for (let bunch of bunchBananas) {
     if (
-      Math.abs(snake.head.center.x - bunch.bananaX) < BANANA_MAGNET_TOL &&
-        Math.abs(snake.head.center.y - bunch.bananaY) < BANANA_MAGNET_TOL
+      Math.abs(snake.center.x - bunch.bananaX) < BANANA_MAGNET_TOL &&
+        Math.abs(snake.center.y - bunch.bananaY) < BANANA_MAGNET_TOL
     ) {
       //console.log("MAGNETING BUNCH!");
       magnetPull(
-        snake.head.center.x,
-        snake.head.center.y,
+        snake.center.x,
+        snake.center.y,
         bunch,
         elapsedTime,
       );
     }
 
     if (
-      Math.abs(snake.head.center.x - bunch.bananaX) > BANANA_EAT_TOL ||
-        Math.abs(snake.head.center.y - bunch.bananaY) > BANANA_EAT_TOL
+      Math.abs(snake.center.x - bunch.bananaX) > BANANA_EAT_TOL ||
+        Math.abs(snake.center.y - bunch.bananaY) > BANANA_EAT_TOL
     ) {
       newBunchBananas.push(bunch);
     } else {
@@ -359,7 +361,24 @@ function updateTime(elapsedTime) {
 function update(elapsedTime, currentTime) {
   updateTime(elapsedTime);
   for (const [id, activeClient] of Object.entries(activeClients)) {
+
+    // ORDER HERE MATTERS
+    if(activeClient.player.snake.needsRotate()) {
+      updateQueue.push({
+        type: 'turn_point',
+        player_id: id,
+        turnPoint: { ...activeClient.player.snake.center },
+      })
+      updateQueue.push({
+        type: "head_position",
+        player_id: id,
+        position: { ...activeClient.player.snake.center },
+      });
+    }
+    activeClient.player.snake.addTurnPoint({ ...activeClient.player.snake.center })
     activeClient.player.snake.update(elapsedTime);
+    // ---
+
     testSnakeWallCollision(activeClient.player.snake, id);
     testSnakeCollision(activeClient.player.snake, elapsedTime, id);
     testBananaCollision(activeClient.player.snake, elapsedTime, id);
@@ -372,7 +391,13 @@ function updateClients(elapsedTime) {
   for (const event of tmpUpdateQueue) {
     for (const clientId in activeClients) {
       let client = activeClients[clientId];
-      if (event.type === "input") {
+      if(event.type === "turn_point") {
+        if (clientId == event?.player_id) {
+          client.socket.emit("add_turn", event);
+        } else {
+          client.socket.emit("add_other_turn", event);
+        }
+      } else if (event.type === "input") {
         if (clientId == event?.player_id) {
           client.socket.emit("add_turn", event);
         } else {
@@ -383,7 +408,7 @@ function updateClients(elapsedTime) {
       } else if (event.type === "magnet_pull") {
         client.socket.emit("magnet_pull", event);
       } else if (event.type === "eat_single") {
-        client.socket.emit("update_other", event);
+        client.socket.emit("eat_single", event);
       } else if (event.type === "new_bunch") {
         client.socket.emit("new_bunch", event);
       } else if (event.type === "head_position") {

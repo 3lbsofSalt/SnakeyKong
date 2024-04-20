@@ -2,369 +2,252 @@ const dkhead = new Image();
 const dkbody = new Image();
 
 dkhead.onload = function () {
-    dkhead.isReady = true;
-    dkhead.subTextureWidth = dkhead.width;
+  dkhead.isReady = true;
+  dkhead.subTextureWidth = dkhead.width;
 };
 dkhead.src = "assets/dkhead.png";
 
 dkbody.onload = function () {
-    dkbody.isReady = true;
-    dkbody.subTextureWidth = dkbody.width;
+  dkbody.isReady = true;
+  dkbody.subTextureWidth = dkbody.width;
 };
 dkbody.src = "assets/dkbody.png";
-let headDistance = 0;
-let bodyDistance = 0;
 
-MyGame.objects.Head = function (spec) {
-    function moveForward(elapsedTime) {
-        // Create a normalized direction vector
-        let vectorX = Math.cos(spec.rotation);
-        let vectorY = Math.sin(spec.rotation);
-        let magnitude = Math.sqrt(vectorX * vectorX + vectorY * vectorY);
+function createBody(
+  center,
+  inflection_points,
+) {
 
-        // With the normalized direction vector, move the center of the sprite
-        let moveX = (vectorX / magnitude) * spec.moveRate * elapsedTime;
-        let moveY = (vectorY / magnitude) * spec.moveRate * elapsedTime;
-        headDistance = Math.sqrt(moveX ** 2 + moveY ** 2);
+  const body = {
+    center: {...center},
+    inflection_points: [...inflection_points]
+  };
 
-        spec.center.x += moveX;
-        spec.center.y += moveY;
-    }
+  body.moveTowardHead = function(distanceMagnitude, snakeCenter) {
+    const vectorX = snakeCenter.x - body.center.x;
+    const vectorY = snakeCenter.y - body.center.y;
 
-    function rotateLeft(elapsedTime) {
-        const rotation = spec.rotateRate * elapsedTime;
-        // If the movement would overshoot the desired rotation
-        if (Math.abs(spec.rotation - spec.desiredRotation) - rotation < 0) {
-            spec.rotation = spec.desiredRotation;
+    const magnitude = Math.sqrt(vectorX ** 2 + vectorY ** 2);
+
+    body.center.x += (vectorX / magnitude) * distanceMagnitude;
+    body.center.y += (vectorY / magnitude) * distanceMagnitude;
+  }
+
+  body.moveForward = function(distanceMagnitude, snakeCenter) {
+    let leftover = distanceMagnitude;
+    while(leftover > 0) {
+
+      if(body.inflection_points.length === 0) {
+        body.moveTowardHead(leftover, snakeCenter);
+        break;
+      } else {
+
+        const nextPoint = body.inflection_points[0];
+        const vectorX = nextPoint.x - body.center.x;
+        const vectorY = nextPoint.y - body.center.y;
+
+        const magnitude = Math.sqrt(vectorX ** 2 + vectorY ** 2);
+        // There is leftover distance to travel
+        if(magnitude < leftover) {
+          body.center.x = nextPoint.x;
+          body.center.y = nextPoint.y
+          leftover -= magnitude;
+          body.inflection_points.shift();
         } else {
-            spec.rotation -= spec.rotateRate * elapsedTime;
+          body.center.x += (vectorX / magnitude) * leftover;
+          body.center.y += (vectorY / magnitude) * leftover;
+          break;
         }
+      }
+
+    }
+  }
+
+  return body;
+}
+
+MyGame.objects.Snake = function(
+  center,
+  direction,
+  moveRate,
+  rotateRate,
+  rotationTolerance,
+  name,
+  headRenderer,
+  bodyRenderer,
+  headImage,
+  bodyImage,
+  startingSegments,
+  score,
+  body = []
+) {
+  const snake = {
+    center: {...center},
+    desiredDirection: direction,
+    direction,
+    moveRate,
+    rotateRate,
+    rotationTolerance,
+    name,
+    headRenderer,
+    bodyRenderer,
+    alive: true,
+    body: [],
+    score: score,
+    headImage,
+    bodyImage
+  };
+
+  const segmentDistance = 30;
+
+  if(body.length === 0) {
+    const vectorY = Math.sin(snake.direction);
+    const vectorX = Math.cos(snake.direction);
+
+    for(let i = 0; i < startingSegments; i++) {
+      snake.body.push(createBody(
+        {
+          x: snake.center.x - (vectorX * segmentDistance * (i + 1)),
+          y: snake.center.y - (vectorY * segmentDistance * (i + 1))
+        },
+        []
+      ));
+    }
+  } else {
+    for(let i = 0; i < body.length; i++) {
+      snake.body.push(
+        createBody({
+          x: body[i].center.x,
+          y: body[i].center.y
+        }, body[i].inflection_points)
+      );
+    }
+  }
+
+  snake.addTurnPoint = function(point) {
+    for(const body of snake.body) {
+      body.inflection_points.push({...point});
+    }
+  }
+
+  snake.adjustPosition = function(adjustment) {
+    snake.center.x += adjustment.x;
+    snake.center.y += adjustment.y;
+
+    for(const seg of snake.body) {
+      seg.center.x += adjustment.x;
+      seg.center.y += adjustment.y;
+    }
+  }
+
+  snake.setRotation = function(direction) { snake.desiredDirection = direction; }
+
+  snake.needsRotate = function() {
+    return Math.abs(snake.direction - snake.desiredDirection) > snake.rotationTolerance;
+  }
+
+  snake.updateRotation = function(elapsedTime) {
+    snake.direction = (snake.direction + 2 * Math.PI) % (2 * Math.PI);
+
+    if(Math.abs(snake.direction - snake.desiredDirection) > snake.rotationTolerance) {
+
+      const leftIsCloser =
+        (snake.desiredDirection -
+          snake.direction +
+          2 * Math.PI) %
+          (2 * Math.PI) >
+          Math.PI;
+      if (leftIsCloser) {
+        snake.direction -= snake.rotateRate * elapsedTime;
+      } else {
+        snake.direction += snake.rotateRate * elapsedTime;
+      }
+    } else {
+      snake.direction = snake.desiredDirection;
     }
 
-    function rotateRight(elapsedTime) {
-        const rotation = spec.rotateRate * elapsedTime;
-        // If the movement would overshoot the desired rotation
-        if (Math.abs(spec.rotation - spec.desiredRotation) - rotation < 0) {
-            spec.rotation = spec.desiredRotation;
-        } else {
-            spec.rotation += spec.rotateRate * elapsedTime;
-        }
+    snake.direction = (snake.direction + 2 * Math.PI) % (2 * Math.PI);
+  }
+
+  snake.moveForward = function(elapsedTime) { 
+    let vectorX = Math.cos(snake.direction);
+    let vectorY = Math.sin(snake.direction);
+    let magnitude = Math.sqrt(vectorX ** 2 + vectorY ** 2);
+
+    // With the normalized direction vector, move the center of the sprite
+    let moveX = (vectorX / magnitude) * snake.moveRate * elapsedTime;
+    let moveY = (vectorY / magnitude) * snake.moveRate * elapsedTime;
+
+    snake.center.x += moveX;
+    snake.center.y += moveY;
+
+    const headDistance = Math.sqrt(moveX ** 2 + moveY ** 2);
+    for(let i = 0; i < snake.body.length; i++) {
+      snake.body[i].moveForward(headDistance, snake.center);
     }
+  }
 
-    function setDirectionRight(elapsedTime) {
-        spec.desiredRotation = 0;
+  snake.isAlive = function () {
+    return snake.alive;
+  };
+
+  snake.kill = function () {
+    snake.alive = false;
+    let deathSound = new Audio("assets/audio/deathSound.mp3");
+    deathSound.volume = 0.75;
+    deathSound.play();
+  };
+
+  snake.setDirectionRight = function(elapsedTime) { snake.desiredDirection = 0; }
+  snake.setDirectionUpRight = function(elapsedTime) { snake.desiredDirection = (7 * Math.PI) / 4; }
+  snake.setDirectionUp = function(elapsedTime) { snake.desiredDirection = (3 * Math.PI) / 2; }
+  snake.setDirectionUpLeft = function(elapsedTime) { snake.desiredDirection = (5 * Math.PI) / 4; }
+  snake.setDirectionLeft = function(elapsedTime) { snake.desiredDirection = Math.PI; }
+  snake.setDirectionDownLeft = function(elapsedTime) { snake.desiredDirection = (3 * Math.PI) / 4; }
+  snake.setDirectionDown = function(elapsedTime) { snake.desiredDirection = Math.PI / 2; }
+  snake.setDirectionDownRight = function(elapsedTime) { snake.desiredDirection = Math.PI / 4; }
+
+  snake.eatSingleBanana = function () {
+    snake.score += 1;
+    let eatSound = new Audio("assets/audio/eatSingle.mp3");
+    eatSound.play();
+  };
+
+  snake.eatBananaBunch = function () {
+    snake.score += 10;
+    let eatSound = new Audio("assets/audio/eatBunch.mp3");
+    eatSound.volume = 0.4;
+    eatSound.play();
+  };
+
+  snake.update = function(elapsedTime) {
+    snake.moveForward(elapsedTime);
+    snake.updateRotation(elapsedTime);
+  }
+
+  snake.render = function () {
+    for (let i = snake.body.length - 1; i >= 0; i--) {
+      snake.bodyRenderer.render({
+        image: snake.bodyImage,
+        center: snake.body[i].center,
+        rotation: 0,
+        size: { x: 50, y: 50 }
+      });
     }
+    snake.headRenderer.render({
+      image: snake.headImage,
+      center: snake.center,
+      rotation: snake.direction,
+      size: { x: 75, y: 50 }
+    });
 
-    function setDirectionUpRight(elapsedTime) {
-        spec.desiredRotation = (7 * Math.PI) / 4;
-    }
+    MyGame.graphics.drawText(
+      snake.center.x,
+      snake.center.y - 80,
+      snake.name,
+      "white",
+    );
+  };
 
-    function setDirectionUp(elapsedTime) {
-        spec.desiredRotation = (3 * Math.PI) / 2;
-    }
-
-    function setDirectionUpLeft(elapsedTime) {
-        spec.desiredRotation = (5 * Math.PI) / 4;
-    }
-
-    function setDirectionLeft(elapsedTime) {
-        spec.desiredRotation = Math.PI;
-    }
-
-    function setDirectionDownLeft(elapsedTime) {
-        spec.desiredRotation = (3 * Math.PI) / 4;
-    }
-
-    function setDirectionDown(elapsedTime) {
-        spec.desiredRotation = Math.PI / 2;
-    }
-
-    function setDirectionDownRight(elapsedTime) {
-        spec.desiredRotation = Math.PI / 4;
-    }
-
-    let api = {
-        get size() {
-            return spec.size;
-        },
-        get center() {
-            return spec.center;
-        },
-        set center(val) {
-            return (spec.center = { ...val });
-        },
-        get rotation() {
-            return spec.rotation;
-        },
-        get image() {
-            return spec.image;
-        },
-        get desiredRotation() {
-            return spec.desiredRotation;
-        },
-        get newTurnInstruction() {
-            return spec.newTurnInstruction;
-        },
-        set newTurnInstruction(val) {
-            spec.newTurnInstruction = val;
-        },
-        set desiredRotation(val) {
-            return (spec.desiredRotation = val);
-        },
-        set rotation(val) {
-            return (spec.rotation = val);
-        },
-        moveForward: moveForward,
-        rotateLeft: rotateLeft,
-        rotateRight: rotateRight,
-        setDirectionRight: setDirectionRight,
-        setDirectionUpRight: setDirectionUpRight,
-        setDirectionUp: setDirectionUp,
-        setDirectionUpLeft: setDirectionUpLeft,
-        setDirectionLeft: setDirectionLeft,
-        setDirectionDownLeft: setDirectionDownLeft,
-        setDirectionDown: setDirectionDown,
-        setDirectionDownRight: setDirectionDownRight,
-    };
-
-    return api;
-};
-
-MyGame.objects.Body = function (spec) {
-    function moveForward(elapsedTime, nextSegment) {
-        let nextLocation, vectorX, vectorY;
-        while (true) {
-            nextLocation = spec.nextLocations.empty()
-                ? nextSegment.center
-                : spec.nextLocations.peek();
-
-            // Create a normalized direction vector
-            vectorX = nextLocation.x - spec.center.x;
-            vectorY = nextLocation.y - spec.center.y;
-
-            if (vectorX != 0 || vectorY != 0) break;
-            spec.nextLocations.pop(); // nextLocation is the same as the current location
-        }
-
-        let magnitude = Math.sqrt(vectorX * vectorX + vectorY * vectorY);
-
-        let normalizedVectorX = vectorX / magnitude;
-        let normalizedVectorY = vectorY / magnitude;
-
-        let moveX = normalizedVectorX * elapsedTime * spec.moveRate;
-        let moveY = normalizedVectorY * elapsedTime * spec.moveRate;
-
-        moveX = Math.round(moveX);
-        moveY = Math.round(moveY);
-        if (isNaN(moveX) || isNaN(moveY)) {
-            console.log(spec);
-            console.log(magnitude);
-            debugger;
-        }
-
-        spec.center.x += moveX;
-        spec.center.y += moveY;
-
-        bodyDistance = Math.sqrt(moveX ** 2 + moveY ** 2);
-        const moveMag = Math.sqrt(moveX * moveX + moveY * moveY);
-        if (moveMag >= magnitude) {
-            spec.nextLocations.pop();
-        }
-    }
-
-    let api = {
-        get size() {
-            return spec.size;
-        },
-        get center() {
-            return spec.center;
-        },
-        get image() {
-            return spec.image;
-        },
-        get rotation() {
-            return spec.rotation;
-        },
-        get nextLocations() {
-            return spec.nextLocations;
-        },
-        moveForward: moveForward,
-    };
-
-    return api;
-};
-
-MyGame.objects.Snake = function (spec) {
-    const snake = {
-        direction: spec.direction,
-        moveRate: spec.moveRate,
-        rotateRate: spec.rotateRate,
-        head: MyGame.objects.Head({
-            size: { x: 75, y: 50 }, // Size in pixels
-            center: { ...spec.center },
-            rotation: spec.direction,
-            image: spec.headimage,
-            desiredRotation: spec.direction,
-            moveRate: spec.moveRate, // Pixels per second
-            rotateRate: spec.rotateRate, // Radians per second
-        }),
-        segmentDistance: spec.segmentDistance,
-        score: spec.score,
-        body: [],
-        name: spec.name,
-        headRenderer: spec.headRenderer,
-        bodyRenderer: spec.bodyRenderer,
-    };
-
-    const lastLocationsTracker = [];
-    for (let i = 0; i < spec.startingSegments; i++) {
-        const yDiff = Math.sin(spec.direction) * spec.segmentDistance;
-        const xDiff = Math.cos(spec.direction) * spec.segmentDistance;
-
-        const lastLocation =
-            i == 0 ? { ...snake.head.center } : { ...snake.body[i - 1].center };
-        lastLocationsTracker.unshift(lastLocation);
-
-        const queue = Queue.createQueue();
-        for (const location of lastLocationsTracker) {
-            queue.push(location);
-        }
-
-        snake.body.push(
-            MyGame.objects.Body({
-                size: { x: 50, y: 50 }, // Size in pixels
-                center: {
-                    x: lastLocation.x - xDiff,
-                    y: lastLocation.y - yDiff,
-                },
-                image: spec.bodyimage,
-                rotation: spec.direction,
-                moveRate: spec.moveRate, // Pixels per second
-                rotateRate: spec.rotateRate, // Radians per second
-                nextLocations: queue,
-            }),
-        );
-    }
-
-    snake.moveForward = function (elapsedTime) {
-        snake.head.moveForward(elapsedTime);
-        for (let i = 0; i < snake.body.length; i++) {
-            const nextSegment = i === 0 ? snake.head : snake.body[i - 1];
-            snake.body[i].moveForward(
-                elapsedTime,
-                nextSegment,
-                snake.segmentDistance,
-            );
-            if (i === 0) {
-                //console.log(headDistance, bodyDistance, headDistance - bodyDistance);
-            }
-        }
-    };
-
-    snake.ROTATION_TOL = Math.PI / 50;
-
-    snake.setDirectionUp = function (elapsedTime) {
-        snake.head.setDirectionUp(elapsedTime);
-    };
-    snake.setDirectionUpRight = function (elapsedTime) {
-        snake.head.setDirectionUpRight(elapsedTime);
-    };
-    snake.setDirectionUpLeft = function (elapsedTime) {
-        snake.head.setDirectionUpLeft(elapsedTime);
-    };
-    snake.setDirectionDownLeft = function (elapsedTime) {
-        snake.head.setDirectionDownLeft(elapsedTime);
-    };
-    snake.setDirectionDownRight = function (elapsedTime) {
-        snake.head.setDirectionDownRight(elapsedTime);
-    };
-    snake.setDirectionDown = function (elapsedTime) {
-        snake.head.setDirectionDown(elapsedTime);
-    };
-    snake.setDirectionLeft = function (elapsedTime) {
-        snake.head.setDirectionLeft(elapsedTime);
-    };
-    snake.setDirectionRight = function (elapsedTime) {
-        snake.head.setDirectionRight(elapsedTime);
-    };
-    snake.setRotation = function (rotation) {
-        snake.head.desiredRotation = rotation;
-    };
-
-    snake.addTurnPoint = function (turnPoint) {
-        for (let i = 0; i < snake.body.length; i++) {
-            snake.body[i].nextLocations.push({ ...turnPoint });
-        }
-    };
-
-    snake.updateRotation = function (elapsedTime) {
-        snake.head.rotation =
-            (snake.head.rotation + 2 * Math.PI) % (2 * Math.PI);
-        if (
-            Math.abs(snake.head.rotation - snake.head.desiredRotation) >
-            snake.ROTATION_TOL
-        ) {
-            // Add new turn point when the head is being turned.
-
-            const leftIsCloser =
-                (snake.head.desiredRotation -
-                    snake.head.rotation +
-                    2 * Math.PI) %
-                    (2 * Math.PI) >
-                Math.PI;
-            if (leftIsCloser) {
-                snake.head.rotateLeft(elapsedTime);
-            } else {
-                snake.head.rotateRight(elapsedTime);
-            }
-        } else {
-            snake.head.rotation = snake.head.desiredRotation;
-        }
-    };
-
-    snake.update = function (elapsedTime) {
-        snake.headRenderer.update(elapsedTime);
-        snake.bodyRenderer.update(elapsedTime);
-        snake.moveForward(elapsedTime);
-        snake.updateRotation(elapsedTime);
-    };
-
-    snake.render = function () {
-        for (let i = snake.body.length - 1; i >= 0; i--) {
-            snake.bodyRenderer.render(snake.body[i]);
-        }
-        snake.headRenderer.render(snake.head);
-        MyGame.graphics.drawText(
-            snake.head.center.x,
-            snake.head.center.y - 80,
-            snake.name,
-            "white",
-        );
-    };
-
-    snake.isAlive = function () {
-        return spec.alive;
-    };
-
-    snake.kill = function () {
-        spec.alive = false;
-        let deathSound = new Audio("assets/audio/deathSound.mp3");
-        deathSound.volume = 0.75;
-        deathSound.play();
-    };
-
-    snake.eatSingleBanana = function () {
-        snake.score += 1;
-        let eatSound = new Audio("assets/audio/eatSingle.mp3");
-        eatSound.play();
-    };
-
-    snake.eatBananaBunch = function () {
-        snake.score += 10;
-        let eatSound = new Audio("assets/audio/eatBunch.mp3");
-        eatSound.volume = 0.4;
-        eatSound.play();
-    };
-
-    return snake;
-};
+  return snake;
+}
