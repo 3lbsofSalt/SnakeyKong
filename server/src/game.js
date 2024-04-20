@@ -274,8 +274,8 @@ function snakeHitOtherSnakeBody(snake, otherSnake) {
 function testSnakeCollision(snake, clientId) {
     // For every snake in the lobby...
     for (const [id, activeClient] of Object.entries(activeClients)) {
-        // ...except for yourself...
-        if (clientId != id) {
+        // ...except for yourself (also make sure the other snake is alive)...
+        if (clientId != id && activeClient.player.snake.isAlive()) {
             otherSnake = activeClient.player.snake;
             // ...check and see if you have collided into a part of the other snake
             if (snakeHitOtherSnakeHead(snake, otherSnake)) {
