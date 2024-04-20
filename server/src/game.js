@@ -438,26 +438,26 @@ function updateTime(elapsedTime) {
 function update(elapsedTime, currentTime) {
     updateTime(elapsedTime);
     for (const [id, activeClient] of Object.entries(activeClients)) {
-        // ORDER HERE MATTERS
-        if (activeClient.player.snake.needsRotate()) {
-            updateQueue.push({
-                type: "turn_point",
-                player_id: id,
-                turnPoint: { ...activeClient.player.snake.center },
-            });
-            updateQueue.push({
-                type: "head_position",
-                player_id: id,
-                position: { ...activeClient.player.snake.center },
-            });
-        }
-        activeClient.player.snake.addTurnPoint({
-            ...activeClient.player.snake.center,
-        });
-        activeClient.player.snake.update(elapsedTime);
-        // ---
-
         if (activeClient.player.snake.isAlive()) {
+            // ORDER HERE MATTERS
+            if (activeClient.player.snake.needsRotate()) {
+                updateQueue.push({
+                    type: "turn_point",
+                    player_id: id,
+                    turnPoint: { ...activeClient.player.snake.center },
+                });
+                updateQueue.push({
+                    type: "head_position",
+                    player_id: id,
+                    position: { ...activeClient.player.snake.center },
+                });
+            }
+            activeClient.player.snake.addTurnPoint({
+                ...activeClient.player.snake.center,
+            });
+            activeClient.player.snake.update(elapsedTime);
+            // ---
+
             testSnakeWallCollision(activeClient.player.snake, id);
             testSnakeCollision(activeClient.player.snake, id);
             testBananaCollision(activeClient.player.snake, elapsedTime, id);
