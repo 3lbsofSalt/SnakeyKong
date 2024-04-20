@@ -99,7 +99,7 @@ Snake = function(
   }
 
   snake.needsNewBodyPiece = function() { 
-    return snake.body.length * 10 > snake.score; 
+    return snake.body.length * 10 < snake.score; 
   }
   snake.setRotation = function(direction) { snake.desiredDirection = direction; }
 
@@ -109,9 +109,11 @@ Snake = function(
     const xDiff = nextLast.center.x - last.center.x;
     const yDiff = nextLast.center.y - last.center.y;
 
+    const mag = Math.sqrt(xDiff ** 2 + yDiff ** 2);
+
     snake.body.push(createBody({
-      x: last.center.x - xDiff,
-      y: last.center.y - yDiff
+      x: last.center.x - (xDiff / mag) * segmentDistance,
+      y: last.center.y - (yDiff / mag) * segmentDistance
     }, [...last.inflection_points]));
   }
 
