@@ -177,7 +177,7 @@ MyGame.main = function (objects, input, renderer, graphics) {
     const snake = data.snake;
     const newSnake = objects.Snake(
       snake.center,
-      snake.rotation,
+      snake.direction,
       snake.moveRate,
       snake.rotateRate,
       snake.rotationTolerance,
@@ -277,6 +277,7 @@ MyGame.main = function (objects, input, renderer, graphics) {
   socket.on("update_other_head", (data) => {
     if(!otherSnakes[data.player_id]) return;
 
+    console.log(otherSnakes[data.player_id])
     otherSnakes[data.player_id].center = data.position;
     /*
     otherSnakes[data.player_id].adjustPosition({
