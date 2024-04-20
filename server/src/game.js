@@ -266,6 +266,16 @@ function testBananaCollision(snake, elapsedTime, clientId) {
       newSingleBananas.push(banana);
       // eat banana
     } else {
+      const client = activeClients[clientId];
+      client.player.snake.eatSingleBanana();
+      if(client.player.snake.needsNewBodyPiece()) {
+        client.player.snake.addBodyPiece();
+        updateQueue.push({
+          type: 'add_body',
+          player_id: clientId,
+          piece: client.player.snake.body[client.player.snake.body.length - 1]
+        });
+      }
       updateQueue.push({
         type: "eat_single",
         banana_id: banana.id,
@@ -295,6 +305,16 @@ function testBananaCollision(snake, elapsedTime, clientId) {
     ) {
       newBunchBananas.push(bunch);
     } else {
+      const client = activeClients[clientId];
+      client.player.snake.eatBananaBunch();
+      if(client.player.snake.needsNewBodyPiece()) {
+        client.player.snake.addBodyPiece();
+        updateQueue.push({
+          type: 'add_body',
+          player_id: clientId,
+          piece: client.player.snake.body[client.player.snake.body.length - 1]
+        });
+      }
       updateQueue.push({
         type: "eat_bunch",
         banana_id: bunch.id,
@@ -421,6 +441,12 @@ function updateClients(elapsedTime) {
         client.socket.emit("eat_bunch", event);
       } else if (event.type === "snake_kill") {
         client.socket.emit("snake_kill", event);
+      } else if (event.type === 'add_body') {
+        if (clientId == event?.player_id) {
+          client.socket.emit("add_body", event);
+        } else {
+          client.socket.emit("add_other_body", event);
+        }
       }
     }
   }

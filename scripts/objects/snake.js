@@ -140,6 +140,7 @@ MyGame.objects.Snake = function(
     }
   }
 
+  snake.needsNewBodyPiece = function() { return snake.body.length * 10 > snake.score; }
   snake.setRotation = function(direction) { snake.desiredDirection = direction; }
 
   snake.needsRotate = function() {

@@ -98,7 +98,22 @@ Snake = function(
     }
   }
 
+  snake.needsNewBodyPiece = function() { 
+    return snake.body.length * 10 > snake.score; 
+  }
   snake.setRotation = function(direction) { snake.desiredDirection = direction; }
+
+  snake.addBodyPiece = function() {
+    const last = snake.body[snake.body.length - 1];
+    const nextLast = snake.body[snake.body.length - 2]; 
+    const xDiff = nextLast.center.x - last.center.x;
+    const yDiff = nextLast.center.y - last.center.y;
+
+    snake.body.push(createBody({
+      x: last.center.x - xDiff,
+      y: last.center.y - yDiff
+    }, [...last.inflection_points]));
+  }
 
   snake.needsRotate = function() {
     return Math.abs(snake.direction - snake.desiredDirection) > snake.rotationTolerance;

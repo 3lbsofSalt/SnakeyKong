@@ -173,6 +173,21 @@ MyGame.main = function (objects, input, renderer, graphics) {
     })
   });
 
+  socket.on("grow_snake", (data) => {
+    playerSnake.body.push(createBody(
+      {...data.center},
+      [...inflection_points]
+    ));
+  });
+
+  socket.on("grow_other", (data) => {
+    if(!otherSnakes[data.player_id]) return;
+    !otherSnakes[data.player_id].body.push(createBody(
+      {...data.center},
+      [...inflection_points]
+    ));
+  });
+
   socket.on("connect_other", (data) => {
     const snake = data.snake;
     const newSnake = objects.Snake(
@@ -274,17 +289,24 @@ MyGame.main = function (objects, input, renderer, graphics) {
     magneted_bananas.push(data);
   });
 
+  socket.on('add_body', (data) => {
+    playerSnake.body.push(createBody(
+      {...data.piece.center},
+      [...data.piece.inflection_points]
+    ))
+  });
+
+  socket.on('add_other_body', (data) => {
+    if(!otherSnakes[data.player_id]) return;
+    otherSnakes[data.player_id].body.push(createBody(
+      {...data.piece.center},
+      [...data.piece.inflection_points]
+    ));
+  });
+
   socket.on("update_other_head", (data) => {
     if(!otherSnakes[data.player_id]) return;
-
-    console.log(otherSnakes[data.player_id])
     otherSnakes[data.player_id].center = data.position;
-    /*
-    otherSnakes[data.player_id].adjustPosition({
-      x: data.position.x - otherSnakes[data.player_id].center.x,
-      y: data.position.y - otherSnakes[data.player_id].center.y
-    })
-    */
   });
 
   socket.on("update_other", (data) => {
