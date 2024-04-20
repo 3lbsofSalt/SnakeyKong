@@ -50,7 +50,10 @@ function initializeSocketIO(server) {
     for (const clientId in activeClients) {
       let client = activeClients[clientId];
       if (playerId !== clientId) {
-        client.socket.emit(NetworkAction.DISCONNECT_OTHER);
+        console.log('yarg')
+        client.socket.emit('disconnect_other', {
+          clientId: playerId
+        });
       }
     }
   }

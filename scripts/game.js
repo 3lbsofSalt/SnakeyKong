@@ -210,6 +210,15 @@ MyGame.main = function (objects, input, renderer, graphics) {
     otherSnakes[data.playerId] = newSnake;
   });
 
+  socket.on('disconnect_other', (data) => {
+    console.log(data);
+    console.log(otherSnakes)
+    if(otherSnakes[data.clientId]) {
+      console.log('deleted')
+      delete otherSnakes[data.clientId];
+    }
+  })
+
   socket.on("add_turn", (data) => {
     playerSnake.addTurnPoint(data.turnPoint);
   });
