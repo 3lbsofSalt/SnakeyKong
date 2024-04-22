@@ -453,8 +453,6 @@ MyGame.main = function (objects, input, renderer, graphics) {
         // Render segments from last to first
         if (playerSnake.isAlive()) {
             playerSnake.render();
-        } else {
-            // render game over screen
         }
 
         for (const snake of Object.values(otherSnakes)) {
@@ -465,7 +463,28 @@ MyGame.main = function (objects, input, renderer, graphics) {
 
         context.translate(camera.x, camera.y);
 
+        // Scoreboard and kill screen should always follow the camera
         renderScoreboard(playerSnake, Object.values(otherSnakes));
+
+        if (!playerSnake.isAlive()) {
+            renderKillScreen();
+        }
+    }
+
+    function renderKillScreen() {
+        if (killScreenImage.isReady) {
+            context.globalAlpha = 0.95;
+
+            context.drawImage(
+                killScreenImage,
+                50,
+                50,
+                killScreenImage.width,
+                killScreenImage.height,
+            );
+
+            context.globalAlpha = 1;
+        }
     }
 
     myKeyboard.register("Escape", function () {
