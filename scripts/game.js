@@ -32,6 +32,14 @@ MyGame.main = function (objects, input, renderer, graphics) {
         graphics,
     );
 
+    const dkTailRender = renderer.AnimatedModel(
+        {
+            spriteCount: 1,
+            spriteTime: [1000], // ms per frame
+        },
+        graphics,
+    );
+
     function registerKeys() {
         myKeyboard.register(" ", () => {
             console.log(playerSnake);
@@ -128,8 +136,10 @@ MyGame.main = function (objects, input, renderer, graphics) {
             localStorage.getItem("name"),
             dkHeadRender,
             dkBodyRender,
+            dkTailRender,
             dkhead, // Head Image
             dkbody, // Body Image
+            dktail,
             data.startingSegments,
             0, // Score
         );
@@ -199,8 +209,10 @@ MyGame.main = function (objects, input, renderer, graphics) {
             snake.name,
             dkHeadRender,
             dkBodyRender,
-            dkhead,
-            dkbody,
+            dkTailRender,
+            dkhead, // Head Image
+            dkbody, // Body Image
+            dktail,
             //segmentDistance: snake.segmentDistance,
             snake.body.length,
             snake.score,

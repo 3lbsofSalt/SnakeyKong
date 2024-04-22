@@ -1,5 +1,6 @@
 const dkhead = new Image();
 const dkbody = new Image();
+const dktail = new Image();
 
 dkhead.onload = function () {
     dkhead.isReady = true;
@@ -12,6 +13,12 @@ dkbody.onload = function () {
     dkbody.subTextureWidth = dkbody.width;
 };
 dkbody.src = "assets/dkbody.png";
+
+dktail.onload = function () {
+    dktail.isReady = true;
+    dktail.subTextureWidth = dktail.width;
+};
+dktail.src = "assets/tailSegment.png";
 
 function createBody(center, inflection_points) {
     const body = {
@@ -69,8 +76,10 @@ MyGame.objects.Snake = function (
     name,
     headRenderer,
     bodyRenderer,
+    tailRenderer,
     headImage,
     bodyImage,
+    tailImage,
     startingSegments,
     score,
     body = [],
@@ -86,11 +95,13 @@ MyGame.objects.Snake = function (
         name,
         headRenderer,
         bodyRenderer,
+        tailRenderer,
         alive: true,
         body: [],
         score: score,
         headImage,
         bodyImage,
+        tailImage,
     };
 
     const segmentDistance = 30;
@@ -252,7 +263,21 @@ MyGame.objects.Snake = function (
     };
 
     snake.render = function () {
-        for (let i = snake.body.length - 1; i >= 0; i--) {
+        const vectorX =
+            snake.body[snake.body.length - 2].center.x -
+            snake.body[snake.body.length - 1].center.x;
+        const vectorY =
+            snake.body[snake.body.length - 2].center.y -
+            snake.body[snake.body.length - 1].center.y;
+
+        let rot =
+            (Math.atan(vectorY / vectorX) - Math.PI / 2 + Math.PI * 2) %
+            (Math.PI * 2);
+        if (vectorX < 0) {
+            rot += Math.PI;
+        }
+
+        for (let i = snake.body.length - 2; i >= 0; i--) {
             snake.bodyRenderer.render({
                 image: snake.bodyImage,
                 center: snake.body[i].center,
@@ -260,6 +285,14 @@ MyGame.objects.Snake = function (
                 size: { x: snake.renderSize, y: snake.renderSize },
             });
         }
+
+        snake.tailRenderer.render({
+            image: snake.tailImage,
+            center: snake.body[snake.body.length - 1].center,
+            rotation: rot,
+            size: { x: snake.renderSize * 0.75, y: snake.renderSize },
+        });
+
         snake.headRenderer.render({
             image: snake.headImage,
             center: snake.center,
