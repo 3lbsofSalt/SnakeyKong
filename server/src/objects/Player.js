@@ -234,7 +234,7 @@ function createPlayer(
     const player = {
         clientId: socketId,
         snake: Snake(
-             {
+            {
                 x: Math.random() * 4800,
                 y: Math.random() * 2600,
             },
