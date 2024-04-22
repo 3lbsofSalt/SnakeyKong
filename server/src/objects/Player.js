@@ -234,7 +234,10 @@ function createPlayer(
     const player = {
         clientId: socketId,
         snake: Snake(
-            { x: 1000, y: 1000 },
+             {
+                x: Math.random() * 4800,
+                y: Math.random() * 2600,
+            },
             starting_directions[Math.floor(Math.random() * 4)],
             moveRate,
             rotateRate,
@@ -244,12 +247,6 @@ function createPlayer(
             name,
             startingSegments,
             0,
-            /*
-            center: {
-                x: Math.random() * 4800,
-                y: Math.random() * 2600,
-            },
-      */
         ),
     };
 
