@@ -96,7 +96,7 @@ Snake = function (
     };
 
     snake.needsNewBodyPiece = function () {
-        return snake.body.length * 10 < snake.score;
+        return snake.score >= (snake.body.length - startingSegments + 1) * 20;
     };
     snake.setRotation = function (direction) {
         snake.desiredDirection = direction;
@@ -203,12 +203,12 @@ Snake = function (
     };
 
     snake.eatSingleBanana = function () {
-        snake.renderSize += 1;
+        snake.renderSize += 0.1;
         snake.score += 1;
     };
 
     snake.eatBananaBunch = function () {
-        snake.renderSize += 10;
+        snake.renderSize += 1;
         snake.score += 10;
     };
 
