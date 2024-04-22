@@ -233,14 +233,14 @@ MyGame.objects.Snake = function (
 
     snake.eatSingleBanana = function () {
         snake.score += 1;
-        snake.renderSize += 0.1;
+        snake.renderSize = Math.min(snake.renderSize + 0.1, 200);
         let eatSound = new Audio("assets/audio/eatSingle.mp3");
         eatSound.play();
     };
 
     snake.eatBananaBunch = function () {
         snake.score += 10;
-        snake.renderSize += 1;
+        snake.renderSize = Math.min(snake.renderSize + 1, 200);
         let eatSound = new Audio("assets/audio/eatBunch.mp3");
         eatSound.volume = 0.4;
         eatSound.play();

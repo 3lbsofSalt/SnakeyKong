@@ -10,9 +10,9 @@ const WORLD_WIDTH = 4800;
 const WORLD_HEIGHT = 2600;
 const BANANA_SPAWN_TIME = 500;
 
-const BANANA_EAT_TOL = 50;
+// const BANANA_EAT_TOL = 50;
 //const BANANA_MAGNET_TOL = 75;
-const BANANA_MAGNET_TOL = 50;
+// const BANANA_MAGNET_TOL = 50;
 
 let timer = 0;
 let positionTimer = 0;
@@ -307,19 +307,21 @@ function testSnakeCollision(snake, clientId) {
 function testBananaCollision(snake, elapsedTime, clientId) {
     let newSingleBananas = [];
     let newBunchBananas = [];
+    let banana_magnet_tol = snake.renderSize;
+    let banana_eat_tol = snake.renderSize;
 
     for (let banana of singleBananas) {
         // pull in banana
         if (
-            Math.abs(snake.center.x - banana.bananaX) < BANANA_MAGNET_TOL &&
-            Math.abs(snake.center.y - banana.bananaY) < BANANA_MAGNET_TOL
+            Math.abs(snake.center.x - banana.bananaX) < banana_magnet_tol &&
+            Math.abs(snake.center.y - banana.bananaY) < banana_magnet_tol
         ) {
             magnetPull(snake.center.x, snake.center.y, banana, elapsedTime);
         }
 
         if (
-            Math.abs(snake.center.x - banana.bananaX) > BANANA_EAT_TOL ||
-            Math.abs(snake.center.y - banana.bananaY) > BANANA_EAT_TOL
+            Math.abs(snake.center.x - banana.bananaX) > banana_eat_tol ||
+            Math.abs(snake.center.y - banana.bananaY) > banana_eat_tol
         ) {
             newSingleBananas.push(banana);
             // eat banana
@@ -347,16 +349,16 @@ function testBananaCollision(snake, elapsedTime, clientId) {
 
     for (let bunch of bunchBananas) {
         if (
-            Math.abs(snake.center.x - bunch.bananaX) < BANANA_MAGNET_TOL &&
-            Math.abs(snake.center.y - bunch.bananaY) < BANANA_MAGNET_TOL
+            Math.abs(snake.center.x - bunch.bananaX) < banana_magnet_tol &&
+            Math.abs(snake.center.y - bunch.bananaY) < banana_magnet_tol
         ) {
             //console.log("MAGNETING BUNCH!");
             magnetPull(snake.center.x, snake.center.y, bunch, elapsedTime);
         }
 
         if (
-            Math.abs(snake.center.x - bunch.bananaX) > BANANA_EAT_TOL ||
-            Math.abs(snake.center.y - bunch.bananaY) > BANANA_EAT_TOL
+            Math.abs(snake.center.x - bunch.bananaX) > banana_eat_tol ||
+            Math.abs(snake.center.y - bunch.bananaY) > banana_eat_tol
         ) {
             newBunchBananas.push(bunch);
         } else {

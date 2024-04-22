@@ -203,12 +203,12 @@ Snake = function (
     };
 
     snake.eatSingleBanana = function () {
-        snake.renderSize += 0.1;
+        snake.renderSize = Math.min(snake.renderSize + 0.1, 200);
         snake.score += 1;
     };
 
     snake.eatBananaBunch = function () {
-        snake.renderSize += 1;
+        snake.renderSize = Math.min(snake.renderSize + 1, 200);
         snake.score += 10;
     };
 
