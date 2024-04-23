@@ -515,12 +515,8 @@ MyGame.main = function (objects, input, renderer, graphics) {
         }
     }
 
-    myKeyboard.register("Escape", function () {
-        cancelNextRequest = true;
-        MyGame.manager.showScreen("main-menu");
-    });
-
     function start() {
+        console.log("yarg");
         socket.emit("join-request", {
             name: localStorage.getItem("name"),
         });
@@ -553,6 +549,7 @@ MyGame.main = function (objects, input, renderer, graphics) {
 
     myKeyboard.register("Escape", function () {
         cancelNextRequest = true;
+        socket.emit("quit");
         MyGame.manager.showScreen("main-menu");
     });
 
