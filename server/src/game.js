@@ -16,6 +16,7 @@ const BANANA_SPAWN_TIME = 500;
 
 let timer = 0;
 let positionTimer = 0;
+let scoreTimer = 500;
 
 const segmentDistance = 30;
 const rotateRate = Math.PI / 1000; // Radians per second
@@ -435,6 +436,30 @@ function updateTime(elapsedTime) {
         positionTimer -= 1000;
         informClientPosition();
     }
+
+    scoreTimer += elapsedTime;
+    if (scoreTimer >= 1000) {
+        scoreTimer -= 1000;
+        sendScoreboard();
+    }
+}
+
+function sendScoreboard() {
+    const scores = [];
+    for (const [id, activeClient] of Object.entries(activeClients)) {
+        if (!activeClient.player.snake.isAlive()) continue;
+        scores.push({
+            name: activeClient.player.snake.name,
+            score: activeClient.player.snake.score,
+        });
+    }
+
+    scores.sort((a, b) => b.score - a.score);
+
+    updateQueue.push({
+        type: "scoreboard",
+        scores,
+    });
 }
 
 function update(elapsedTime, currentTime) {
@@ -473,7 +498,9 @@ function updateClients(elapsedTime) {
     for (const event of tmpUpdateQueue) {
         for (const clientId in activeClients) {
             let client = activeClients[clientId];
-            if (event.type === "turn_point") {
+            if (event.type === "scoreboard") {
+                client.socket.emit("scoreboard", event);
+            } else if (event.type === "turn_point") {
                 if (clientId == event?.player_id) {
                     client.socket.emit("add_turn", event);
                 } else {

@@ -5,7 +5,7 @@ scoreboardImage.onload = function () {
     this.ready = true;
 };
 
-function renderScoreboard(playerSnake, otherSnakes) {
+function renderScoreboard(playerSnake, scores) {
     if (scoreboardImage.ready) {
         MyGame.graphics.drawTexture(scoreboardImage, { x: 1070, y: 130 }, 0, {
             x: 250,
@@ -17,5 +17,30 @@ function renderScoreboard(playerSnake, otherSnakes) {
             "Score: " + playerSnake.score,
             "white",
         );
+
+        if (scores.length > 0) {
+            for (let i = 0; i < 5; i++) {
+                if (!scores[i]) break;
+                MyGame.graphics.drawText(
+                    1070,
+                    100 + i * 25,
+                    (i + 1).toString() +
+                        " - " +
+                        scores[i].name +
+                        " - " +
+                        scores[i].score.toString(),
+                    "white",
+                    "25px",
+                );
+            }
+        } else {
+            MyGame.graphics.drawText(
+                1070,
+                100,
+                "Nobody is in the room",
+                "white",
+                "20px",
+            );
+        }
     }
 }

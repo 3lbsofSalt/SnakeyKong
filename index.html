@@ -28,6 +28,28 @@
                 />
                 <canvas id="id-canvas" width="1200" height="600"></canvas>
             </div>
+            <div id="tutorial" class="screen">
+                <h1>Tutorial</h1>
+                <p>
+                    Play by pressing buttons representing up, down, left, and
+                    right.
+                </p>
+                <p>
+                    The snake will go in the direction indicated by the button.
+                </p>
+                <div
+                    style="
+                        display: flex;
+                        align-items: center;
+                        justify-content: space-around;
+                    "
+                >
+                    <img id="cranky" src="assets/crankyKong.png" />
+                    <ul class="menu">
+                        <li><button id="start">Start</button></li>
+                    </ul>
+                </div>
+            </div>
             <div id="high-scores" class="screen">
                 <h1>High Scores</h1>
                 <ol id="scores-list"></ol>
@@ -118,5 +140,6 @@
         <script src="scripts/screens/about.js"></script>
         <script src="scripts/screens/edit-controls.js"></script>
         <script src="scripts/screens/setup.js"></script>
+        <script src="scripts/screens/tutorial.js"></script>
     </body>
 </html>

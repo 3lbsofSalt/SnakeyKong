@@ -117,10 +117,10 @@ MyGame.graphics = (function () {
         context.restore();
     }
 
-    function drawText(x, y, text, color) {
+    function drawText(x, y, text, color, size = "30px") {
         var width = context.measureText(text).width;
 
-        context.font = "30px Courier";
+        context.font = size + " Courier";
         context.fillStyle = color;
         context.textBaseline = "top";
         context.fillText(text, x - width / 2, y);

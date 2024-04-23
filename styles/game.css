@@ -28,6 +28,10 @@ canvas {
     filter: drop-shadow(5px 5px 2px #222);
 }
 
+#cranky {
+    width: 50%;
+}
+
 #game {
     margin: 0 auto;
     width: 80%;

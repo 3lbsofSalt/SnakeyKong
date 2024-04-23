@@ -124,6 +124,14 @@ MyGame.main = function (objects, input, renderer, graphics) {
         height: canvas.height,
     };
 
+    let scores = [];
+
+    socket.on("scoreboard", (data) => {
+        console.log(data);
+        scores = data.scores;
+        console.log(scores);
+    });
+
     // This event should only be recieved after a join request event is emitted.
     socket.on("join", (data) => {
         playerSnake = objects.Snake(
@@ -252,6 +260,8 @@ MyGame.main = function (objects, input, renderer, graphics) {
 
         if (data.snake_id === socket.id) {
             playerSnake.eatSingleBanana();
+        } else {
+            otherSnakes[data.snake_id].eatSingleBanana();
         }
     });
 
@@ -268,6 +278,8 @@ MyGame.main = function (objects, input, renderer, graphics) {
 
         if (data.snake_id === socket.id) {
             playerSnake.eatBananaBunch();
+        } else {
+            otherSnakes[data.snake_id].eatBananaBunch();
         }
     });
 
@@ -465,7 +477,7 @@ MyGame.main = function (objects, input, renderer, graphics) {
 
         context.translate(camera.x, camera.y);
 
-        renderScoreboard(playerSnake, Object.values(otherSnakes));
+        renderScoreboard(playerSnake, scores);
     }
 
     myKeyboard.register("Escape", function () {
