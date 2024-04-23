@@ -204,6 +204,16 @@ MyGame.main = function (objects, input, renderer, graphics) {
         );
     });
 
+    socket.on("update_body", (data) => {
+        if (data.client_id === socket.id) {
+            playerSnake.repositionBody(data.body);
+        } else {
+            if (otherSnakes[data.client_id]) {
+                otherSnakes[data.client_id].repositionBody(data.body);
+            }
+        }
+    });
+
     socket.on("connect_other", (data) => {
         const snake = data.snake;
         const newSnake = objects.Snake(

@@ -15,8 +15,10 @@ const BANANA_SPAWN_TIME = 500;
 // const BANANA_MAGNET_TOL = 50;
 
 let timer = 0;
+let snakeToSend = 0;
+let bodyUpdateTimer = 250;
 let positionTimer = 0;
-let scoreTimer = 500;
+let scoreTimer = 750;
 
 const segmentDistance = 30;
 const rotateRate = Math.PI / 1000; // Radians per second
@@ -444,11 +446,31 @@ function updateTime(elapsedTime) {
         informClientPosition();
     }
 
+    bodyUpdateTimer += elapsedTime;
+    if (bodyUpdateTimer >= 1000) {
+        bodyUpdateTimer -= 1000;
+        if (Object.keys(activeClients).length !== 0) {
+            snakeToSend++;
+            snakeToSend = snakeToSend % Object.keys(activeClients).length;
+            sendBodyPosition(snakeToSend);
+        }
+    }
+
     scoreTimer += elapsedTime;
     if (scoreTimer >= 1000) {
         scoreTimer -= 1000;
         sendScoreboard();
     }
+}
+
+function sendBodyPosition(snake_index) {
+    const client_id = Object.keys(activeClients)[snake_index];
+    if (!client_id) return;
+    updateQueue.push({
+        type: "update_body",
+        client_id,
+        body: activeClients[client_id].player.snake.body,
+    });
 }
 
 function sendScoreboard() {
@@ -547,6 +569,8 @@ function updateClients(elapsedTime) {
                 } else {
                     client.socket.emit("add_other_body", event);
                 }
+            } else if (event.type === "update_body") {
+                client.socket.emit("update_body", event);
             }
         }
     }

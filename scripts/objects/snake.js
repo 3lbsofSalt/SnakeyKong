@@ -289,6 +289,13 @@ MyGame.objects.Snake = function (
         snake.updateInvincibility(elapsedTime);
     };
 
+    snake.repositionBody = function (body) {
+        for (let i = 0; i < snake.body.length; i++) {
+            snake.body[i].center = body[i].center;
+            snake.body[i].inflection_points = body[i].inflection_points;
+        }
+    };
+
     snake.getHeadImage = function () {
         return snake.headImage;
     };

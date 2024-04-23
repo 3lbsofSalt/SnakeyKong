@@ -21,8 +21,8 @@ function renderScoreboard(playerSnake, scores) {
         if (scores.length > 0) {
             for (let i = 0; i < 5; i++) {
                 if (!scores[i]) break;
-                MyGame.graphics.drawText(
-                    1140,
+                MyGame.graphics.rawDrawText(
+                    980,
                     100 + i * 25,
                     (i + 1).toString() +
                         " - " +
@@ -31,7 +31,6 @@ function renderScoreboard(playerSnake, scores) {
                         scores[i].score.toString(),
                     "white",
                     "15px",
-                    "left",
                 );
             }
         } else {
