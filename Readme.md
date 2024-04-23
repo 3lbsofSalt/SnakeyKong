@@ -3,13 +3,13 @@
 list:
 
 -   [x] Scoreboard actually needs to work
-    -   [ ] Fix text
+    -   [x] Fix text
 -   [ ] update body segment positions every < 20 seconds
 -   [x] Tail texture - Max
 -   [x] Tutorial Message
 -   [ ] Kill screen
 -   [ ] Add invincibility
--   [ ] Don't start near a wall
+-   [x] Don't start near a wall
 -   [ ] User high score logic
 
 Optional:
