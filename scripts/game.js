@@ -139,12 +139,13 @@ MyGame.main = function (objects, input, renderer, graphics) {
             data.rotateRate, // rotateRate
             data.rotationTolerance,
             data.renderSize,
+            data.invincibilityTimeLeft,
             localStorage.getItem("name"),
             dkHeadRender,
             dkBodyRender,
             dkTailRender,
             dkhead, // Head Image
-            dkbody, // Body Image
+            dkbodyGold, // Body Image
             dktail,
             data.startingSegments,
             0, // Score
@@ -212,12 +213,13 @@ MyGame.main = function (objects, input, renderer, graphics) {
             snake.rotateRate,
             snake.rotationTolerance,
             snake.renderSize,
+            snake.invincibilityTimeLeft,
             snake.name,
             dkHeadRender,
             dkBodyRender,
             dkTailRender,
             dkhead, // Head Image
-            dkbody, // Body Image
+            dkbodyRed, // Body Image
             dktail,
             //segmentDistance: snake.segmentDistance,
             snake.body.length,
@@ -458,12 +460,12 @@ MyGame.main = function (objects, input, renderer, graphics) {
 
         // Render segments from last to first
         if (playerSnake.isAlive()) {
-            playerSnake.render();
+            renderSnake(playerSnake);
         }
 
         for (const snake of Object.values(otherSnakes)) {
             if (snake.isAlive()) {
-                snake.render();
+                renderSnake(snake);
             }
         }
 
@@ -474,6 +476,12 @@ MyGame.main = function (objects, input, renderer, graphics) {
         if (!playerSnake.isAlive()) {
             renderKillScreen();
         }
+    }
+
+    function renderSnake(snake) {
+        context.globalAlpha = 1 - snake.invincibilityTimeLeft / 5000;
+        snake.render();
+        context.globalAlpha = 1;
     }
 
     function renderKillScreen() {

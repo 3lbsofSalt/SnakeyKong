@@ -54,6 +54,7 @@ Snake = function (
     rotateRate,
     rotationTolerance,
     renderSize,
+    invincibilityTimeLeft,
     name,
     startingSegments,
     score,
@@ -66,10 +67,11 @@ Snake = function (
         rotateRate,
         rotationTolerance,
         renderSize,
+        invincibilityTimeLeft,
         name,
         alive: true,
         body: [],
-        score: score,
+        score,
     };
 
     const segmentDistance = 30;
@@ -93,6 +95,10 @@ Snake = function (
         for (const body of snake.body) {
             body.inflection_points.push({ ...point });
         }
+    };
+
+    snake.isInvincible = function () {
+        return snake.invincibilityTimeLeft > 0;
     };
 
     snake.needsNewBodyPiece = function () {
@@ -212,9 +218,16 @@ Snake = function (
         snake.score += 10;
     };
 
+    snake.updateInvincibility = function (elapsedTime) {
+        if (snake.isInvincible()) {
+            snake.invincibilityTimeLeft -= elapsedTime;
+        }
+    };
+
     snake.update = function (elapsedTime) {
         snake.moveForward(elapsedTime);
         snake.updateRotation(elapsedTime);
+        snake.updateInvincibility(elapsedTime);
     };
 
     return snake;
@@ -228,6 +241,7 @@ function createPlayer(
     rotateRate,
     segmentDistance,
     renderSize,
+    invincibilityTimeLeft,
     name,
     startingSegments = 3,
 ) {
@@ -235,8 +249,8 @@ function createPlayer(
         clientId: socketId,
         snake: Snake(
             {
-                x: Math.random() * 4200 + 300,
-                y: Math.random() * 2000 + 300,
+                x: Math.random() * 2400 + 1200, // World width is 4800, viewport width is 1200.
+                y: Math.random() * 1400 + 600, // World height is 2600, viewport height is 600.
             },
             starting_directions[Math.floor(Math.random() * 4)],
             moveRate,
@@ -244,6 +258,7 @@ function createPlayer(
             ROTATE_TOL,
             //segmentDistance,
             renderSize,
+            invincibilityTimeLeft,
             name,
             startingSegments,
             0,

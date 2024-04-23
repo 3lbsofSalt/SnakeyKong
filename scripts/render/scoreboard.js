@@ -35,14 +35,7 @@ function renderScoreboard(playerSnake, scores) {
                 );
             }
         } else {
-            MyGame.graphics.drawText(
-                1165,
-                100,
-                "Nobody is in the room",
-                "white",
-                "15px",
-                "left",
-            );
+            MyGame.graphics.drawText(1070, 100, "N/A", "white", "20px");
         }
     }
 }
