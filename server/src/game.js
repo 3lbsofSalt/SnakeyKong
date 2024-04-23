@@ -306,83 +306,86 @@ function testSnakeCollision(snake, clientId) {
 }
 
 function testBananaCollision(snake, elapsedTime, clientId) {
-    let newSingleBananas = [];
-    let newBunchBananas = [];
-    let banana_magnet_tol = snake.renderSize;
-    let banana_eat_tol = snake.renderSize;
+    // Have to test if the snake is alive so a snake can't eat their own banana bunches upon death
+    if (snake.isAlive()) {
+        let newSingleBananas = [];
+        let newBunchBananas = [];
+        let banana_magnet_tol = snake.renderSize;
+        let banana_eat_tol = snake.renderSize;
 
-    for (let banana of singleBananas) {
-        // pull in banana
-        if (
-            Math.abs(snake.center.x - banana.bananaX) < banana_magnet_tol &&
-            Math.abs(snake.center.y - banana.bananaY) < banana_magnet_tol
-        ) {
-            magnetPull(snake.center.x, snake.center.y, banana, elapsedTime);
-        }
+        for (let banana of singleBananas) {
+            // pull in banana
+            if (
+                Math.abs(snake.center.x - banana.bananaX) < banana_magnet_tol &&
+                Math.abs(snake.center.y - banana.bananaY) < banana_magnet_tol
+            ) {
+                magnetPull(snake.center.x, snake.center.y, banana, elapsedTime);
+            }
 
-        if (
-            Math.abs(snake.center.x - banana.bananaX) > banana_eat_tol ||
-            Math.abs(snake.center.y - banana.bananaY) > banana_eat_tol
-        ) {
-            newSingleBananas.push(banana);
-            // eat banana
-        } else {
-            const client = activeClients[clientId];
-            client.player.snake.eatSingleBanana();
-            if (client.player.snake.needsNewBodyPiece()) {
-                client.player.snake.addBodyPiece();
+            if (
+                Math.abs(snake.center.x - banana.bananaX) > banana_eat_tol ||
+                Math.abs(snake.center.y - banana.bananaY) > banana_eat_tol
+            ) {
+                newSingleBananas.push(banana);
+                // eat banana
+            } else {
+                const client = activeClients[clientId];
+                client.player.snake.eatSingleBanana();
+                if (client.player.snake.needsNewBodyPiece()) {
+                    client.player.snake.addBodyPiece();
+                    updateQueue.push({
+                        type: "add_body",
+                        player_id: clientId,
+                        piece: client.player.snake.body[
+                            client.player.snake.body.length - 1
+                        ],
+                    });
+                }
                 updateQueue.push({
-                    type: "add_body",
-                    player_id: clientId,
-                    piece: client.player.snake.body[
-                        client.player.snake.body.length - 1
-                    ],
+                    type: "eat_single",
+                    banana_id: banana.id,
+                    snake_id: clientId,
                 });
             }
-            updateQueue.push({
-                type: "eat_single",
-                banana_id: banana.id,
-                snake_id: clientId,
-            });
         }
-    }
-    singleBananas = newSingleBananas;
+        singleBananas = newSingleBananas;
 
-    for (let bunch of bunchBananas) {
-        if (
-            Math.abs(snake.center.x - bunch.bananaX) < banana_magnet_tol &&
-            Math.abs(snake.center.y - bunch.bananaY) < banana_magnet_tol
-        ) {
-            //console.log("MAGNETING BUNCH!");
-            magnetPull(snake.center.x, snake.center.y, bunch, elapsedTime);
-        }
+        for (let bunch of bunchBananas) {
+            if (
+                Math.abs(snake.center.x - bunch.bananaX) < banana_magnet_tol &&
+                Math.abs(snake.center.y - bunch.bananaY) < banana_magnet_tol
+            ) {
+                //console.log("MAGNETING BUNCH!");
+                magnetPull(snake.center.x, snake.center.y, bunch, elapsedTime);
+            }
 
-        if (
-            Math.abs(snake.center.x - bunch.bananaX) > banana_eat_tol ||
-            Math.abs(snake.center.y - bunch.bananaY) > banana_eat_tol
-        ) {
-            newBunchBananas.push(bunch);
-        } else {
-            const client = activeClients[clientId];
-            client.player.snake.eatBananaBunch();
-            if (client.player.snake.needsNewBodyPiece()) {
-                client.player.snake.addBodyPiece();
+            if (
+                Math.abs(snake.center.x - bunch.bananaX) > banana_eat_tol ||
+                Math.abs(snake.center.y - bunch.bananaY) > banana_eat_tol
+            ) {
+                newBunchBananas.push(bunch);
+            } else {
+                const client = activeClients[clientId];
+                client.player.snake.eatBananaBunch();
+                if (client.player.snake.needsNewBodyPiece()) {
+                    client.player.snake.addBodyPiece();
+                    updateQueue.push({
+                        type: "add_body",
+                        player_id: clientId,
+                        piece: client.player.snake.body[
+                            client.player.snake.body.length - 1
+                        ],
+                    });
+                }
                 updateQueue.push({
-                    type: "add_body",
-                    player_id: clientId,
-                    piece: client.player.snake.body[
-                        client.player.snake.body.length - 1
-                    ],
+                    type: "eat_bunch",
+                    banana_id: bunch.id,
+                    snake_id: clientId,
                 });
             }
-            updateQueue.push({
-                type: "eat_bunch",
-                banana_id: bunch.id,
-                snake_id: clientId,
-            });
         }
+        bunchBananas = newBunchBananas;
     }
-    bunchBananas = newBunchBananas;
 }
 
 function createDeathBananas(snake) {
