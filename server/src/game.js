@@ -104,7 +104,21 @@ function initializeSocketIO(server) {
             notifyConnect(socket, newPlayer);
         });
 
+        socket.on("quit", function () {
+            activeClients[socket.id].player.snake.kill();
+            updateQueue.push({
+                type: "snake_kill",
+                snake_id: socket.id,
+            });
+            delete activeClients[socket.id];
+        });
+
         socket.on("disconnect", function () {
+            activeClients[socket.id]?.player?.snake?.kill();
+            updateQueue.push({
+                type: "snake_kill",
+                snake_id: socket.id,
+            });
             delete activeClients[socket.id];
             console.log("Player " + socket.id + " disconnected");
             inputQueue = [
@@ -452,7 +466,13 @@ function updateTime(elapsedTime) {
         if (Object.keys(activeClients).length !== 0) {
             snakeToSend++;
             snakeToSend = snakeToSend % Object.keys(activeClients).length;
-            sendBodyPosition(snakeToSend);
+            if (
+                Object.values(activeClients)[
+                    snakeToSend
+                ]?.player?.snake?.isAlive()
+            ) {
+                sendBodyPosition(snakeToSend);
+            }
         }
     }
 

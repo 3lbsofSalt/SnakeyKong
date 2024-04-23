@@ -1,4 +1,5 @@
 MyGame.main = function (objects, input, renderer, graphics) {
+    const jungleJapes = new Audio("assets/audio/jungleJapesMusic.mp3");
     let singleBananaRender = renderer.AnimatedModel(
         {
             spriteCount: SINGLE_SPRITE_COUNT,
@@ -369,7 +370,6 @@ MyGame.main = function (objects, input, renderer, graphics) {
     startMusic();
 
     function startMusic() {
-        let jungleJapes = new Audio("assets/audio/jungleJapesMusic.mp3");
         jungleJapes.play();
     }
 
@@ -515,12 +515,8 @@ MyGame.main = function (objects, input, renderer, graphics) {
         }
     }
 
-    myKeyboard.register("Escape", function () {
-        cancelNextRequest = true;
-        MyGame.manager.showScreen("main-menu");
-    });
-
     function start() {
+        console.log("yarg");
         socket.emit("join-request", {
             name: localStorage.getItem("name"),
         });
@@ -552,7 +548,9 @@ MyGame.main = function (objects, input, renderer, graphics) {
     }
 
     myKeyboard.register("Escape", function () {
+        jungleJapes.pause();
         cancelNextRequest = true;
+        socket.emit("quit");
         MyGame.manager.showScreen("main-menu");
     });
 
