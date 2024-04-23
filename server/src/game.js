@@ -249,7 +249,7 @@ function testSnakeWallCollision(snake, clientId) {
 }
 
 function snakeHitOtherSnakeHead(snake, otherSnake) {
-    if (!snake.isInvincible && !otherSnake.isInvincible) {
+    if (!snake.isInvincible() && !otherSnake.isInvincible()) {
         let tooCloseX =
             Math.abs(snake.center.x - otherSnake.center.x) <
             otherSnake.renderSize / 2;
