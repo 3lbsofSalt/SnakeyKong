@@ -168,7 +168,7 @@ MyGame.objects.Snake = function (
     };
 
     snake.needsNewBodyPiece = function () {
-        return snake.score >= (snake.body.length - startingSegments + 1) * 20;
+        return snake.score >= (snake.body.length - startingSegments + 1) * 40;
     };
     snake.setRotation = function (direction) {
         snake.desiredDirection = direction;
@@ -260,14 +260,14 @@ MyGame.objects.Snake = function (
 
     snake.eatSingleBanana = function () {
         snake.score += 1;
-        snake.renderSize = Math.min(snake.renderSize + 0.05, 200);
+        snake.renderSize = Math.min(snake.renderSize + 0.05, 150);
         let eatSound = new Audio("assets/audio/eatSingle.mp3");
         eatSound.play();
     };
 
     snake.eatBananaBunch = function () {
         snake.score += 10;
-        snake.renderSize = Math.min(snake.renderSize + 0.5, 200);
+        snake.renderSize = Math.min(snake.renderSize + 0.5, 150);
         let eatSound = new Audio("assets/audio/eatBunch.mp3");
         eatSound.volume = 0.4;
         eatSound.play();
