@@ -249,8 +249,8 @@ function createPlayer(
         clientId: socketId,
         snake: Snake(
             {
-                x: Math.random() * 4800,
-                y: Math.random() * 2600,
+                x: Math.random() * 2400 + 1200, // World width is 4800, viewport width is 1200.
+                y: Math.random() * 1400 + 600, // World height is 2600, viewport height is 600.
             },
             starting_directions[Math.floor(Math.random() * 4)],
             moveRate,
