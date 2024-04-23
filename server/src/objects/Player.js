@@ -102,7 +102,7 @@ Snake = function (
     };
 
     snake.needsNewBodyPiece = function () {
-        return snake.score >= (snake.body.length - startingSegments + 1) * 20;
+        return snake.score >= (snake.body.length - startingSegments + 1) * 40;
     };
     snake.setRotation = function (direction) {
         snake.desiredDirection = direction;

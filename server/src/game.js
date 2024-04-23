@@ -8,7 +8,7 @@ let bunchBananas = [];
 
 const WORLD_WIDTH = 4800;
 const WORLD_HEIGHT = 2600;
-const BANANA_SPAWN_TIME = 500;
+const BANANA_SPAWN_TIME = 1000;
 
 // const BANANA_EAT_TOL = 50;
 //const BANANA_MAGNET_TOL = 75;
@@ -197,7 +197,7 @@ function informClientPosition() {
 let food_id = 0;
 
 function spawnNewBanana() {
-    if (singleBananas.length >= 1000) return;
+    if (singleBananas.length >= 500) return;
     let bananaSpawnX = Math.random() * WORLD_WIDTH;
     let bananaSpawnY = Math.random() * WORLD_HEIGHT;
     let bananaColor = Math.floor(Math.random() * 6);
