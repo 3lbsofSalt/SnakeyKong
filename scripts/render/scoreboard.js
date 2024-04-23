@@ -31,7 +31,7 @@ function renderScoreboard(playerSnake, scores) {
                         scores[i].score.toString(),
                     "white",
                     "15px",
-                    "left",
+                    "start",
                 );
             }
         } else {
