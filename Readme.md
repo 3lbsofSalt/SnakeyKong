@@ -4,7 +4,7 @@ list:
 
 -   [x] Scoreboard actually needs to work
     -   [x] Fix text
--   [ ] update body segment positions every < 20 seconds
+-   [x] update body segment positions every < 20 seconds
 -   [x] Tail texture - Max
 -   [x] Tutorial Message
 -   [ ] Kill screen

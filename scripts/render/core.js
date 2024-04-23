@@ -117,13 +117,20 @@ MyGame.graphics = (function () {
         context.restore();
     }
 
-    function drawText(x, y, text, color, size = "30px", align = "left") {
+  function rawDrawText(x, y, text, color, size = "30px", align = "start") {
+    context.font = size + " Courier";
+    context.fillStyle = color;
+    context.textBaseline = "top";
+    context.textAlign = align;
+    context.fillText(text, x, y);
+  }
+
+    function drawText(x, y, text, color, size = "30px") {
         var width = context.measureText(text).width;
 
         context.font = size + " Courier";
         context.fillStyle = color;
         context.textBaseline = "top";
-        context.textAlign = align;
         context.fillText(text, x - width / 2, y);
     }
 
@@ -141,6 +148,7 @@ MyGame.graphics = (function () {
         drawSubTexture: drawSubTexture,
         drawRectangle: drawRectangle,
         drawText: drawText,
+    rawDrawText: rawDrawText,
         getCanvas: getCanvas,
         getContext: getContext,
     };
