@@ -19,7 +19,6 @@ invincParticle.onload = function () {
 };
 invincParticle.src = "assets/invincParticle.png";
 
-
 yellowParticle.onload = function () {
     yellowParticle.isReady = true;
     yellowParticle.subTextureWidth = yellowParticle.width;
@@ -147,8 +146,8 @@ function Particle(spec) {
             return spec.image;
         },
         get timeLeft() {
-            return spec.timeLeft;   // Only for invincibility particles
-        }
+            return spec.timeLeft; // Only for invincibility particles
+        },
     };
 
     return api;
@@ -171,7 +170,7 @@ function particleSystem(playerSnake) {
                 },
                 size: {
                     x: 30,
-                    y: 30
+                    y: 30,
                 },
                 image: particleColorImages[banana.color], // determinesColor
                 speed: Math.random() * 600, // pixels per second
@@ -198,13 +197,13 @@ function particleSystem(playerSnake) {
                 },
                 size: {
                     x: 10,
-                    y: 10
+                    y: 10,
                 },
                 image: invincParticle,
                 speed: Math.random() * 200, // pixels per second
                 rotation: playerSnake.direction,
                 lifetime: Math.random(), // seconds
-                timeLeft: invincibilityTimeLeft
+                timeLeft: invincibilityTimeLeft,
             };
             invinc_particles.push(Particle(p));
         }
@@ -226,7 +225,7 @@ function particleSystem(playerSnake) {
                 },
                 size: {
                     x: 30,
-                    y: 30
+                    y: 30,
                 },
                 image: deathParticle,
                 speed: Math.random() * 200, // pixels per second
@@ -322,7 +321,11 @@ function renderParticles(context) {
     }
 
     // Render invincibility particles
-    for (let particle = invinc_particles.length - 1; particle >= 0; particle--) {
+    for (
+        let particle = invinc_particles.length - 1;
+        particle >= 0;
+        particle--
+    ) {
         curr_particle = invinc_particles[particle];
         if (curr_particle.image?.isReady) {
             let drawX = curr_particle.center.x - curr_particle.size.x / 2;

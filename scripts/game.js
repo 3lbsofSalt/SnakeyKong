@@ -442,7 +442,9 @@ MyGame.main = function (objects, input, renderer, graphics) {
         if (playerSnake.isAlive()) {
             playerSnake.update(elapsedTime);
             if (playerSnake.isInvincible()) {
-                particle_system.invincibility(playerSnake.invincibilityTimeLeft);
+                particle_system.invincibility(
+                    playerSnake.invincibilityTimeLeft,
+                );
             }
         }
 

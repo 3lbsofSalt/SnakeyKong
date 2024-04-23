@@ -116,7 +116,7 @@ MyGame.objects.Snake = function (
     const segmentDistance = 30;
 
     let enterSound = new Audio("assets/audio/enterArena.mp3");
-        enterSound.play();
+    enterSound.play();
 
     if (body.length === 0) {
         const vectorY = Math.sin(snake.direction);
