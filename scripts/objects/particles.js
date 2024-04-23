@@ -1,4 +1,6 @@
 const deathParticle = new Image();
+const invincParticle = new Image();
+
 const yellowParticle = new Image();
 const redParticle = new Image();
 const blueParticle = new Image();
@@ -10,6 +12,13 @@ deathParticle.onload = function () {
     deathParticle.subTextureWidth = deathParticle.width;
 };
 deathParticle.src = "assets/deathParticle.png";
+
+invincParticle.onload = function () {
+    invincParticle.isReady = true;
+    invincParticle.subTextureWidth = invincParticle.width;
+};
+invincParticle.src = "assets/invincParticle.png";
+
 
 yellowParticle.onload = function () {
     yellowParticle.isReady = true;
@@ -97,9 +106,9 @@ killScreenImage.src = "assets/gameOver.png";
 
 let banana_particles = [];
 let death_particles = [];
+let invinc_particles = [];
 
 function Particle(spec) {
-    spec.size = { x: 30, y: 30 };
     spec.alive = 0;
 
     function update(elapsed_time) {
@@ -137,6 +146,9 @@ function Particle(spec) {
         get image() {
             return spec.image;
         },
+        get timeLeft() {
+            return spec.timeLeft;   // Only for invincibility particles
+        }
     };
 
     return api;
@@ -148,8 +160,6 @@ function particleSystem(playerSnake) {
         for (let particle = 0; particle < 20; particle++) {
             let negX = Math.random() < 0.5 ? 1 : -1;
             let negY = Math.random() < 0.5 ? 1 : -1;
-            let xDrift = (Math.random() / 2) * negX;
-            let yDrift = (Math.random() / 2) * negY;
             let p = {
                 center: {
                     x: banana.center.x,
@@ -159,12 +169,44 @@ function particleSystem(playerSnake) {
                     x: Math.random() * negX,
                     y: Math.random() * negY,
                 },
+                size: {
+                    x: 30,
+                    y: 30
+                },
                 image: particleColorImages[banana.color], // determinesColor
                 speed: Math.random() * 600, // pixels per second
                 rotation: playerSnake.direction,
                 lifetime: Math.random(), // seconds
             };
             banana_particles.push(Particle(p));
+        }
+    }
+
+    function invincibility(invincibilityTimeLeft) {
+        // Generate some new particles
+        for (let particle = 0; particle < 2; particle++) {
+            let negX = Math.random() < 0.5 ? 1 : -1;
+            let negY = Math.random() < 0.5 ? 1 : -1;
+            let p = {
+                center: {
+                    x: playerSnake.center.x + negX * 10,
+                    y: playerSnake.center.y + negY * 10,
+                },
+                direction: {
+                    x: Math.random() * negX,
+                    y: Math.random() * negY,
+                },
+                size: {
+                    x: 10,
+                    y: 10
+                },
+                image: invincParticle,
+                speed: Math.random() * 200, // pixels per second
+                rotation: playerSnake.direction,
+                lifetime: Math.random(), // seconds
+                timeLeft: invincibilityTimeLeft
+            };
+            invinc_particles.push(Particle(p));
         }
     }
 
@@ -182,6 +224,10 @@ function particleSystem(playerSnake) {
                     x: Math.random() * negX,
                     y: Math.random() * negY,
                 },
+                size: {
+                    x: 30,
+                    y: 30
+                },
                 image: deathParticle,
                 speed: Math.random() * 200, // pixels per second
                 rotation: playerSnake.direction,
@@ -193,6 +239,7 @@ function particleSystem(playerSnake) {
 
     return {
         eatBanana: eatBanana,
+        invincibility: invincibility,
         snakeCrash: snakeCrash,
     };
 }
@@ -210,9 +257,8 @@ function updateParticles(elapsed_time) {
     }
     banana_particles = aliveParticles;
 
-    aliveParticles = [];
-
     // Update death particles
+    aliveParticles = [];
     for (particle = 0; particle < death_particles.length; particle++) {
         // A return value of true indicates this particle is still alive
         if (death_particles[particle].update(elapsed_time)) {
@@ -220,9 +266,20 @@ function updateParticles(elapsed_time) {
         }
     }
     death_particles = aliveParticles;
+
+    // Update invincibility particles
+    aliveParticles = [];
+    for (particle = 0; particle < invinc_particles.length; particle++) {
+        // A return value of true indicates this particle is still alive
+        if (invinc_particles[particle].update(elapsed_time)) {
+            aliveParticles.push(invinc_particles[particle]);
+        }
+    }
+    invinc_particles = aliveParticles;
 }
 
 function renderParticles(context) {
+    // Render banana particles
     for (
         let particle = banana_particles.length - 1;
         particle >= 0;
@@ -245,12 +302,32 @@ function renderParticles(context) {
         }
     }
 
+    // Render death particles
     for (let particle = death_particles.length - 1; particle >= 0; particle--) {
         curr_particle = death_particles[particle];
         if (curr_particle.image?.isReady) {
             let drawX = curr_particle.center.x - curr_particle.size.x / 2;
             let drawY = curr_particle.center.y - curr_particle.size.y / 2;
             let opacity = 1 - curr_particle.age;
+            context.globalAlpha = Math.max(0, opacity);
+            context.drawImage(
+                curr_particle.image,
+                drawX,
+                drawY,
+                2 * curr_particle.size.x,
+                2 * curr_particle.size.y,
+            );
+            context.globalAlpha = 1;
+        }
+    }
+
+    // Render invincibility particles
+    for (let particle = invinc_particles.length - 1; particle >= 0; particle--) {
+        curr_particle = invinc_particles[particle];
+        if (curr_particle.image?.isReady) {
+            let drawX = curr_particle.center.x - curr_particle.size.x / 2;
+            let drawY = curr_particle.center.y - curr_particle.size.y / 2;
+            let opacity = 1 - curr_particle.timeLeft / 5000 - curr_particle.age;
             context.globalAlpha = Math.max(0, opacity);
             context.drawImage(
                 curr_particle.image,

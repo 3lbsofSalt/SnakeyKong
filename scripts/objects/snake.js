@@ -115,6 +115,9 @@ MyGame.objects.Snake = function (
 
     const segmentDistance = 30;
 
+    let enterSound = new Audio("assets/audio/enterArena.mp3");
+        enterSound.play();
+
     if (body.length === 0) {
         const vectorY = Math.sin(snake.direction);
         const vectorX = Math.cos(snake.direction);
@@ -273,6 +276,10 @@ MyGame.objects.Snake = function (
     snake.updateInvincibility = function (elapsedTime) {
         if (snake.isInvincible()) {
             snake.invincibilityTimeLeft -= elapsedTime;
+            if (!snake.isInvincible()) {
+                let okaySound = new Audio("assets/audio/okay.mp3");
+                okaySound.play();
+            }
         }
     };
 
