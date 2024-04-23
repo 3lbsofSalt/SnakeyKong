@@ -1,5 +1,6 @@
 const dkhead = new Image();
-const dkbody = new Image();
+const dkbodyGold = new Image();
+const dkbodyRed = new Image();
 const dktail = new Image();
 
 dkhead.onload = function () {
@@ -8,11 +9,17 @@ dkhead.onload = function () {
 };
 dkhead.src = "assets/dkhead.png";
 
-dkbody.onload = function () {
-    dkbody.isReady = true;
-    dkbody.subTextureWidth = dkbody.width;
+dkbodyGold.onload = function () {
+    dkbodyGold.isReady = true;
+    dkbodyGold.subTextureWidth = dkbodyGold.width;
 };
-dkbody.src = "assets/dkbody.png";
+dkbodyGold.src = "assets/dkbodyGold.png";
+
+dkbodyRed.onload = function () {
+    dkbodyRed.isReady = true;
+    dkbodyRed.subTextureWidth = dkbodyRed.width;
+};
+dkbodyRed.src = "assets/dkbodyRed.png";
 
 dktail.onload = function () {
     dktail.isReady = true;

@@ -147,7 +147,7 @@ MyGame.main = function (objects, input, renderer, graphics) {
             dkBodyRender,
             dkTailRender,
             dkhead, // Head Image
-            dkbody, // Body Image
+            dkbodyGold, // Body Image
             dktail,
             data.startingSegments,
             0, // Score
@@ -221,7 +221,7 @@ MyGame.main = function (objects, input, renderer, graphics) {
             dkBodyRender,
             dkTailRender,
             dkhead, // Head Image
-            dkbody, // Body Image
+            dkbodyRed, // Body Image
             dktail,
             //segmentDistance: snake.segmentDistance,
             snake.body.length,
