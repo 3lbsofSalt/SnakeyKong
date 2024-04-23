@@ -323,6 +323,13 @@ MyGame.objects.Snake = function (
             rot += Math.PI;
         }
 
+        snake.tailRenderer.render({
+            image: snake.getTailImage(),
+            center: snake.body[snake.body.length - 1].center,
+            rotation: rot,
+            size: { x: snake.renderSize * 0.75, y: snake.renderSize },
+        });
+
         for (let i = snake.body.length - 2; i >= 0; i--) {
             snake.bodyRenderer.render({
                 image: snake.getBodyImage(),
@@ -331,13 +338,6 @@ MyGame.objects.Snake = function (
                 size: { x: snake.renderSize, y: snake.renderSize },
             });
         }
-
-        snake.tailRenderer.render({
-            image: snake.getTailImage(),
-            center: snake.body[snake.body.length - 1].center,
-            rotation: rot,
-            size: { x: snake.renderSize * 0.75, y: snake.renderSize },
-        });
 
         snake.headRenderer.render({
             image: snake.getHeadImage(),
