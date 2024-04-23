@@ -466,12 +466,12 @@ MyGame.main = function (objects, input, renderer, graphics) {
 
         // Render segments from last to first
         if (playerSnake.isAlive()) {
-            playerSnake.render();
+            renderSnake(playerSnake);
         }
 
         for (const snake of Object.values(otherSnakes)) {
             if (snake.isAlive()) {
-                snake.render();
+                renderSnake(snake);
             }
         }
 
@@ -482,6 +482,12 @@ MyGame.main = function (objects, input, renderer, graphics) {
         if (!playerSnake.isAlive()) {
             renderKillScreen();
         }
+    }
+
+    function renderSnake(snake) {
+        context.globalAlpha = 1 - snake.invincibilityTimeLeft / 5000;
+        snake.render();
+        context.globalAlpha = 1;
     }
 
     function renderKillScreen() {
