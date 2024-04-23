@@ -523,8 +523,8 @@ MyGame.main = function (objects, input, renderer, graphics) {
     }
 
     function magnetPull(x, y, banana, elapsedTime) {
-        banana.center.x += ((x - banana.center.x) * elapsedTime) / 150;
-        banana.center.y += ((y - banana.center.y) * elapsedTime) / 150;
+        banana.center.x += ((x - banana.center.x) * elapsedTime) / 200;
+        banana.center.y += ((y - banana.center.y) * elapsedTime) / 200;
     }
 
     function updateCamera() {

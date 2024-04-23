@@ -328,7 +328,7 @@ function testBananaCollision(snake, elapsedTime, clientId) {
     if (snake.isAlive()) {
         let newSingleBananas = [];
         let newBunchBananas = [];
-        let banana_magnet_tol = snake.renderSize * 1.25;
+        let banana_magnet_tol = snake.renderSize * 1.3;
         let banana_eat_tol = snake.renderSize * 0.8;
 
         for (let banana of singleBananas) {
@@ -433,8 +433,8 @@ function createDeathBananas(snake) {
 }
 
 function magnetPull(x, y, banana, elapsedTime) {
-    banana.bananaX += ((x - banana.bananaX) * elapsedTime) / 150;
-    banana.bananaY += ((y - banana.bananaY) * elapsedTime) / 150;
+    banana.bananaX += ((x - banana.bananaX) * elapsedTime) / 200;
+    banana.bananaY += ((y - banana.bananaY) * elapsedTime) / 200;
     updateQueue.push({
         type: "magnet_pull",
         pullLoc: { x, y },
