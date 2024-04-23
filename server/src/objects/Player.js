@@ -209,12 +209,12 @@ Snake = function (
     };
 
     snake.eatSingleBanana = function () {
-        snake.renderSize = Math.min(snake.renderSize + 0.1, 200);
+        snake.renderSize = Math.min(snake.renderSize + 0.05, 200);
         snake.score += 1;
     };
 
     snake.eatBananaBunch = function () {
-        snake.renderSize = Math.min(snake.renderSize + 1, 200);
+        snake.renderSize = Math.min(snake.renderSize + 0.5, 200);
         snake.score += 10;
     };
 
