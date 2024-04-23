@@ -127,9 +127,7 @@ MyGame.main = function (objects, input, renderer, graphics) {
     let scores = [];
 
     socket.on("scoreboard", (data) => {
-        console.log(data);
         scores = data.scores;
-        console.log(scores);
     });
 
     // This event should only be recieved after a join request event is emitted.
@@ -231,10 +229,7 @@ MyGame.main = function (objects, input, renderer, graphics) {
     });
 
     socket.on("disconnect_other", (data) => {
-        console.log(data);
-        console.log(otherSnakes);
         if (otherSnakes[data.clientId]) {
-            console.log("");
             delete otherSnakes[data.clientId];
         }
     });
@@ -315,7 +310,6 @@ MyGame.main = function (objects, input, renderer, graphics) {
     });
 
     socket.on("other_snake_kill", (data) => {
-        console.log(data);
         if (otherSnakes[data.snake_id]) {
             otherSnakes[data.snake_id].kill();
             //particle_system.snakeCrash();

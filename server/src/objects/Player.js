@@ -235,8 +235,8 @@ function createPlayer(
         clientId: socketId,
         snake: Snake(
             {
-                x: Math.random() * 4800,
-                y: Math.random() * 2600,
+                x: Math.random() * 4200 + 300,
+                y: Math.random() * 2000 + 300,
             },
             starting_directions[Math.floor(Math.random() * 4)],
             moveRate,

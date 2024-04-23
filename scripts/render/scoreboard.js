@@ -22,7 +22,7 @@ function renderScoreboard(playerSnake, scores) {
             for (let i = 0; i < 5; i++) {
                 if (!scores[i]) break;
                 MyGame.graphics.drawText(
-                    1070,
+                    1140,
                     100 + i * 25,
                     (i + 1).toString() +
                         " - " +
@@ -30,16 +30,18 @@ function renderScoreboard(playerSnake, scores) {
                         " - " +
                         scores[i].score.toString(),
                     "white",
-                    "25px",
+                    "15px",
+                    "left",
                 );
             }
         } else {
             MyGame.graphics.drawText(
-                1070,
+                1165,
                 100,
                 "Nobody is in the room",
                 "white",
-                "20px",
+                "15px",
+                "left",
             );
         }
     }
