@@ -262,7 +262,7 @@ function snakeHitOtherSnakeHead(snake, otherSnake) {
 }
 
 function snakeHitOtherSnakeBody(snake, otherSnake) {
-    if (!snake.isInvincible && !otherSnake.isInvincible) {
+    if (!snake.isInvincible() && !otherSnake.isInvincible()) {
         for (segment of otherSnake.body) {
             let tooCloseX =
                 Math.abs(snake.center.x - segment.center.x) <
