@@ -141,6 +141,7 @@ MyGame.main = function (objects, input, renderer, graphics) {
             data.rotateRate, // rotateRate
             data.rotationTolerance,
             data.renderSize,
+            data.invincibilityTimeLeft,
             localStorage.getItem("name"),
             dkHeadRender,
             dkBodyRender,
@@ -214,6 +215,7 @@ MyGame.main = function (objects, input, renderer, graphics) {
             snake.rotateRate,
             snake.rotationTolerance,
             snake.renderSize,
+            snake.invincibilityTimeLeft,
             snake.name,
             dkHeadRender,
             dkBodyRender,

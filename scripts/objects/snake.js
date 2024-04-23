@@ -73,6 +73,7 @@ MyGame.objects.Snake = function (
     rotateRate,
     rotationTolerance,
     renderSize,
+    invincibilityTimeLeft,
     name,
     headRenderer,
     bodyRenderer,
@@ -92,13 +93,14 @@ MyGame.objects.Snake = function (
         rotateRate,
         rotationTolerance,
         renderSize,
+        invincibilityTimeLeft,
         name,
         headRenderer,
         bodyRenderer,
         tailRenderer,
         alive: true,
         body: [],
-        score: score,
+        score,
         headImage,
         bodyImage,
         tailImage,
@@ -149,6 +151,10 @@ MyGame.objects.Snake = function (
             seg.center.x += adjustment.x;
             seg.center.y += adjustment.y;
         }
+    };
+
+    snake.isInvincible = function () {
+        return snake.invincibilityTimeLeft > 0;
     };
 
     snake.needsNewBodyPiece = function () {
@@ -257,9 +263,28 @@ MyGame.objects.Snake = function (
         eatSound.play();
     };
 
+    snake.updateInvincibility = function (elapsedTime) {
+        if (snake.isInvincible()) {
+            snake.invincibilityTimeLeft -= elapsedTime;
+        }
+    };
+
     snake.update = function (elapsedTime) {
         snake.moveForward(elapsedTime);
         snake.updateRotation(elapsedTime);
+        snake.updateInvincibility(elapsedTime);
+    };
+
+    snake.getHeadImage = function () {
+        return snake.headImage;
+    };
+
+    snake.getBodyImage = function () {
+        return snake.bodyImage;
+    };
+
+    snake.getTailImage = function () {
+        return snake.tailImage;
     };
 
     snake.render = function () {
@@ -279,7 +304,7 @@ MyGame.objects.Snake = function (
 
         for (let i = snake.body.length - 2; i >= 0; i--) {
             snake.bodyRenderer.render({
-                image: snake.bodyImage,
+                image: snake.getBodyImage(),
                 center: snake.body[i].center,
                 rotation: 0,
                 size: { x: snake.renderSize, y: snake.renderSize },
@@ -287,14 +312,14 @@ MyGame.objects.Snake = function (
         }
 
         snake.tailRenderer.render({
-            image: snake.tailImage,
+            image: snake.getTailImage(),
             center: snake.body[snake.body.length - 1].center,
             rotation: rot,
             size: { x: snake.renderSize * 0.75, y: snake.renderSize },
         });
 
         snake.headRenderer.render({
-            image: snake.headImage,
+            image: snake.getHeadImage(),
             center: snake.center,
             rotation: snake.direction,
             size: { x: snake.renderSize * 1.5, y: snake.renderSize },

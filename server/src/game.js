@@ -22,6 +22,7 @@ const segmentDistance = 30;
 const rotateRate = Math.PI / 1000; // Radians per second
 const moveRate = 200 / 1000; // Pixels per second
 const initialRenderSize = 50;
+const initialInvincibilityTime = 5000;
 const UPDATE_RATE_MS = 30;
 let inputQueue = [];
 let updateQueue = [];
@@ -53,7 +54,6 @@ function initializeSocketIO(server) {
         for (const clientId in activeClients) {
             let client = activeClients[clientId];
             if (playerId !== clientId) {
-                console.log("yarg");
                 client.socket.emit("disconnect_other", {
                     clientId: playerId,
                 });
@@ -73,6 +73,7 @@ function initializeSocketIO(server) {
                 rotateRate,
                 segmentDistance,
                 initialRenderSize,
+                initialInvincibilityTime,
                 data.name,
             );
             activeClients[socket.id] = {
@@ -90,6 +91,7 @@ function initializeSocketIO(server) {
                 rotateRate,
                 rotationTolerance: newPlayer.snake.rotationTolerance,
                 renderSize: initialRenderSize,
+                invincibilityTimeLeft: initialInvincibilityTime,
                 segmentDistance,
                 startingSegments: 3,
                 single_bananas: singleBananas,
@@ -245,28 +247,32 @@ function testSnakeWallCollision(snake, clientId) {
 }
 
 function snakeHitOtherSnakeHead(snake, otherSnake) {
-    let tooCloseX =
-        Math.abs(snake.center.x - otherSnake.center.x) <
-        otherSnake.renderSize / 2;
-    let tooCloseY =
-        Math.abs(snake.center.y - otherSnake.center.y) <
-        otherSnake.renderSize / 2;
-    if (tooCloseX && tooCloseY) {
-        return true;
+    if (!snake.isInvincible && !otherSnake.isInvincible) {
+        let tooCloseX =
+            Math.abs(snake.center.x - otherSnake.center.x) <
+            otherSnake.renderSize / 2;
+        let tooCloseY =
+            Math.abs(snake.center.y - otherSnake.center.y) <
+            otherSnake.renderSize / 2;
+        if (tooCloseX && tooCloseY) {
+            return true;
+        }
     }
     return false;
 }
 
 function snakeHitOtherSnakeBody(snake, otherSnake) {
-    for (segment of otherSnake.body) {
-        let tooCloseX =
-            Math.abs(snake.center.x - segment.center.x) <
-            otherSnake.renderSize / 2;
-        let tooCloseY =
-            Math.abs(snake.center.y - segment.center.y) <
-            otherSnake.renderSize / 2;
-        if (tooCloseX && tooCloseY) {
-            return true;
+    if (!snake.isInvincible && !otherSnake.isInvincible) {
+        for (segment of otherSnake.body) {
+            let tooCloseX =
+                Math.abs(snake.center.x - segment.center.x) <
+                otherSnake.renderSize / 2;
+            let tooCloseY =
+                Math.abs(snake.center.y - segment.center.y) <
+                otherSnake.renderSize / 2;
+            if (tooCloseX && tooCloseY) {
+                return true;
+            }
         }
     }
     return false;
@@ -355,7 +361,6 @@ function testBananaCollision(snake, elapsedTime, clientId) {
                 Math.abs(snake.center.x - bunch.bananaX) < banana_magnet_tol &&
                 Math.abs(snake.center.y - bunch.bananaY) < banana_magnet_tol
             ) {
-                //console.log("MAGNETING BUNCH!");
                 magnetPull(snake.center.x, snake.center.y, bunch, elapsedTime);
             }
 
@@ -404,7 +409,6 @@ function createDeathBananas(snake) {
         };
 
         bunchBananas.push(bunch);
-        //console.log("ADDING BUNCH");
 
         updateQueue.push({
             type: "new_bunch",
