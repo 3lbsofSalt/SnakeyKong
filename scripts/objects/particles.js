@@ -87,6 +87,14 @@ backgroundImage.onload = function () {
 };
 backgroundImage.src = "assets/gameBackdropDK.png";
 
+const killScreenImage = new Image();
+
+killScreenImage.onload = function () {
+    killScreenImage.isReady = true;
+    killScreenImage.subTextureWidth = killScreenImage.width;
+};
+killScreenImage.src = "assets/gameOver.png";
+
 let banana_particles = [];
 let death_particles = [];
 
