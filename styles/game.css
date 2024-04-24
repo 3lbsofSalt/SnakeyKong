@@ -79,6 +79,18 @@ ul.menu li {
     margin-right: 2.5em;
 }
 
+#tutorial button {
+    width: 6em;
+    margin-left: 3em;
+    margin-right: 3em;
+}
+
+#tutorial button:hover {
+    width: 7em;
+    margin-left: 2.5em;
+    margin-right: 2.5em;
+}
+
 ul.menu li button {
     font-family: "Courier", serif;
     font-size: 1em;
@@ -186,4 +198,9 @@ input[type="text"] {
     font-size: 1em;
     font-family: "Courier", serif;
     width: 9em;
+}
+
+#cranky {
+    width: 15em;
+    height: 12em;
 }
