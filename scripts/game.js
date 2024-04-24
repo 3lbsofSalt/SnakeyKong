@@ -512,6 +512,13 @@ MyGame.main = function (objects, input, renderer, graphics) {
             );
 
             context.globalAlpha = 1;
+
+            MyGame.graphics.drawText(875, 160, 'Score', 'white')
+            MyGame.graphics.drawText(890, 200, playerSnake.score, 'white')
+            MyGame.graphics.drawText(890, 280, 'Kills', 'white')
+            MyGame.graphics.drawText(890, 320, playerSnake.kills, 'white')
+            MyGame.graphics.drawText(890, 400, 'Top Position', 'white')
+            MyGame.graphics.drawText(890, 440, playerSnake.topPos, 'white')
         }
     }
 

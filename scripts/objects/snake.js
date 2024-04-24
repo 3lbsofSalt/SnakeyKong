@@ -108,6 +108,8 @@ MyGame.objects.Snake = function (
         alive: true,
         body: [],
         score,
+        topPos: 0,
+        kills: 0,
         headImage,
         bodyImage,
         tailImage,
