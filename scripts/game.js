@@ -324,7 +324,7 @@ MyGame.main = function (objects, input, renderer, graphics) {
 
     socket.on("kill_pt", (data) => {
         if (data.name === playerSnake.name) {
-            playerSnake.kills ++;
+            playerSnake.kills++;
         }
     });
 
@@ -499,8 +499,8 @@ MyGame.main = function (objects, input, renderer, graphics) {
         if (!playerSnake.isAlive()) {
             renderKillScreen();
             if (!scoreLogged) {
-                if (localStorage.getItem('scores')) {
-                    let scoresList = localStorage.getItem('scores').split(' ')
+                if (localStorage.getItem("scores")) {
+                    let scoresList = localStorage.getItem("scores").split(" ");
                     scoresList.push(playerSnake.score.toString());
                     scoresList.sort((a, b) => {
                         return parseInt(b, 10) - parseInt(a, 10);
@@ -509,10 +509,12 @@ MyGame.main = function (objects, input, renderer, graphics) {
                         scoresList.pop();
                     }
 
-                    localStorage.setItem('scores', scoresList.join(' '))
-                }
-                else {
-                    localStorage.setItem('scores', playerSnake.score.toString())
+                    localStorage.setItem("scores", scoresList.join(" "));
+                } else {
+                    localStorage.setItem(
+                        "scores",
+                        playerSnake.score.toString(),
+                    );
                 }
                 var button = document.getElementById("id-game-back");
                 button.style.display = "block";
@@ -543,13 +545,13 @@ MyGame.main = function (objects, input, renderer, graphics) {
 
             context.globalAlpha = 1;
 
-            MyGame.graphics.drawText(890, 160, '', 'white')
-            MyGame.graphics.drawText(890, 160, 'Score', 'white')
-            MyGame.graphics.drawText(890, 200, playerSnake.score, 'white')
-            MyGame.graphics.drawText(890, 280, 'Kills', 'white')
-            MyGame.graphics.drawText(890, 320, playerSnake.kills, 'white')
-            MyGame.graphics.drawText(890, 400, 'Top Position', 'white')
-            MyGame.graphics.drawText(890, 440, playerSnake.topPos, 'white')
+            MyGame.graphics.drawText(890, 160, "", "white");
+            MyGame.graphics.drawText(890, 160, "Score", "white");
+            MyGame.graphics.drawText(890, 200, playerSnake.score, "white");
+            MyGame.graphics.drawText(890, 280, "Kills", "white");
+            MyGame.graphics.drawText(890, 320, playerSnake.kills, "white");
+            MyGame.graphics.drawText(890, 400, "Top Position", "white");
+            MyGame.graphics.drawText(890, 440, playerSnake.topPos, "white");
         }
     }
 

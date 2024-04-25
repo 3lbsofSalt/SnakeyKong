@@ -37,7 +37,10 @@ function renderScoreboard(playerSnake, scores) {
             // update top position
             for (let i = 0; i < scores.length; i++) {
                 if (scores[i].name === playerSnake.name) {
-                    if (i + 1 < playerSnake.topPos || playerSnake.topPos === 0) {
+                    if (
+                        i + 1 < playerSnake.topPos ||
+                        playerSnake.topPos === 0
+                    ) {
                         playerSnake.topPos = i + 1;
                     }
                 }

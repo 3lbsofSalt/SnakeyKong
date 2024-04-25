@@ -351,7 +351,7 @@ MyGame.objects.Snake = function (
         MyGame.graphics.drawText(
             snake.center.x,
             snake.center.y - 80,
-            '',
+            "",
             "white",
         );
         MyGame.graphics.drawText(
