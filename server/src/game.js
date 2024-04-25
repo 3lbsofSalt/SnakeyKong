@@ -40,10 +40,12 @@ function initializeSocketIO(server) {
                     playerId: socket.id,
                 });
 
-                socket.emit("connect_other", {
-                    playerId: client.socket.id,
-                    snake: client.player.snake,
-                });
+                if(client.player.snake.isAlive()) {
+                    socket.emit("connect_other", {
+                        playerId: client.socket.id,
+                        snake: client.player.snake,
+                    });
+                }
             }
         }
     }
