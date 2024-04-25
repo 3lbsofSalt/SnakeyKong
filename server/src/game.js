@@ -203,7 +203,7 @@ function spawnNewBanana() {
     if (singleBananas.length >= 500) return;
     let bananaSpawnX = Math.random() * WORLD_WIDTH;
     let bananaSpawnY = Math.random() * WORLD_HEIGHT;
-    let bananaColor = Math.floor(Math.random() * 6);
+    let bananaColor = Math.floor(Math.random() * 5);
     food_id++;
 
     const banana = {
@@ -227,7 +227,7 @@ function spawnNewBanana() {
 function spawnNewBunch() {
     let bananaSpawnX = Math.random() * WORLD_WIDTH;
     let bananaSpawnY = Math.random() * WORLD_HEIGHT;
-    let bananaColor = Math.floor(Math.random() * 6);
+    let bananaColor = Math.floor(Math.random() * 5);
     food_id++;
 
     const banana = {
@@ -417,7 +417,7 @@ function testBananaCollision(snake, elapsedTime, clientId) {
 }
 
 function createDeathBananas(snake) {
-    let bananaColor = Math.floor(Math.random() * 6);
+    let bananaColor = Math.floor(Math.random() * 5);
 
     for (let segment of snake.body) {
         let bananaSpawnX = segment.center.x;
