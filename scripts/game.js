@@ -588,20 +588,16 @@ MyGame.main = function (objects, input, renderer, graphics) {
     }
 
     myKeyboard.register("Escape", function () {
+        quit();
+    });
+
+    function quit() {
         jungleJapes.pause();
         cancelNextRequest = true;
         socket.emit("quit");
         MyGame.manager.showScreen("main-menu");
-    });
+    }
 
-    document
-        .getElementById("id-game-back")
-        .addEventListener("click", function () {
-            jungleJapes.pause();
-            cancelNextRequest = true;
-            socket.emit("quit");
-            MyGame.manager.showScreen("main-menu");
-        });
 
     return {
         processInput: processInput,
@@ -612,5 +608,6 @@ MyGame.main = function (objects, input, renderer, graphics) {
         cancelNextRequest: cancelNextRequest,
         socket: socket,
         dkHead: playerSnake,
+        quit: quit
     };
 };
