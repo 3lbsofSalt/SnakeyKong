@@ -10,12 +10,6 @@ MyGame.screens["game-play"] = (function (manager, graphics, input) {
     //------------------------------------------------------------------
     function initialize() {
         console.log("game initializing...");
-        model = MyGame.main(
-            MyGame.objects,
-            MyGame.input,
-            MyGame.render,
-            MyGame.graphics,
-        );
     }
 
     //------------------------------------------------------------------
@@ -35,6 +29,12 @@ MyGame.screens["game-play"] = (function (manager, graphics, input) {
         button.parentNode.replaceChild(newButton, button);
         newButton.style.display = "none";
         updateControls();
+        model = MyGame.main(
+            MyGame.objects,
+            MyGame.input,
+            MyGame.render,
+            MyGame.graphics,
+        );
 
         // Start the animation loop
 
