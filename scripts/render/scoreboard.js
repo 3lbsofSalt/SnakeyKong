@@ -33,6 +33,15 @@ function renderScoreboard(playerSnake, scores) {
                     "15px",
                 );
             }
+
+            // update top position
+            for (let i = 0; i < scores.length; i++) {
+                if (scores[i].name === playerSnake.name) {
+                    if (i + 1 < playerSnake.topPos || playerSnake.topPos === 0) {
+                        playerSnake.topPos = i + 1;
+                    }
+                }
+            }
         } else {
             MyGame.graphics.drawText(1070, 100, "N/A", "white", "20px");
         }
