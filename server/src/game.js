@@ -109,6 +109,11 @@ function initializeSocketIO(server) {
                 snake_id: socket.id,
             });
             delete activeClients[socket.id];
+            console.log("Player " + socket.id + " disconnected");
+            inputQueue = [
+                ...inputQueue.filter((input) => input.clientId !== socket.id),
+            ];
+            notifyDisconnect(socket.id);
         });
 
         socket.on("disconnect", function () {
