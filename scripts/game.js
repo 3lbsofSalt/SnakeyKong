@@ -469,6 +469,8 @@ MyGame.main = function (objects, input, renderer, graphics) {
         }
     }
 
+    let scoreLogged = false;
+
     function render() {
         graphics.clear();
 
@@ -494,6 +496,24 @@ MyGame.main = function (objects, input, renderer, graphics) {
 
         if (!playerSnake.isAlive()) {
             renderKillScreen();
+            if (!scoreLogged) {
+                if (localStorage.getItem('scores')) {
+                    let scoresList = localStorage.getItem('scores').split(' ')
+                    scoresList.push(playerSnake.score.toString());
+                    scoresList.sort((a, b) => {
+                        return parseInt(b, 10) - parseInt(a, 10);
+                    });
+                    if (scoresList.length > 5) {
+                        scoresList.pop();
+                    }
+
+                    localStorage.setItem('scores', scoresList.join(' '))
+                }
+                else {
+                    localStorage.setItem('scores', playerSnake.score.toString())
+                }
+                scoreLogged = true;
+            }
         }
     }
 
