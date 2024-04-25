@@ -323,7 +323,9 @@ MyGame.main = function (objects, input, renderer, graphics) {
     });
 
     socket.on("kill_pt", (data) => {
-        playerSnake.kills ++;
+        if (data.name === playerSnake.name) {
+            playerSnake.kills ++;
+        }
     });
 
     socket.on("other_snake_kill", (data) => {
