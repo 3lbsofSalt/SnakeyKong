@@ -152,6 +152,8 @@ MyGame.main = function (objects, input, renderer, graphics) {
             0, // Score
         );
 
+        singleBananas = [];
+
         for (const banana of data.single_bananas) {
             singleBananas.push(
                 objects.Food({
@@ -164,6 +166,8 @@ MyGame.main = function (objects, input, renderer, graphics) {
                 }),
             );
         }
+
+        bunchBananas = [];
 
         for (const bunch of data.bunch_bananas) {
             bunchBananas.push(
