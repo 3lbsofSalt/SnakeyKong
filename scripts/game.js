@@ -512,6 +512,10 @@ MyGame.main = function (objects, input, renderer, graphics) {
                 else {
                     localStorage.setItem('scores', playerSnake.score.toString())
                 }
+                var button = document.getElementById("id-game-back");
+                button.style.display = "block";
+                button.style.marginLeft = "auto";
+                button.style.marginRight = "auto";
                 scoreLogged = true;
             }
         }
@@ -585,11 +589,23 @@ MyGame.main = function (objects, input, renderer, graphics) {
         MyGame.manager.showScreen("main-menu");
     });
 
+    document
+        .getElementById("id-game-back")
+        .addEventListener("click", function () {
+            jungleJapes.pause();
+            cancelNextRequest = true;
+            socket.emit("quit");
+            MyGame.manager.showScreen("main-menu");
+        });
+
     return {
         processInput: processInput,
         update: update,
         render: render,
         start: start,
+        jungleJapes: jungleJapes,
+        cancelNextRequest: cancelNextRequest,
+        socket: socket,
         dkHead: playerSnake,
     };
 };

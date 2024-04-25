@@ -20,6 +20,8 @@ MyGame.screens["game-play"] = (function (manager, graphics, input) {
 
     function run() {
         console.log("running");
+        var button = document.getElementById("id-game-back");
+        button.style.display = "none";
         updateControls();
         model = MyGame.main(
             MyGame.objects,
