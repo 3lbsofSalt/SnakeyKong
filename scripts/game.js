@@ -322,6 +322,10 @@ MyGame.main = function (objects, input, renderer, graphics) {
         particle_system.snakeCrash();
     });
 
+    socket.on("kill_pt", (data) => {
+        playerSnake.kills ++;
+    });
+
     socket.on("other_snake_kill", (data) => {
         if (otherSnakes[data.snake_id]) {
             otherSnakes[data.snake_id].kill();

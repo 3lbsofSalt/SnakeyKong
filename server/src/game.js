@@ -320,6 +320,10 @@ function testSnakeCollision(snake, clientId) {
                     type: "snake_kill",
                     snake_id: clientId,
                 });
+                updateQueue.push({
+                    type: "kill_pt",
+                    snake_id: id,
+                });
             }
         }
     }
@@ -591,6 +595,10 @@ function updateClients(elapsedTime) {
                 }
             } else if (event.type === "update_body") {
                 client.socket.emit("update_body", event);
+            } else if (event.type === "kill_pt") {
+                if (clientId == event?.player_id) {
+                    client.socket.emit("kill_pt", event);
+                }
             }
         }
     }
