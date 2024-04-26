@@ -42,10 +42,6 @@ MyGame.main = function (objects, input, renderer, graphics) {
     );
 
     function registerKeys() {
-        myKeyboard.register(" ", () => {
-            console.log(playerSnake);
-            debugger;
-        });
         myKeyboard.register(input.keys.right, () => {
             if (myKeyboard.keys.hasOwnProperty(input.keys.up)) {
                 playerSnake.setDirectionUpRight();
@@ -556,7 +552,7 @@ MyGame.main = function (objects, input, renderer, graphics) {
     }
 
     function start() {
-        console.log("yarg");
+        console.log("Starting game...");
         socket.emit("join-request", {
             name: localStorage.getItem("name"),
         });
@@ -591,7 +587,8 @@ MyGame.main = function (objects, input, renderer, graphics) {
         jungleJapes.pause();
         cancelNextRequest = true;
         socket.emit("quit");
-        MyGame.manager.showScreen("main-menu");
+        socket.disconnect();
+        window.location.reload();
     });
 
     document
@@ -600,7 +597,7 @@ MyGame.main = function (objects, input, renderer, graphics) {
             jungleJapes.pause();
             cancelNextRequest = true;
             socket.emit("quit");
-            MyGame.manager.showScreen("main-menu");
+            window.location.reload();
         });
 
     return {
