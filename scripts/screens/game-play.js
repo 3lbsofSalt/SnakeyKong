@@ -10,6 +10,11 @@ MyGame.screens["game-play"] = (function (manager, graphics, input) {
     //------------------------------------------------------------------
     function initialize() {
         console.log("game initializing...");
+        document
+            .getElementById("id-game-back")
+            .addEventListener("click", function () {
+                model.quit();
+            });
     }
 
     //------------------------------------------------------------------
@@ -21,13 +26,7 @@ MyGame.screens["game-play"] = (function (manager, graphics, input) {
     function run() {
         console.log("running");
         var button = document.getElementById("id-game-back");
-
-        // Clone the button
-        var newButton = button.cloneNode(true);
-
-        // Replace the original button with the cloned button
-        button.parentNode.replaceChild(newButton, button);
-        newButton.style.display = "none";
+        button.style.display = "none";
         updateControls();
         model = MyGame.main(
             MyGame.objects,

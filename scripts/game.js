@@ -372,6 +372,7 @@ MyGame.main = function (objects, input, renderer, graphics) {
     startMusic();
 
     function startMusic() {
+        jungleJapes.loop = true;
         jungleJapes.play();
     }
 
@@ -584,12 +585,16 @@ MyGame.main = function (objects, input, renderer, graphics) {
     }
 
     myKeyboard.register("Escape", function () {
+        quit();
+    });
+
+    function quit() {
         jungleJapes.pause();
         cancelNextRequest = true;
         socket.emit("quit");
         socket.disconnect();
         window.location.reload();
-    });
+    }
 
     document
         .getElementById("id-game-back")
@@ -609,5 +614,6 @@ MyGame.main = function (objects, input, renderer, graphics) {
         cancelNextRequest: cancelNextRequest,
         socket: socket,
         dkHead: playerSnake,
+        quit: quit,
     };
 };
