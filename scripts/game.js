@@ -376,6 +376,7 @@ MyGame.main = function (objects, input, renderer, graphics) {
     startMusic();
 
     function startMusic() {
+        jungleJapes.loop = true;
         jungleJapes.play();
     }
 
@@ -598,7 +599,6 @@ MyGame.main = function (objects, input, renderer, graphics) {
         MyGame.manager.showScreen("main-menu");
     }
 
-
     return {
         processInput: processInput,
         update: update,
@@ -608,6 +608,6 @@ MyGame.main = function (objects, input, renderer, graphics) {
         cancelNextRequest: cancelNextRequest,
         socket: socket,
         dkHead: playerSnake,
-        quit: quit
+        quit: quit,
     };
 };
